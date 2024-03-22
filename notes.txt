@@ -9,17 +9,22 @@ Installed packages:
 Nessecary to-dos:
 - Refactor
 - Contact form
-- Model errors at admin panel
+- Model validation errors at admin panel
 - Responsiveness
 - Add global 404 and blog specific
-- Fix view using same casing as in models (for better clarity)
-- CSRF-token
-- Admin auth
+- ✔ Fix view using same casing as in models (for better clarity)
+- ✔ CSRF-token missing
+- ✔ Admin auth
 - Image upload
 - Fix both using attribute routing and conventional routing
+- ✔ Fix multiple namespaces
 
 Nice to haves:
 - Cache pages (whole HTML for some hours)
+- Roles so I can do demo user access
+
+On deploy:
+- Remove Quill debug
 
 Run DB locally:
 docker run -d --name mariadb \

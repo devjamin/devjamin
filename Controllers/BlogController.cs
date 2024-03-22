@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using BlogSite.Models;
+using devjamin.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace devjamin.Controllers

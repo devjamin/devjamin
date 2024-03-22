@@ -21,21 +21,21 @@
 <form class="ceForm" asp-action="Create" method="post">
     <div class="ceForm__groupContainer">
         <div class="ceForm__group">
-            <label class="ceForm__label" for="title">Title</label>
-            <input class="ceForm__input" type="text" placeholder="Title" class="form-control" id="title" name="Title">
+            <label class="ceForm__label" for="Title">Title</label>
+            <input class="ceForm__input" type="text" placeholder="Title" class="form-control" id="Title" name="Title">
         </div>
         <div class="ceForm__group">
-            <label class="ceForm__label" for="slug">Slug</label>
-            <input class="ceForm__input" type="text" placeholder="Slug" class="form-control" id="slug" name="slug">
+            <label class="ceForm__label" for="Slug">Slug</label>
+            <input class="ceForm__input" type="text" placeholder="Slug" class="form-control" id="Slug" name="Slug">
         </div>
     </div>
-    <label class="ceForm__label" for="description">Description</label>
-    <textarea class="ceForm__textarea" id="description" name="description" cols="30" rows="10"
+    <label class="ceForm__label" for="Description">Description</label>
+    <textarea class="ceForm__textarea" id="Description" name="Description" cols="30" rows="10"
         placeholder="Description"></textarea>
     <div class="ceForm__group">
-        <label class="ceForm__label" for="editor">Content</label>
-                <div class="ceForm__editor" id="editor"></div>
-        <input class="ceForm__input ceForm__input--hidden" type="hidden" name="Content" id="content">
+        <label class="ceForm__label" for="Editor">Content</label>
+                <div class="ceForm__editor" id="Editor"></div>
+        <input class="ceForm__input ceForm__input--hidden" type="hidden" name="Content" id="Content">
     </div>
     <div class="ceForm__bottom">
         <div class="ceForm__bottomCheckboxContainer">
@@ -49,8 +49,8 @@
 
 <script>
     // Generate slug on title change (lowercase and replace spaces with hyphens)
-    const titleInput = document.getElementById("title");
-    const slugInput = document.getElementById("slug");
+    const titleInput = document.getElementById("Title");
+    const slugInput = document.getElementById("Slug");
 
     titleInput.oninput = function() {
         const title = titleInput.value;
@@ -84,6 +84,6 @@
     const form = document.querySelector("form");
     form.onsubmit = function(e) {
         // Set Quill content to hidden field
-        document.getElementById("content").value = quill.root.innerHTML;
+        document.getElementById("Content").value = quill.root.innerHTML;
     };
 </script>

@@ -1,4 +1,3 @@
-using BlogSite.Models;
 using devjamin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -51,6 +50,7 @@ namespace devjamin.Controllers
 
         // POST: /Admin/Login
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(AdminLoginViewModel model)
         {
             if (ModelState.IsValid)
@@ -69,7 +69,7 @@ namespace devjamin.Controllers
                 }
             }
 
-            // something failed, redisplay form
+            // Something failed, redisplay form
             return View(model);
         }
 
@@ -99,6 +99,7 @@ namespace devjamin.Controllers
 
         // POST: Admin/Blogs/Create
         [Authorize]
+        [ValidateAntiForgeryToken]
         [HttpPost("/Admin/Blogs/Create")]
         public async Task<IActionResult> Create(BlogPostViewModel model)
         {
@@ -115,7 +116,7 @@ namespace devjamin.Controllers
                     Content = model.Content,
                     AuthorId = currentUser.Id,
                     PublishedDate = DateTime.UtcNow,
-                    IsPublished = model.IsPublished == "on" ? true : false // Set IsPublished based on the form input
+                    IsPublished = model.IsPublished == "on" // Set IsPublished based on the form input
                 };
 
                 _context.BlogPosts.Add(blogPost);
@@ -157,7 +158,7 @@ namespace devjamin.Controllers
             return View("~/Views/Admin/Blogs/Edit.cshtml", viewModel);
         }
 
-        // POST: Admin/Blogs/Edit/5
+        // POST: Admin/Blogs/Edit/[BlogPostId]
         [HttpPost("/Admin/Blogs/Edit/{id:int}")]
         [Authorize]
         [ValidateAntiForgeryToken]

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using devjamin.Models;
-using BlogSite.Models;
+using devjamin.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace devjamin.Controllers;

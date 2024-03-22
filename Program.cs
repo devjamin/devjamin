@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using BlogSite.Models;
+using devjamin.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 // Add database context
@@ -26,11 +25,11 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var dbContext = services.GetRequiredService<BlogDbContext>(); // Changed PhotosDB to BlogDbContext
-    dbContext.Database.EnsureCreated(); // In production, you'd typically use dbContext.Database.Migrate();
+    var dbContext = services.GetRequiredService<BlogDbContext>();
+    dbContext.Database.EnsureCreated();
 }
 
-// Configure the HTTP request pipeline.
+// Configure HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BlogSite.Models.BlogPost>
+﻿@model IEnumerable<devjamin.Models.BlogPost>
 @{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -105,7 +105,7 @@
         <h2 class="contact__title">Contact me</h2>
         <p class="contact__description">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam, natus?
             Similique non officia nihil sint.</p>
-        <form class="contact__form">
+        <form class="contact__form" asp-action="">
             <label class="contact__label" for="name">Name</label>
             <input class="contact__input" id="name" name="name" type="text" placeholder="Name" />
             <label class="contact__label" for="email">Email</label>
