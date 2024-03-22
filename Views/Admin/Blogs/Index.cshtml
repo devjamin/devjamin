@@ -1,0 +1,87 @@
+@model BlogSite.Models.BlogsViewModel
+
+@{
+    ViewData["Title"] = "Blogs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    /* Highlight active nav link */
+    #blogNavItem a,
+    #blogNavItem svg {
+        color: #160042;
+        fill: #160042;
+    }
+</style>
+
+<div class="top">
+    <h1 class="top__title">Blogs</h1>
+    <a class="top__createBtn" href="/Admin/Blogs/Create">Create blog</a>
+</div>
+
+@if (Model.ActiveBlogs.Count == 0 && Model.NonActiveBlogs.Count == 0)
+{
+    <p class="blogs__title">No blogs found</p>
+}
+else
+{
+    @if (Model.ActiveBlogs.Count != 0)
+    {
+        <section id="activeBlogs" class="blogs">
+    <h2 class="blogs__title">Active blogs</h2>
+    <div class="blogs__container">
+        @foreach (var blog in Model.ActiveBlogs)
+                {
+                    <article class="blog">
+                        <a class="blog__editLink" href="/Admin/Blogs/Edit/@blog.BlogPostId">
+                            <svg class="blog__edit" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
+                                stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="m11.239 15.533c-1.045 3.004-1.238 3.451-1.238 3.84 0 .441.385.627.627.627.272 0 1.108-.301 3.829-1.249zm.888-.888 3.22 3.22 6.408-6.401c.163-.163.245-.376.245-.591 0-.213-.082-.427-.245-.591-.58-.579-1.458-1.457-2.039-2.036-.163-.163-.377-.245-.591-.245-.213 0-.428.082-.592.245zm-3.127-.895c0-.402-.356-.75-.75-.75-2.561 0-2.939 0-5.5 0-.394 0-.75.348-.75.75s.356.75.75.75h5.5c.394 0 .75-.348.75-.75zm5-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75z"
+                                    fill-rule="nonzero" />
+                            </svg>
+                        </a>
+                        <div class="blog__content">
+                            <a class="blog__contentLink" href="/Blog/@blog.Slug" target="_blank">
+                                <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Image of Benjamin Nielsen">
+                                <span class="blog__tag">Craftsmanship</span>
+                                <h3 class="blog__title">@blog.Title</h3>
+                                <p class="blog__description">@blog.Description</p>
+                            </a>
+                        </div>
+                    </article>
+                }
+
+            </div>
+        </section>
+    }
+    @if (Model.NonActiveBlogs.Count != 0)
+    {
+        <section id="nonActiveBlogs" class="blogs">
+    <h2 class="blogs__title">Non-active blogs</h2>
+    <div class="blogs__container">
+        @foreach (var blog in Model.NonActiveBlogs)
+                {
+                    <article class="blog">
+                        <a class="blog__editLink" href="/Admin/Blogs/Edit/@blog.BlogPostId">
+                            <svg class="blog__edit" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
+                                stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="m11.239 15.533c-1.045 3.004-1.238 3.451-1.238 3.84 0 .441.385.627.627.627.272 0 1.108-.301 3.829-1.249zm.888-.888 3.22 3.22 6.408-6.401c.163-.163.245-.376.245-.591 0-.213-.082-.427-.245-.591-.58-.579-1.458-1.457-2.039-2.036-.163-.163-.377-.245-.591-.245-.213 0-.428.082-.592.245zm-3.127-.895c0-.402-.356-.75-.75-.75-2.561 0-2.939 0-5.5 0-.394 0-.75.348-.75.75s.356.75.75.75h5.5c.394 0 .75-.348.75-.75zm5-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75z"
+                                    fill-rule="nonzero" />
+                            </svg>
+                        </a>
+                        <div class="blog__content">
+                            <a class="blog__contentLink" href="/Blog/@blog.Slug" target="_blank">
+                                <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Image of Benjamin Nielsen">
+                                <span class="blog__tag">Craftsmanship</span>
+                                <h3 class="blog__title">@blog.Title</h3>
+                                <p class="blog__description">@blog.Description</p>
+                            </a>
+                        </div>
+                    </article>
+                }
+            </div>
+        </section>
+    }
+}

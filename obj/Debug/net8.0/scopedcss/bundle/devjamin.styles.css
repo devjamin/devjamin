@@ -1,0 +1,15 @@
+/* _content/devjamin/Views/Shared/_Layout.cshtml.rz.scp.css */
+*[b-kt56int4hx] {
+    color: #160042;
+    font-family: "Montserrat", sans-serif;
+}
+
+.navigation__list[b-kt56int4hx] {
+    display: flex;
+    list-style: none;
+}
+
+.navigation__link[b-kt56int4hx] {
+    text-decoration: none;
+    color: red;
+}

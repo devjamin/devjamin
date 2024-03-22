@@ -1,0 +1,131 @@
+﻿@model IEnumerable<BlogSite.Models.BlogPost>
+@{
+    ViewData["Title"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="sectionWrapper hero">
+    <div class="hero__infoBox">
+        <p class="hero__name">Benjamin Nielsen</p>
+        <h1 class="hero__title">Frontend-developer and DIY enthusiast</h1>
+        <p class="hero__description">I love to learn new stuff every day</p>
+        <div class="hero__cta">
+            <form class="hero__form" novalidate>
+                <input name="email" class="hero__input" type="email" placeholder="Enter Email" />
+                <button class="hero__contact">Contact</button>
+            </form>
+            <a class="hero__more" asp-controller="Home" asp-action="Index" asp-fragment="experience">Learn more</a>
+        </div>
+    </div>
+    <div class="hero__imgBox">
+        <img class="hero__img" src="../images/benjamin_nielsen.jpg" alt="Image of Benjamin Nielsen">
+    </div>
+</section>
+<div id="blogs" class="sectionContrastWrapper">
+    <section class="sectionWrapper blogs">
+        <p class="blogs__tag">Devjamin blog</p>
+        <h2 class="blogs__title">Take a look at my latest blog posts</h2>
+        <div class="blogs__container">
+            @foreach (var blog in Model)
+            {
+                <article class="blog">
+                    <a class="blog__anchor" href="/Blog/@blog.Slug">
+                        <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Image of Benjamin Nielsen">
+                        <span class="blog__tag">Craftsmanship</span>
+                        <h3 class="blog__title">@blog.Title</h3>
+                        <p class="blog__description">@blog.Description</p>
+                    </a>
+                </article>
+            }
+        </div>
+        <a class="blogs__more">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M8.6944 9.51487C8.39098 9.71716 8.33325 9.90509 8.33325 10C8.33325 10.0949 8.39098 10.2829 8.6944 10.4851C8.992 10.6835 9.45114 10.8333 9.99992 10.8333C10.5487 10.8333 11.0078 10.6835 11.3054 10.4851C11.6089 10.2829 11.6666 10.0949 11.6666 10C11.6666 9.90509 11.6089 9.71716 11.3054 9.51487C11.0078 9.31647 10.5487 9.16668 9.99992 9.16668C9.45114 9.16668 8.992 9.31647 8.6944 9.51487ZM11.6666 12.174C11.1665 12.3863 10.5937 12.5 9.99992 12.5C9.40617 12.5 8.83333 12.3863 8.33325 12.174V15C8.33325 15.0949 8.39098 15.2829 8.6944 15.4851C8.992 15.6835 9.45114 15.8333 9.99992 15.8333C10.5487 15.8333 11.0078 15.6835 11.3054 15.4851C11.6089 15.2829 11.6666 15.0949 11.6666 15V12.174ZM13.3333 10C13.3333 9.17445 12.8313 8.52905 12.2299 8.12812C11.6227 7.72331 10.8318 7.50001 9.99992 7.50001C9.16799 7.50001 8.37712 7.72331 7.7699 8.12812C7.1685 8.52905 6.66659 9.17445 6.66659 10V18.3333C6.66659 18.7936 7.03968 19.1667 7.49992 19.1667C8.31246 19.1667 11.6874 19.1667 12.4999 19.1667C12.9602 19.1667 13.3333 18.7936 13.3333 18.3333V10Z" />
+                <path
+                    d="M3.8686 4.34702C3.99138 4.10161 4.34178 4.10161 4.46456 4.34702C5.09319 5.60358 5.22877 5.73891 6.48567 6.36701C6.73122 6.48971 6.73121 6.83993 6.48567 6.96263C5.22877 7.59073 5.09319 7.72606 4.46455 8.98262C4.34178 9.22803 3.99138 9.22803 3.8686 8.98262C3.23997 7.72606 3.10439 7.59073 1.84749 6.96263C1.60194 6.83993 1.60194 6.48971 1.84749 6.36701C3.10439 5.73891 3.23997 5.60358 3.8686 4.34702Z" />
+                <path
+                    d="M9.69869 1.0174C9.82146 0.771991 10.1719 0.771991 10.2946 1.0174C10.9233 2.27396 11.0589 2.40929 12.3158 3.03739C12.5613 3.16009 12.5613 3.5103 12.3158 3.63301C11.0589 4.26111 10.9233 4.39644 10.2946 5.653C10.1719 5.89841 9.82146 5.89841 9.69869 5.653C9.07006 4.39644 8.93447 4.26111 7.67757 3.63301C7.43203 3.5103 7.43203 3.16009 7.67757 3.03739C8.93447 2.40929 9.07006 2.27396 9.69869 1.0174Z" />
+                <path
+                    d="M15.5288 4.34702C15.6515 4.10161 16.002 4.10161 16.1247 4.34702C16.7534 5.60358 16.8889 5.73891 18.1458 6.36701C18.3914 6.48971 18.3914 6.83993 18.1458 6.96263C16.8889 7.59073 16.7534 7.72606 16.1247 8.98262C16.002 9.22803 15.6515 9.22803 15.5288 8.98262C14.9001 7.72606 14.7646 7.59073 13.5077 6.96263C13.2621 6.83993 13.2621 6.48971 13.5077 6.36701C14.7646 5.73891 14.9001 5.60358 15.5288 4.34702Z" />
+            </svg>
+            See All Blogs
+        </a>
+    </section>
+</div>
+<section id="experience" class="sectionWrapper experience">
+    <h2 class="experience__title">Experience</h2>
+    <p class="experience__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nulla tellus,
+        semper dictum tortor a, tempus iaculis mi. Vestibulum pretium in mi sed sollicitudin. </p>
+    <ul class="timeline">
+        <li class="timeline__item">
+            <div class="timeline__date">
+                <p class="timeline__dateTxt">Nov 20th, 2024</p>
+                <div class="timeline__dot"></div>
+            </div>
+            <ul class="timeline__card">
+                <li>HEJ</li>
+                <li>HEJ</li>
+            </ul>
+        </li>
+        <li class="timeline__item">
+            <div class="timeline__date">
+                <p class="timeline__dateTxt">Nov 20th, 2024</p>
+                <div class="timeline__dot"></div>
+            </div>
+            <ul class="timeline__card">
+                <li>HEJ</li>
+                <li>HEJ</li>
+                <li>HEJ</li>
+            </ul>
+        </li>
+        <li class="timeline__item">
+            <div class="timeline__date">
+                <p class="timeline__dateTxt">Nov 20th, 2024</p>
+                <div class="timeline__dot"></div>
+            </div>
+            <ul class="timeline__card">
+                <li>HEJ</li>
+                <li>HEJ</li>
+                <li>HEJ</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+<div id="contact" class="sectionContrastWrapper">
+    <section class="sectionWrapper contact">
+        <span class="contact__tag">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M8 14C7.60417 14 7.23958 13.9011 6.90625 13.7031C6.58333 13.5156 6.32292 13.2604 6.125 12.9375C5.9375 12.6042 5.84375 12.2396 5.84375 11.8437C5.84375 11.3437 5.95833 10.9271 6.1875 10.5937C6.41667 10.2604 6.77083 9.86978 7.25 9.42188C7.60417 9.09896 7.78125 8.79164 7.78125 8.49998V8.21876H7.5C7.17708 8.21876 6.73437 8.54168 6.17187 9.18752C5.61979 9.83336 4.94791 10.1562 4.15625 10.1562C3.76042 10.1562 3.39583 10.0625 3.0625 9.875C2.73958 9.67706 2.47917 9.41666 2.28125 9.09374C2.09375 8.76044 2 8.39582 2 8C2 7.60417 2.09375 7.24479 2.28125 6.92187C2.47917 6.58854 2.73958 6.32812 3.0625 6.14062C3.39583 5.94271 3.76042 5.84375 4.15625 5.84375C4.9375 5.84375 5.60416 6.16146 6.15625 6.79687C6.70833 7.43229 7.15625 7.75 7.5 7.75H7.78125V7.5C7.78125 7.20833 7.60417 6.90104 7.25 6.57813L6.89062 6.25C6.63021 6.01042 6.39063 5.72396 6.17187 5.39062C5.95312 5.04687 5.84375 4.63542 5.84375 4.15625C5.84375 3.76042 5.9375 3.40104 6.125 3.07813C6.32292 2.74479 6.58333 2.48438 6.90625 2.29687C7.23958 2.09896 7.60417 2 8 2C8.39582 2 8.75522 2.09896 9.07814 2.29687C9.41144 2.49479 9.6719 2.75521 9.8594 3.07813C10.0573 3.40104 10.1562 3.76042 10.1562 4.15625C10.1562 4.9375 9.83852 5.60416 9.20312 6.15625C8.56772 6.70833 8.25002 7.15625 8.25002 7.5V7.75H8.49998C8.85416 7.75 9.30206 7.43229 9.84374 6.79687C10.375 6.16146 11.0416 5.84375 11.8438 5.84375C12.2396 5.84375 12.5989 5.94271 12.9219 6.14062C13.2552 6.32812 13.5156 6.58333 13.7031 6.90625C13.9011 7.22917 14 7.59375 14 8C14 8.39582 13.9011 8.76044 13.7031 9.09374C13.5156 9.41666 13.2552 9.67706 12.9219 9.875C12.5989 10.0625 12.2396 10.1562 11.8438 10.1562C11.3542 10.1562 10.9323 10.0365 10.5781 9.79688C10.2344 9.5573 9.84896 9.20834 9.42188 8.75C9.09896 8.39582 8.79164 8.21876 8.49998 8.21876H8.25002V8.49998C8.25002 8.88542 8.56772 9.33332 9.20312 9.84374C9.83852 10.3542 10.1562 11.0208 10.1562 11.8437C10.1562 12.2396 10.0573 12.6042 9.8594 12.9375C9.6719 13.2604 9.41666 13.5156 9.09374 13.7031C8.77082 13.9011 8.40626 14 8 14Z"
+                    fill="#779ACF" />
+            </svg>
+            Lets grab a coffee
+        </span>
+        <h2 class="contact__title">Contact me</h2>
+        <p class="contact__description">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam, natus?
+            Similique non officia nihil sint.</p>
+        <form class="contact__form">
+            <label class="contact__label" for="name">Name</label>
+            <input class="contact__input" id="name" name="name" type="text" placeholder="Name" />
+            <label class="contact__label" for="email">Email</label>
+            <input class="contact__input" novalidate type="email" id="email" name="email" type="text"
+                placeholder="Email" />
+            <label class="contact__label" for="message">Message</label>
+            <textarea class="contact__textarea" id="message" name="message" cols="30" rows="10"
+                placeholder="Message"></textarea>
+            <button class="contact__btn">Send</button>
+        </form>
+    </section>
+</div>
+<script>
+    /* Insert hero email value at contact sections email input and scroll to it */
+    const heroForm = document.querySelector(".hero__form");
+
+    heroForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        document.getElementById("email").value = e.target.email.value;
+        document.getElementById("contact").scrollIntoView();
+        document.getElementById("name").focus();
+    });
+</script>

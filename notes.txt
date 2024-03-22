@@ -1,0 +1,29 @@
+Add package:
+dotnet add package [NAME]
+
+Installed packages:
+- Microsoft.AspNetCore.Identity.EntityFrameworkCore
+- Pomelo.EntityFrameworkCore.MySql
+- Microsoft.AspNetCore.Identity.UI
+
+Nessecary to-dos:
+- Refactor
+- Contact form
+- Model errors at admin panel
+- Responsiveness
+- Add global 404 and blog specific
+- Fix view using same casing as in models (for better clarity)
+- CSRF-token
+- Admin auth
+- Image upload
+- Fix both using attribute routing and conventional routing
+
+Nice to haves:
+- Cache pages (whole HTML for some hours)
+
+Run DB locally:
+docker run -d --name mariadb \
+    -e MYSQL_ROOT_PASSWORD=root_password \
+    -p 3306:3306 \
+    -v mariadb_data:/var/lib/mysql \
+    mariadb

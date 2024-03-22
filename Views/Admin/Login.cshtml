@@ -1,0 +1,48 @@
+@model devjamin.Models.AdminLoginViewModel
+@{
+    ViewData["Title"] = "Admin login";
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/css/global.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/adminLogin.css" />
+<div class="loginWrapper">
+    <div class="login">
+        <h2 class="login__title">Admin Login</h2>
+        <p class="login__description">Please <span class="login__descriptionFuckOff">fuck off</span>, this is only for Benjamin.</p>
+        <form asp-action="Login" method="post" class="login__form">
+            <div class="login__inputContainer">
+                <label asp-for="Username" class="login__label">Username</label>
+                <input asp-for="Username" class="login__input" placeholder="Username" />
+                <span asp-validation-for="Username" class="login__inputError"></span>
+            </div>
+            <div class="login__inputContainer">
+                <label asp-for="Password" class="login__label">Password</label>
+                <input asp-for="Password" class="login__input" placeholder="Password" />
+                <span asp-validation-for="Password" class="login__inputError"></span>
+            </div>
+            <button type="submit" class="login__btn">Login</button>
+            <div asp-validation-summary="ModelOnly" class="login__errors"></div>
+        </form>
+    </div>
+</div>
+<script>
+    /* Removes error msg on input input */
+    const inputs = document.querySelectorAll("input");
+
+    inputs.forEach(input => {
+        input.addEventListener("input", function() {
+            if (input.nextElementSibling && input.nextElementSibling.className.includes("login__inputError")) {
+                input.nextElementSibling.remove();
+            }
+        });
+    });
+
+    /* Highlight "fuck off" txt when model errors */
+    window.onload = function() {
+        const validationSummary = document.querySelector('.login__errors');
+        if (validationSummary && validationSummary.innerHTML.trim() !== '') {
+            document.querySelector(".login__descriptionFuckOff").style.color = "#ff0000";
+        }
+    };
+</script>

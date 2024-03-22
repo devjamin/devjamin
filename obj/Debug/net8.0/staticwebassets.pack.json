@@ -1,0 +1,157 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/css/admin.css",
+      "PackagePath": "staticwebassets/css/admin.css"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/css/adminLogin.css",
+      "PackagePath": "staticwebassets/css/adminLogin.css"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/css/blog.css",
+      "PackagePath": "staticwebassets/css/blog.css"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/css/global.css",
+      "PackagePath": "staticwebassets/css/global.css"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/css/site.css",
+      "PackagePath": "staticwebassets/css/site.css"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/favicon.ico",
+      "PackagePath": "staticwebassets/favicon.ico"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Courier_Prime/CourierPrime-Bold.ttf",
+      "PackagePath": "staticwebassets/fonts/Courier_Prime/CourierPrime-Bold.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Courier_Prime/CourierPrime-BoldItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Courier_Prime/CourierPrime-BoldItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Courier_Prime/CourierPrime-Italic.ttf",
+      "PackagePath": "staticwebassets/fonts/Courier_Prime/CourierPrime-Italic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Courier_Prime/CourierPrime-Regular.ttf",
+      "PackagePath": "staticwebassets/fonts/Courier_Prime/CourierPrime-Regular.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Courier_Prime/OFL.txt",
+      "PackagePath": "staticwebassets/fonts/Courier_Prime/OFL.txt"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-Black.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-Black.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-BlackItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-BlackItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-Bold.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-Bold.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-BoldItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-BoldItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-ExtraBold.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-ExtraBold.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-ExtraBoldItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-ExtraBoldItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-ExtraLight.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-ExtraLight.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-ExtraLightItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-ExtraLightItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-Italic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-Italic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-Light.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-Light.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-LightItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-LightItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-Medium.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-Medium.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-MediumItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-MediumItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-Regular.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-Regular.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-SemiBold.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-SemiBold.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-SemiBoldItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-SemiBoldItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-Thin.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-Thin.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/Montserrat-ThinItalic.ttf",
+      "PackagePath": "staticwebassets/fonts/Montserrat/Montserrat-ThinItalic.ttf"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/fonts/Montserrat/OFL.txt",
+      "PackagePath": "staticwebassets/fonts/Montserrat/OFL.txt"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/images/benjamin_nielsen.jpg",
+      "PackagePath": "staticwebassets/images/benjamin_nielsen.jpg"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/js/site.js",
+      "PackagePath": "staticwebassets/js/site.js"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/lib/quill@2.0.0-rc.3/quill.js",
+      "PackagePath": "staticwebassets/lib/quill@2.0.0-rc.3/quill.js"
+    },
+    {
+      "Id": "/Users/benjamin/Desktop/devjamin/wwwroot/lib/quill@2.0.0-rc.3/quill.snow.css",
+      "PackagePath": "staticwebassets/lib/quill@2.0.0-rc.3/quill.snow.css"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.devjamin.props",
+      "PackagePath": "build\\devjamin.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.devjamin.props",
+      "PackagePath": "buildMultiTargeting\\devjamin.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.devjamin.props",
+      "PackagePath": "buildTransitive\\devjamin.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.devjamin.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

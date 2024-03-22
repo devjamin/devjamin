@@ -1,0 +1,101 @@
+/*
+    Admin login
+*/
+.loginWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.login {
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.login__title {
+    font-size: 40px;
+    font-weight: 900;
+    font-family: "Courier New", Courier, monospace;
+    margin-bottom: 8px;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.login__description {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+/* Form */
+.login__form {
+    display: flex;
+    flex-direction: column;
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.login__inputContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+}
+
+.login__inputError {
+    font-size: 14px;
+    margin-top: 4px;
+    color: #ff0000;
+}
+
+/* Used by JS to highlight "fuck off" txt */
+.login__errors {
+    display: none;
+}
+
+.login__label {
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.login__input,
+.login__textarea {
+    height: 56px;
+    border: 1px solid #c4cad4;
+    border-radius: 16px;
+    padding: 0 20px;
+    color: #160042;
+}
+.login__input:focus,
+.login__textarea:focus {
+    outline: 1px solid #5d53a2;
+}
+
+.login__textarea {
+    height: 128px;
+    resize: none;
+    padding-top: 16px;
+}
+
+.login__btn {
+    background-color: #5d53a2;
+    border: 1px solid #5d53a2;
+    color: #fff;
+    padding: 16px 32px;
+    border-radius: 16px;
+    cursor: pointer;
+    margin-left: auto;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.login__btn:hover,
+.login__btn:focus {
+    background-color: #fff;
+    color: #5d53a2;
+    border: 1px solid #5d53a2;
+    outline: none;
+}

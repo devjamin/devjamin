@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Create Blog";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Quill library (WYSIWYG-editor) -->
+<link href="~/lib/quill@2.0.0-rc.3/quill.snow.css" rel="stylesheet"/>
+<script src="~/lib/quill@2.0.0-rc.3/quill.js"></script>
+
+<style>
+    /* Highlight active nav link */
+    #blogNavItem a, #blogNavItem svg {
+        color: #160042;
+        fill: #160042;
+    }
+</style>
+
+<h1 class="ceTitle">Create Blog</h1>
+
+<!-- Blog editor form -->
+<form class="ceForm" asp-action="Create" method="post">
+    <div class="ceForm__groupContainer">
+        <div class="ceForm__group">
+            <label class="ceForm__label" for="title">Title</label>
+            <input class="ceForm__input" type="text" placeholder="Title" class="form-control" id="title" name="Title">
+        </div>
+        <div class="ceForm__group">
+            <label class="ceForm__label" for="slug">Slug</label>
+            <input class="ceForm__input" type="text" placeholder="Slug" class="form-control" id="slug" name="slug">
+        </div>
+    </div>
+    <label class="ceForm__label" for="description">Description</label>
+    <textarea class="ceForm__textarea" id="description" name="description" cols="30" rows="10"
+        placeholder="Description"></textarea>
+    <div class="ceForm__group">
+        <label class="ceForm__label" for="editor">Content</label>
+                <div class="ceForm__editor" id="editor"></div>
+        <input class="ceForm__input ceForm__input--hidden" type="hidden" name="Content" id="content">
+    </div>
+    <div class="ceForm__bottom">
+        <div class="ceForm__bottomCheckboxContainer">
+            <!-- Ensure a value is always submitted for IsPublished -->
+            <input class="ceForm__bottomCheckbox" type="checkbox" name="IsPublished" id="IsPublished">
+            <label class="ceForm__bottomLabel ceForm__label" for="IsPublished">Publish blog</label>
+        </div>
+        <button class="ceForm__btn">Save</button>
+    </div>
+</form>
+
+<script>
+    // Generate slug on title change (lowercase and replace spaces with hyphens)
+    const titleInput = document.getElementById("title");
+    const slugInput = document.getElementById("slug");
+
+    titleInput.oninput = function() {
+        const title = titleInput.value;
+        const slug = title.toLowerCase().replace(/ /g, "-");
+        slugInput.value = slug;
+    };
+</script>
+
+<!-- Init Quill editor -->
+<script>
+    const options = {
+        debug: "info",
+        modules: {
+            toolbar: [
+                [{ "header": [1, 2, 3, 4, 5, 6, false] }],
+                ["bold", "italic", "underline", "strike"],        // Toggled buttons
+                [{ "list": "ordered" }, { "list": "bullet" }],
+                ["blockquote", "code-block"],
+                [{ "script": "sub" }, { "script": "super" }],      // Superscript/subscript
+                [{ "indent": "-1" }, { "indent": "+1" }],          // Tutdent/indent
+                [{ "direction": "rtl" }],                         // Text direction
+                [{ "align": [] }],                                // Alignment tools
+                ["clean"]                                         // Remove formatting
+            ]
+        },
+        placeholder: "Compose an epic blog...",
+        theme: "snow"
+    };
+    const quill = new Quill("#editor", options);
+
+    const form = document.querySelector("form");
+    form.onsubmit = function(e) {
+        // Set Quill content to hidden field
+        document.getElementById("content").value = quill.root.innerHTML;
+    };
+</script>

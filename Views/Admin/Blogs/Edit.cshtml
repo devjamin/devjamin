@@ -1,0 +1,95 @@
+@model BlogSite.Models.BlogPostViewModel
+@{
+    ViewData["Title"] = "Edit Blog";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<!-- Quill library (WYSIWYG-editor) -->
+<link href="~/lib/quill@2.0.0-rc.3/quill.snow.css" rel="stylesheet"/>
+<script src="~/lib/quill@2.0.0-rc.3/quill.js"></script>
+
+<style>
+    /* Highlight active nav link */
+    #blogNavItem a, #blogNavItem svg {
+        color: #160042;
+        fill: #160042;
+    }
+</style>
+
+<h1 class="ceTitle">Edit Blog</h1>
+
+<!-- Blog editor form -->
+<form class="ceForm" asp-action="Edit" method="post">
+    <input type="hidden" name="BlogPostId" value="@Model.BlogPostId" />
+    <div class="ceForm__groupContainer">
+        <div class="ceForm__group">
+            <label class="ceForm__label" for="title">Title</label>
+            <input class="ceForm__input" type="text" placeholder="Title" value="@Model.Title" id="title" name="Title">
+        </div>
+        <div class="ceForm__group">
+            <label class="ceForm__label" for="slug">Slug</label>
+            <input class="ceForm__input" type="text" placeholder="Slug" value="@Model.Slug" id="slug" name="slug">
+        </div>
+    </div>
+    <label class="ceForm__label" for="description">Description</label>
+    <textarea class="ceForm__textarea" id="description" name="description" cols="30" rows="10">@Model.Description</textarea>
+    <div class="ceForm__group">
+        <label class="ceForm__label" for="editor">Content</label>
+        <div class="ceForm__editor" id="editor"></div>
+        <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.Content" name="Content" id="content">
+    </div>
+    <div class="ceForm__bottom">
+        <div class="ceForm__bottomCheckboxContainer">
+            <input class="ceForm__bottomCheckbox" type="checkbox" name="isPublished" id="isPublished"  @(Model.IsPublished == "on" ? "checked" : "")>
+            <label class="ceForm__bottomLabel ceForm__label" for="isPublished">Publish blog</label>
+        </div>
+        <div class="ceForm__btnWrapper">
+            <a href="/Admin/Blogs/Delete/@Model.BlogPostId" onclick="return confirm('Are you sure you want to delete this blog post?');" class="ceForm__btn ceForm__btn--danger">Delete</a>
+            <button class="ceForm__btn">Save</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    // Generate slug on title change (lowercase and replace spaces with hyphens)
+    const titleInput = document.getElementById("title");
+    const slugInput = document.getElementById("slug");
+
+    titleInput.oninput = function() {
+        const title = titleInput.value;
+        const slug = title.toLowerCase().replace(/ /g, "-");
+        slugInput.value = slug;
+    };
+</script>
+
+<!-- Init Quill editor -->
+<script>
+    const options = {
+        debug: "info",
+        modules: {
+            toolbar: [
+                [{ "header": [1, 2, 3, 4, 5, 6, false] }],
+                ["bold", "italic", "underline", "strike"],        // Toggled buttons
+                [{ "list": "ordered" }, { "list": "bullet" }],
+                ["blockquote", "code-block"],
+                [{ "script": "sub" }, { "script": "super" }],      // Superscript/subscript
+                [{ "indent": "-1" }, { "indent": "+1" }],          // Tutdent/indent
+                [{ "direction": "rtl" }],                         // Text direction
+                [{ "align": [] }],                                // Alignment tools
+                ["clean"]                                         // Remove formatting
+            ]
+        },
+        placeholder: "Compose an epic blog...",
+        theme: "snow"
+    };
+    // Initialize Quill with existing content
+    const quill = new Quill("#editor", options);
+    quill.root.innerHTML = document.getElementById("content").value;
+
+    const form = document.querySelector("form");
+    form.onsubmit = function(e) {
+        // Set Quill content to hidden field
+        document.getElementById("content").value = quill.root.innerHTML;
+    };
+</script>
