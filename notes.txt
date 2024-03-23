@@ -19,6 +19,7 @@ Nessecary to-dos:
 - Add edited date and sort /Admin/Blogs based on newest
 - ✔ Fix both using attribute routing and conventional routing (simplify routing)
 - ✔ Fix multiple namespaces
+- Add a layout for login, probably redesign that part a bit
 
 Nice to haves:
 - Cache pages (whole HTML for some hours)

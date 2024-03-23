@@ -82,7 +82,6 @@ namespace devjamin.Controllers
 
         // GET: Admin/Blogs
         [HttpGet("Blogs")]
-        [Authorize]
         public async Task<IActionResult> GetBlogs()
         {
             var allBlogs = await _context.BlogPosts.ToListAsync();
@@ -98,7 +97,6 @@ namespace devjamin.Controllers
 
         // GET: Admin/Blogs/Create
         [HttpGet("Blogs/Create")]
-        [Authorize]
         public IActionResult Create()
         {
             var blogPostViewModel = new BlogPostViewModel();
@@ -107,7 +105,6 @@ namespace devjamin.Controllers
 
         // POST: Admin/Blogs/Create
         [HttpPost("Blogs/Create")]
-        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BlogPostViewModel blogPostViewModel)
         {
@@ -142,7 +139,6 @@ namespace devjamin.Controllers
 
         // GET: Admin/Blogs/Edit/{BlogPostId}
         [HttpGet("Blogs/Edit/{id:int}")]
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -171,7 +167,6 @@ namespace devjamin.Controllers
 
         // POST: Admin/Blogs/Edit/{BlogPostId}
         [HttpPost("Blogs/Edit/{BlogPostId:int}")]
-        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int blogPostId, BlogPostViewModel blogPostViewModel)
         {
@@ -222,7 +217,6 @@ namespace devjamin.Controllers
 
         // GET: Admin/Blogs/Delete/[ID]
         [HttpGet("Blogs/Delete/{id:int}")]
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -245,7 +239,6 @@ namespace devjamin.Controllers
 
         // GET: /Admin/Logout
         [HttpGet("Logout")]
-        [Authorize] // Only allow logged in users to log out
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
