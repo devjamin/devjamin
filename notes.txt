@@ -16,7 +16,8 @@ Nessecary to-dos:
 - ✔ CSRF-token missing
 - ✔ Admin auth
 - Image upload
-- Fix both using attribute routing and conventional routing
+- Add edited date and sort /Admin/Blogs based on newest
+- ✔ Fix both using attribute routing and conventional routing (simplify routing)
 - ✔ Fix multiple namespaces
 
 Nice to haves:
