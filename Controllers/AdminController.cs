@@ -84,29 +84,55 @@ namespace devjamin.Controllers
         [HttpGet("Blogs")]
         public async Task<IActionResult> GetBlogs()
         {
-            var allBlogs = await _context.BlogPosts.ToListAsync();
-            var blogsViewModel = new BlogsViewModel
+            var activeBlogs = await _context.BlogPosts
+                .Where(b => b.IsPublished)
+                .OrderByDescending(b => b.PublishedDate)
+                .Select(b => new BlogPostCardViewModel
+                {
+                    BlogPostId = b.BlogPostId,
+                    Title = b.Title,
+                    Slug = b.Slug,
+                    Description = b.Description,
+                    PublishedDate = b.PublishedDate
+                })
+                .ToListAsync();
+
+            var nonActiveBlogs = await _context.BlogPosts
+                .Where(b => !b.IsPublished)
+                .OrderByDescending(b => b.PublishedDate)
+                .Select(b => new BlogPostCardViewModel
+                {
+                    BlogPostId = b.BlogPostId,
+                    Title = b.Title,
+                    Slug = b.Slug,
+                    Description = b.Description,
+                    PublishedDate = b.PublishedDate
+                })
+                .ToListAsync();
+
+            var blogsViewModel = new AllBlogsCardViewModel
             {
-                ActiveBlogs = allBlogs.Where(b => b.IsPublished).ToList(),
-                NonActiveBlogs = allBlogs.Where(b => !b.IsPublished).ToList()
+                ActiveBlogs = activeBlogs,
+                NonActiveBlogs = nonActiveBlogs
             };
 
             return View("~/Views/Admin/Blogs/Index.cshtml", blogsViewModel);
         }
 
 
+
         // GET: Admin/Blogs/Create
         [HttpGet("Blogs/Create")]
         public IActionResult Create()
         {
-            var blogPostViewModel = new BlogPostViewModel();
-            return View("~/Views/Admin/Blogs/Create.cshtml", blogPostViewModel);
+            var BlogPostCreateEditViewModel = new BlogPostCreateEditViewModel();
+            return View("~/Views/Admin/Blogs/Create.cshtml", BlogPostCreateEditViewModel);
         }
 
         // POST: Admin/Blogs/Create
         [HttpPost("Blogs/Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BlogPostViewModel blogPostViewModel)
+        public async Task<IActionResult> Create(BlogPostCreateEditViewModel BlogPostCreateEditViewModel)
         {
             if (ModelState.IsValid)
             {
@@ -119,13 +145,13 @@ namespace devjamin.Controllers
 
                 var blogPost = new BlogPost
                 {
-                    Title = blogPostViewModel.Title,
-                    Slug = blogPostViewModel.Slug,
-                    Description = blogPostViewModel.Description,
-                    Content = blogPostViewModel.Content,
+                    Title = BlogPostCreateEditViewModel.Title,
+                    Slug = BlogPostCreateEditViewModel.Slug,
+                    Description = BlogPostCreateEditViewModel.Description,
+                    Content = BlogPostCreateEditViewModel.Content,
                     AuthorId = currentUser.Id,
                     PublishedDate = DateTime.UtcNow,
-                    IsPublished = blogPostViewModel.IsPublished == "on" // BlogPostViewModel.IsPublished is a checkbox string (on/null), convert to bool
+                    IsPublished = BlogPostCreateEditViewModel.IsPublished == "on" // BlogPostCreateEditViewModel.IsPublished is a checkbox string (on/null), convert to bool
                 };
 
                 _context.BlogPosts.Add(blogPost);
@@ -134,7 +160,7 @@ namespace devjamin.Controllers
                 return RedirectToAction("Blogs", "Admin"); // Redirect to /Admin/Blogs
             }
 
-            return View("~/Views/Admin/Blogs/Create.cshtml", blogPostViewModel);
+            return View("~/Views/Admin/Blogs/Create.cshtml", BlogPostCreateEditViewModel);
         }
 
         // GET: Admin/Blogs/Edit/{BlogPostId}
@@ -152,7 +178,7 @@ namespace devjamin.Controllers
                 return NotFound();
             }
 
-            var viewModel = new BlogPostViewModel
+            var viewModel = new BlogPostCreateEditViewModel
             {
                 BlogPostId = blogPost.BlogPostId,
                 Title = blogPost.Title,
@@ -168,9 +194,9 @@ namespace devjamin.Controllers
         // POST: Admin/Blogs/Edit/{BlogPostId}
         [HttpPost("Blogs/Edit/{BlogPostId:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int blogPostId, BlogPostViewModel blogPostViewModel)
+        public async Task<IActionResult> Edit(int blogPostId, BlogPostCreateEditViewModel BlogPostCreateEditViewModel)
         {
-            if (blogPostId != blogPostViewModel.BlogPostId) // From hidden input in form
+            if (blogPostId != BlogPostCreateEditViewModel.BlogPostId) // From hidden input in form
             {
                 return NotFound();
             }
@@ -184,11 +210,11 @@ namespace devjamin.Controllers
                 }
 
                 // Update blog post with new data
-                blogPost.Title = blogPostViewModel.Title;
-                blogPost.Slug = blogPostViewModel.Slug;
-                blogPost.Description = blogPostViewModel.Description;
-                blogPost.Content = blogPostViewModel.Content;
-                blogPost.IsPublished = blogPostViewModel.IsPublished == "on"; // Convert BlogPostViewModel.IsPublished to bool
+                blogPost.Title = BlogPostCreateEditViewModel.Title;
+                blogPost.Slug = BlogPostCreateEditViewModel.Slug;
+                blogPost.Description = BlogPostCreateEditViewModel.Description;
+                blogPost.Content = BlogPostCreateEditViewModel.Content;
+                blogPost.IsPublished = BlogPostCreateEditViewModel.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
 
                 try
                 {
@@ -212,20 +238,20 @@ namespace devjamin.Controllers
                 return Redirect("/Admin/Blogs");
             }
 
-            return View("~/Views/Admin/Blogs/Edit.cshtml", blogPostViewModel);
+            return View("~/Views/Admin/Blogs/Edit.cshtml", BlogPostCreateEditViewModel);
         }
 
-        // GET: Admin/Blogs/Delete/[ID]
-        [HttpGet("Blogs/Delete/{id:int}")]
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Admin/Blogs/Delete/{BlogPostId}
+        [HttpGet("Blogs/Delete/{blogPostId:int}")]
+        public async Task<IActionResult> Delete(int? blogPostId)
         {
-            if (id == null)
+            if (blogPostId == null)
             {
                 return NotFound();
             }
 
             var blogPost = await _context.BlogPosts
-                .FirstOrDefaultAsync(m => m.BlogPostId == id);
+                .FirstOrDefaultAsync(m => m.BlogPostId == blogPostId);
             if (blogPost == null)
             {
                 return NotFound();
@@ -242,7 +268,7 @@ namespace devjamin.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Public");
         }
     }
 }

@@ -22,7 +22,7 @@ namespace devjamin.Controllers
 
         [HttpPost]
         [Route("CreateAdminUser")]
-        public async Task<IActionResult> CreateAdminUser([FromBody] AdminUserViewModel model)
+        public async Task<IActionResult> CreateAdminUser([FromBody] CreateAdminUserViewModel model)
         {
             if (ModelState.IsValid)
             {

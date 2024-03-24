@@ -24,6 +24,7 @@ Nessecary to-dos:
 Nice to haves:
 - Cache pages (whole HTML for some hours)
 - Roles so I can do demo user access
+- Lowercase URL's (personal preference)
 
 On deploy:
 - Remove Quill debug

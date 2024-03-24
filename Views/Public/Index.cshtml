@@ -1,4 +1,4 @@
-﻿@model IEnumerable<devjamin.Models.BlogPost>
+﻿@model IEnumerable<devjamin.Models.BlogPostCardViewModel>
 @{
     ViewData["Title"] = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -26,19 +26,19 @@
         <p class="blogs__tag">Devjamin blog</p>
         <h2 class="blogs__title">Take a look at my latest blog posts</h2>
         <div class="blogs__container">
-            @foreach (var blog in Model)
+            @foreach (var blogCard in Model)
             {
                 <article class="blog">
-                    <a class="blog__anchor" href="/Blog/@blog.Slug">
+                    <a class="blog__anchor" href="/Blog/@blogCard.Slug">
                         <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Image of Benjamin Nielsen">
                         <span class="blog__tag">Craftsmanship</span>
-                        <h3 class="blog__title">@blog.Title</h3>
-                        <p class="blog__description">@blog.Description</p>
+                        <h3 class="blog__title">@blogCard.Title</h3>
+                        <p class="blog__description">@blogCard.Description</p>
                     </a>
                 </article>
             }
         </div>
-        <a class="blogs__more">
+        <a class="blogs__more" href="/Blogs">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="white" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M8.6944 9.51487C8.39098 9.71716 8.33325 9.90509 8.33325 10C8.33325 10.0949 8.39098 10.2829 8.6944 10.4851C8.992 10.6835 9.45114 10.8333 9.99992 10.8333C10.5487 10.8333 11.0078 10.6835 11.3054 10.4851C11.6089 10.2829 11.6666 10.0949 11.6666 10C11.6666 9.90509 11.6089 9.71716 11.3054 9.51487C11.0078 9.31647 10.5487 9.16668 9.99992 9.16668C9.45114 9.16668 8.992 9.31647 8.6944 9.51487ZM11.6666 12.174C11.1665 12.3863 10.5937 12.5 9.99992 12.5C9.40617 12.5 8.83333 12.3863 8.33325 12.174V15C8.33325 15.0949 8.39098 15.2829 8.6944 15.4851C8.992 15.6835 9.45114 15.8333 9.99992 15.8333C10.5487 15.8333 11.0078 15.6835 11.3054 15.4851C11.6089 15.2829 11.6666 15.0949 11.6666 15V12.174ZM13.3333 10C13.3333 9.17445 12.8313 8.52905 12.2299 8.12812C11.6227 7.72331 10.8318 7.50001 9.99992 7.50001C9.16799 7.50001 8.37712 7.72331 7.7699 8.12812C7.1685 8.52905 6.66659 9.17445 6.66659 10V18.3333C6.66659 18.7936 7.03968 19.1667 7.49992 19.1667C8.31246 19.1667 11.6874 19.1667 12.4999 19.1667C12.9602 19.1667 13.3333 18.7936 13.3333 18.3333V10Z" />

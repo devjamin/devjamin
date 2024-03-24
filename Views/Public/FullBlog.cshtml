@@ -1,4 +1,4 @@
-@model devjamin.Models.BlogPost
+@model devjamin.Models.BlogPostViewModel
 
 @{
     ViewData["Title"] = Model.Title;
@@ -38,7 +38,10 @@
         <div class="blogTop__info">
             <ul class="breadcrumb">
                 <li class="breadcrumb__item">
-                    <a class="breadcrumb__link" href="/Blog">Blogs</a>
+                    <a class="breadcrumb__link" href="/">Home</a>
+                </li>
+                <li class="breadcrumb__item">
+                    <a class="breadcrumb__link" href="/Blogs">Blogs</a>
                 </li>
                 <li>@Model.Title</li>
             </ul>
@@ -49,8 +52,8 @@
                 <div class="blogTop__author">
                     <img class="blogTop__authorImg" src="~/images/benjamin_nielsen.jpg" alt="Author">
                     <div class="blogTop__authorDescription">
-                        <p class="blogTop__authorName">@Model.Author.FullName</p>
-                        <p class="blogTop__authorReadTime">X minute read</p>
+                        <p class="blogTop__authorName">@Model.AuthorFullName</p>
+                        <p class="blogTop__authorReadTime">@Model.ReadTimeMinuteEstimate minute read</p>
                     </div>
                 </div>
                 <p class="blogTop__aboutDate">@Model.PublishedDate.ToString("dd MMMM yyyy")</p>

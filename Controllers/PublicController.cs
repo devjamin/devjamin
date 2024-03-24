@@ -13,67 +13,85 @@ using System.Diagnostics;
 
 namespace devjamin.Controllers
 {
-  [Route("")]
-  public class PublicController(BlogDbContext context) : Controller
-  {
-    private readonly BlogDbContext _context = context;
-
-    // GET: /
-    [HttpGet("")]
-    public async Task<IActionResult> Index()
+    [Route("")]
+    public class PublicController(BlogDbContext context) : Controller
     {
-      var latestThreePublishedBlogs = await _context.BlogPosts
-          .Where(b => b.IsPublished)
-          .OrderByDescending(b => b.PublishedDate)
-          .Take(3)
-          .ToListAsync();
+        private readonly BlogDbContext _context = context;
 
-      return View("~/Views/Home/Index.cshtml", latestThreePublishedBlogs);
+        // GET: /
+        [HttpGet("")]
+        public async Task<IActionResult> Index()
+        {
+            var latestThreePublishedBlogs = await _context.BlogPosts
+                .Where(b => b.IsPublished)
+                .OrderByDescending(b => b.PublishedDate)
+                .Take(3)
+                .Select(blog => new BlogPostCardViewModel
+                {
+                    BlogPostId = blog.BlogPostId,
+                    Title = blog.Title,
+                    Slug = blog.Slug,
+                    Description = blog.Description,
+                    PublishedDate = blog.PublishedDate
+                })
+                .ToListAsync();
+
+            return View("~/Views/Public/Index.cshtml", latestThreePublishedBlogs);
+        }
+
+        // GET: /Blogs
+        [HttpGet("/Blogs")]
+        public async Task<IActionResult> Blogs()
+        {
+            var allPublishedBlogs = await _context.BlogPosts
+                .Where(b => b.IsPublished)
+                .OrderByDescending(b => b.PublishedDate)
+                .ToListAsync();
+
+            return View("~/Views/Public/BlogsListing.cshtml", allPublishedBlogs);
+        }
+
+        // GET: /Blog/{Slug}
+        [HttpGet("/Blog/{slug}")]
+        public async Task<IActionResult> GetSpecificBlog(string slug)
+        {
+            var blogPostViewModel = await _context.BlogPosts
+              .Where(bp => bp.Slug == slug && (bp.IsPublished || (User != null && User.Identity != null && User.Identity.IsAuthenticated)))
+              .Select(bp => new BlogPostViewModel
+              {
+                  BlogPostId = bp.BlogPostId,
+                  Title = bp.Title,
+                  Slug = bp.Slug,
+                  Description = bp.Description,
+                  PublishedDate = bp.PublishedDate,
+                  Content = bp.Content,
+                  AuthorFullName = bp.Author!.FullName, // Author is always present
+                  ReadTimeMinuteEstimate = CalculateReadTime(bp.Content)
+              })
+              .FirstOrDefaultAsync();
+
+            if (blogPostViewModel == null)
+            {
+                return NotFound();
+            }
+
+            return View("~/Views/Public/FullBlog.cshtml", blogPostViewModel);
+        }
+
+        private static int CalculateReadTime(string content)
+        {
+            int averageWordReadSpeedPerMinute = 200;
+            int wordCount = content.Split(new char[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+            int readTimeMinutes = (int)Math.Ceiling(wordCount / (double)averageWordReadSpeedPerMinute);
+
+            // Ensure at least 1 minute is returned for very short texts
+            return Math.Max(readTimeMinutes, 1);
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
-
-    // GET: /Blogs
-    [HttpGet("/Blogs")]
-    public async Task<IActionResult> Blogs()
-    {
-      var allPublishedBlogs = await _context.BlogPosts
-          .Where(b => b.IsPublished)
-          .OrderByDescending(b => b.PublishedDate)
-          .ToListAsync();
-
-      return View("~/Views/Blog/Blogs.cshtml", allPublishedBlogs);
-    }
-
-    // GET: /Blog/{Slug}
-    [HttpGet("/Blog/{slug}")]
-    public async Task<IActionResult> Post(string slug)
-    {
-      BlogPost? blogPost = null;
-
-      // First try to get the published post
-      blogPost = await _context.BlogPosts
-          .Include(bp => bp.Author)
-          .FirstOrDefaultAsync(bp => bp.Slug == slug && bp.IsPublished);
-
-      // If not found and user is logged in, try to get unpublished post (so admin can preview it)
-      if (blogPost == null && User?.Identity?.IsAuthenticated == true)
-      {
-        blogPost = await _context.BlogPosts
-          .Include(bp => bp.Author)
-          .FirstOrDefaultAsync(bp => bp.Slug == slug && !bp.IsPublished);
-      }
-
-      if (blogPost == null)
-      {
-        return NotFound();
-      }
-
-      return View("~/Views/Blog/Blog.cshtml", blogPost);
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-      return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-  }
 }

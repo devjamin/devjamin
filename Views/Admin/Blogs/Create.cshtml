@@ -1,3 +1,4 @@
+@model devjamin.Models.BlogPostCreateEditViewModel
 @{
     ViewData["Title"] = "Create Blog";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -22,30 +23,32 @@
     <div class="ceForm__groupContainer">
         <div class="ceForm__group">
             <label class="ceForm__label" for="Title">Title</label>
-            <input class="ceForm__input" type="text" placeholder="Title" class="form-control" id="Title" name="Title">
+            <input class="ceForm__input" type="text" placeholder="Title" value="@Model.Title" id="Title" name="Title">
         </div>
         <div class="ceForm__group">
             <label class="ceForm__label" for="Slug">Slug</label>
-            <input class="ceForm__input" type="text" placeholder="Slug" class="form-control" id="Slug" name="Slug">
+            <input class="ceForm__input" type="text" placeholder="Slug" value="@Model.Slug" id="Slug" name="Slug">
         </div>
     </div>
     <label class="ceForm__label" for="Description">Description</label>
-    <textarea class="ceForm__textarea" id="Description" name="Description" cols="30" rows="10"
-        placeholder="Description"></textarea>
+    <textarea class="ceForm__textarea" id="Description" name="Description" cols="30" rows="10">@Model.Description</textarea>
     <div class="ceForm__group">
-        <label class="ceForm__label" for="Editor">Content</label>
-                <div class="ceForm__editor" id="Editor"></div>
-        <input class="ceForm__input ceForm__input--hidden" type="hidden" name="Content" id="Content">
+        <label class="ceForm__label" for="Content">Content</label>
+        <div class="ceForm__editor" id="Editor"></div>
+        <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.Content" name="Content" id="Content">
     </div>
     <div class="ceForm__bottom">
         <div class="ceForm__bottomCheckboxContainer">
-            <!-- Ensure a value is always submitted for IsPublished -->
-            <input class="ceForm__bottomCheckbox" type="checkbox" name="IsPublished" id="IsPublished">
+            <input class="ceForm__bottomCheckbox" type="checkbox" name="IsPublished" id="IsPublished"  @(Model.IsPublished == "on" ? "checked" : "")>
             <label class="ceForm__bottomLabel ceForm__label" for="IsPublished">Publish blog</label>
         </div>
-        <button class="ceForm__btn">Save</button>
+        <div class="ceForm__btnWrapper">
+            <a href="/Admin/Blogs/Delete/@Model.BlogPostId" onclick="return confirm('Are you sure you want to delete this blog post?');" class="ceForm__btn ceForm__btn--danger">Delete</a>
+            <button class="ceForm__btn">Save</button>
+        </div>
     </div>
 </form>
+
 
 <script>
     // Generate slug on title change (lowercase and replace spaces with hyphens)
@@ -79,7 +82,9 @@
         placeholder: "Compose an epic blog...",
         theme: "snow"
     };
+    // Initialize Quill with existing content
     const quill = new Quill("#Editor", options);
+    quill.root.innerHTML = document.getElementById("Content").value;
 
     const form = document.querySelector("form");
     form.onsubmit = function(e) {
