@@ -31,8 +31,7 @@ namespace devjamin.Controllers
                     BlogPostId = blog.BlogPostId,
                     Title = blog.Title,
                     Slug = blog.Slug,
-                    Description = blog.Description,
-                    PublishedDate = blog.PublishedDate
+                    Description = blog.Description
                 })
                 .ToListAsync();
 

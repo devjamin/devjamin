@@ -86,27 +86,25 @@ namespace devjamin.Controllers
         {
             var activeBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished)
-                .OrderByDescending(b => b.PublishedDate)
+                .OrderByDescending(b => b.EditedDate)
                 .Select(b => new BlogPostCardViewModel
                 {
                     BlogPostId = b.BlogPostId,
                     Title = b.Title,
                     Slug = b.Slug,
                     Description = b.Description,
-                    PublishedDate = b.PublishedDate
                 })
                 .ToListAsync();
 
             var nonActiveBlogs = await _context.BlogPosts
                 .Where(b => !b.IsPublished)
-                .OrderByDescending(b => b.PublishedDate)
+                .OrderByDescending(b => b.EditedDate)
                 .Select(b => new BlogPostCardViewModel
                 {
                     BlogPostId = b.BlogPostId,
                     Title = b.Title,
                     Slug = b.Slug,
                     Description = b.Description,
-                    PublishedDate = b.PublishedDate
                 })
                 .ToListAsync();
 
@@ -143,6 +141,7 @@ namespace devjamin.Controllers
                     return Challenge();
                 }
 
+                var DateNow = DateTime.UtcNow;
                 var blogPost = new BlogPost
                 {
                     Title = BlogPostCreateEditViewModel.Title,
@@ -150,7 +149,8 @@ namespace devjamin.Controllers
                     Description = BlogPostCreateEditViewModel.Description,
                     Content = BlogPostCreateEditViewModel.Content,
                     AuthorId = currentUser.Id,
-                    PublishedDate = DateTime.UtcNow,
+                    PublishedDate = DateNow,
+                    EditedDate = DateNow,
                     IsPublished = BlogPostCreateEditViewModel.IsPublished == "on" // BlogPostCreateEditViewModel.IsPublished is a checkbox string (on/null), convert to bool
                 };
 
@@ -214,6 +214,7 @@ namespace devjamin.Controllers
                 blogPost.Slug = BlogPostCreateEditViewModel.Slug;
                 blogPost.Description = BlogPostCreateEditViewModel.Description;
                 blogPost.Content = BlogPostCreateEditViewModel.Content;
+                blogPost.EditedDate = DateTime.UtcNow;
                 blogPost.IsPublished = BlogPostCreateEditViewModel.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
 
                 try

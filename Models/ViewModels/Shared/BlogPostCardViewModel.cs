@@ -12,8 +12,5 @@ namespace devjamin.Models
         public required string Slug { get; set; }
 
         public required string Description { get; set; }
-
-        public required DateTime PublishedDate { get; set; } = DateTime.UtcNow;
-
     }
 }
