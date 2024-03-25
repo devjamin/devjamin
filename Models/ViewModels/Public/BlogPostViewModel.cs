@@ -19,6 +19,8 @@ namespace devjamin.Models
 
         public required string AuthorFullName { get; set; }
 
+        public required string AuthorProfilePicturePath { get; set; }
+
         public int ReadTimeMinuteEstimate { get; set; }
 
     }

@@ -34,5 +34,8 @@ namespace devjamin.Models
 
         [ForeignKey("AuthorId")]
         public virtual ApplicationUser? Author { get; set; }
+
+        // Navigation property for media files
+        public virtual ICollection<BlogMedia> Files { get; set; } = [];
     }
 }

@@ -6,6 +6,7 @@ namespace devjamin.Models
 	public class BlogDbContext(DbContextOptions<BlogDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 	{
 		public DbSet<BlogPost> BlogPosts { get; set; }
+		public DbSet<BlogMedia> BlogMedia { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{

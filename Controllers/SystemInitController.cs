@@ -33,7 +33,8 @@ namespace devjamin.Controllers
                     {
                         Email = model.Email,
                         UserName = model.UserName,
-                        FullName = model.FullName
+                        FullName = model.FullName,
+                        ProfilePicturePath = model.ProfilePicturePath
                     };
                     var result = await _userManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)

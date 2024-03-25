@@ -13,6 +13,9 @@ namespace devjamin.Models
         [Required(ErrorMessage = "Provide a username.")]
         public string UserName { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Provide a profile picture path.")]
+        public string ProfilePicturePath { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Provide an email, can be dummy.")]
         public string Email { get; set; } = string.Empty;
 

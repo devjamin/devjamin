@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var CDNBASEPATH = ViewData["CDNBASEPATH"];
 }
 
 <link href="~/css/blog.css" rel="stylesheet" asp-append-version="true" />
@@ -50,7 +51,7 @@
             </p>
             <div class="blogTop__about">
                 <div class="blogTop__author">
-                    <img class="blogTop__authorImg" src="~/images/benjamin_nielsen.jpg" alt="Author">
+                    <img class="blogTop__authorImg" src="@CDNBASEPATH@Model.AuthorProfilePicturePath" alt="Author">
                     <div class="blogTop__authorDescription">
                         <p class="blogTop__authorName">@Model.AuthorFullName</p>
                         <p class="blogTop__authorReadTime">@Model.ReadTimeMinuteEstimate minute read</p>

@@ -14,9 +14,10 @@ using System.Diagnostics;
 namespace devjamin.Controllers
 {
     [Route("")]
-    public class PublicController(BlogDbContext context) : Controller
+    public class PublicController(BlogDbContext context, IConfiguration configuration) : Controller
     {
         private readonly BlogDbContext _context = context;
+        private readonly IConfiguration _configuration = configuration;
 
         // GET: /
         [HttpGet("")]
@@ -65,9 +66,13 @@ namespace devjamin.Controllers
                   PublishedDate = bp.PublishedDate,
                   Content = bp.Content,
                   AuthorFullName = bp.Author!.FullName, // Author is always present
+                  AuthorProfilePicturePath = bp.Author.ProfilePicturePath,
                   ReadTimeMinuteEstimate = CalculateReadTime(bp.Content)
               })
               .FirstOrDefaultAsync();
+
+            // Add CDN base path
+            ViewData["CDNBASEPATH"] = _configuration.GetValue<string>("EnvironmentVariables:CDNBASEPATH");
 
             if (blogPostViewModel == null)
             {

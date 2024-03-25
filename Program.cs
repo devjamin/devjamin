@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using devjamin.Models;
 
@@ -19,6 +18,16 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 })
 .AddEntityFrameworkStores<BlogDbContext>();
 
+// Add AWS S3 service
+builder.Services.AddAWSService<Amazon.S3.IAmazonS3>(new Amazon.Extensions.NETCore.Setup.AWSOptions
+{
+    Credentials = new Amazon.Runtime.BasicAWSCredentials(
+        builder.Configuration["AWS:AccessKey"],
+        builder.Configuration["AWS:SecretKey"]),
+    Region = Amazon.RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"]),
+    DefaultClientConfig = { ServiceURL = builder.Configuration["AWS:ServiceURL"] }
+});
+
 var app = builder.Build();
 
 // Ensure database creation (use migrations in production)
@@ -26,7 +35,6 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<BlogDbContext>();
-    dbContext.Database.EnsureCreated();
 }
 
 // Configure HTTP request pipeline

@@ -8,5 +8,7 @@ namespace devjamin.Models
     public class ApplicationUser : IdentityUser
     {
         public required string FullName { get; set; }
+
+        public required string ProfilePicturePath { get; set; }
     }
 }

@@ -5,9 +5,20 @@ Installed packages:
 - Microsoft.AspNetCore.Identity.EntityFrameworkCore
 - Pomelo.EntityFrameworkCore.MySql
 - Microsoft.AspNetCore.Identity.UI
+- AWSSDK.S3
+- AWSSDK.Extensions.NETCore.Setup
+- SixLabors.ImageSharp
+
+SSL certificate (for development):
+dotnet dev-certs https --trust
+
+Launch specific profile (from launchSettings.json):
+dotnet run --launch-profile https
 
 Nessecary to-dos:
-- Refactor
+- Implement share links
+- Implement Open Graph
+- Refactor (✔ controllers | ✔ models | X views & css)
 - Contact form
 - Model validation errors at admin panel
 - Responsiveness
@@ -16,15 +27,20 @@ Nessecary to-dos:
 - ✔ CSRF-token missing
 - ✔ Admin auth
 - Image upload
-- Add edited date and sort /Admin/Blogs based on newest
+- ✔ Add edited date and sort /Admin/Blogs based on newest
 - ✔ Fix both using attribute routing and conventional routing (simplify routing)
 - ✔ Fix multiple namespaces
 - Add a layout for login, probably redesign that part a bit
+- Logging
+- Use env CDNBASEPATH everywhere
+- Delete associated blog images on blog delete
+- Active border on Quill
 
 Nice to haves:
 - Cache pages (whole HTML for some hours)
 - Roles so I can do demo user access
 - Lowercase URL's (personal preference)
+- Automatic imagecropping, to use with e.g srcset
 
 On deploy:
 - Remove Quill debug
@@ -35,3 +51,12 @@ docker run -d --name mariadb \
     -p 3306:3306 \
     -v mariadb_data:/var/lib/mysql \
     mariadb
+
+Database via Entity Framework (ef):
+- dotnet ef database drop (delete whole database)
+- dotnet ef migrations add InitialCreate/[MIGRATION]
+- dotnet ef database update (applies migrations)
+- dotnet ef migrations remove (remove latest migration)
+- dotnet ef database update PreviousMigrationName (rolling back to specific migration, use with causion)
+
+Always check migration files for any wrongdoings
