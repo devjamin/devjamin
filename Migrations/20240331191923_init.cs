@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace devjamin.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -214,6 +214,8 @@ namespace devjamin.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Content = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    CoverImageFilePath = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     PublishedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EditedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsPublished = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -233,7 +235,7 @@ namespace devjamin.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "BlogFiles",
+                name: "BlogMedia",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -247,9 +249,9 @@ namespace devjamin.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BlogFiles", x => x.Id);
+                    table.PrimaryKey("PK_BlogMedia", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BlogFiles_BlogPosts_BlogPostId",
+                        name: "FK_BlogMedia_BlogPosts_BlogPostId",
                         column: x => x.BlogPostId,
                         principalTable: "BlogPosts",
                         principalColumn: "BlogPostId",
@@ -295,8 +297,8 @@ namespace devjamin.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_BlogFiles_BlogPostId",
-                table: "BlogFiles",
+                name: "IX_BlogMedia_BlogPostId",
+                table: "BlogMedia",
                 column: "BlogPostId");
 
             migrationBuilder.CreateIndex(
@@ -324,7 +326,7 @@ namespace devjamin.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "BlogFiles");
+                name: "BlogMedia");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

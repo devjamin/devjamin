@@ -36,6 +36,6 @@ namespace devjamin.Models
         public virtual ApplicationUser? Author { get; set; }
 
         // Navigation property for media files
-        public virtual ICollection<BlogMedia> Files { get; set; } = [];
+        public virtual ICollection<BlogMedia> Media { get; set; } = [];
     }
 }

@@ -230,13 +230,13 @@ namespace devjamin.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("devjamin.Models.BlogFile", b =>
+            modelBuilder.Entity("devjamin.Models.BlogMedia", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("MediaId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("MediaId"));
 
                     b.Property<int>("BlogPostId")
                         .HasColumnType("int");
@@ -252,11 +252,14 @@ namespace devjamin.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.Property<bool>("IsCoverImage")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("MediaId");
 
                     b.HasIndex("BlogPostId");
 
-                    b.ToTable("BlogFiles");
+                    b.ToTable("BlogMedia");
                 });
 
             modelBuilder.Entity("devjamin.Models.BlogPost", b =>
@@ -354,10 +357,10 @@ namespace devjamin.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("devjamin.Models.BlogFile", b =>
+            modelBuilder.Entity("devjamin.Models.BlogMedia", b =>
                 {
                     b.HasOne("devjamin.Models.BlogPost", "BlogPost")
-                        .WithMany("Files")
+                        .WithMany("Media")
                         .HasForeignKey("BlogPostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -378,7 +381,7 @@ namespace devjamin.Migrations
 
             modelBuilder.Entity("devjamin.Models.BlogPost", b =>
                 {
-                    b.Navigation("Files");
+                    b.Navigation("Media");
                 });
 #pragma warning restore 612, 618
         }

@@ -16,6 +16,7 @@ using Amazon.S3.Model;
 using devjamin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
@@ -38,6 +39,7 @@ namespace devjamin.Controllers
             ];
 
         // POST: API/Upload-Media
+        [Authorize]
         [HttpPost("Upload-Media")]
         public async Task<IActionResult> UploadMedia(IFormFile file)
         {
@@ -77,11 +79,9 @@ namespace devjamin.Controllers
                 }
 
                 // Upload file to S3 bucket
-                string fileUrl = await UploadFileAsync(file.FileName, fileStream, contentType, blogPostId);
+                var uploadResult = await UploadFileAsync(file.FileName, fileStream, contentType, blogPostId);
 
-
-
-                return Ok(new { Url = fileUrl });
+                return Ok(uploadResult);
             }
             catch (Exception exp)
             {
@@ -98,7 +98,12 @@ namespace devjamin.Controllers
         }
 
         // Uploads file to S3 bucket
-        private async Task<string> UploadFileAsync(string fileName, Stream fileStream, string contentType, int blogPostId)
+        private class UploadResult
+        {
+            public int MediaId { get; set; }
+            public string FilePath { get; set; } = "";
+        }
+        private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int blogPostId)
         {
             // Generate unique key name
             var keyName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
@@ -126,14 +131,119 @@ namespace devjamin.Controllers
                 _context.BlogMedia.Add(blogMedia);
                 await _context.SaveChangesAsync();
 
-                // Return file URL
-                return $"{_configuration.GetValue<string>("EnvironmentVariables:CDNBASEPATH")}{keyName}";
+                var result = new UploadResult
+                {
+                    MediaId = blogMedia.MediaId,
+                    FilePath = blogMedia.FilePath
+                };
+
+                return result;
             }
             else
             {
                 throw new Exception("Failed to upload file.");
             }
         }
+
+        // Model to capture incoming data
+        public class CoverImageSelectionModel
+        {
+            public int BlogPostId { get; set; }
+            public int MediaId { get; set; }
+        }
+        // POST: API/Select-Cover-Image
+        [Authorize]
+        [HttpPost("Select-Cover-Image")]
+        public async Task<IActionResult> SelectCoverImage([FromBody] CoverImageSelectionModel model)
+        {
+            if (model == null)
+            {
+                return BadRequest(new { Error = "Invalid request payload." });
+            }
+
+            // Validate blog post exists
+            var blogPost = await _context.BlogPosts.FindAsync(model.BlogPostId);
+            if (blogPost == null)
+            {
+                return NotFound(new { Error = "Blog post not found." });
+            }
+
+            // Validate media belongs to blog post
+            var media = await _context.BlogMedia.FirstOrDefaultAsync(m => m.MediaId == model.MediaId && m.BlogPostId == model.BlogPostId);
+            if (media == null)
+            {
+                return NotFound(new { Error = "Media not found or does not belong to the specified blog post." });
+            }
+
+            // Toggle the IsCoverImage status
+            if (media.IsCoverImage)
+            {
+                // If already the cover image, remove the flag
+                media.IsCoverImage = false;
+            }
+            else
+            {
+                // If not the cover image, first clear any existing cover image flag
+                var allMedia = await _context.BlogMedia.Where(m => m.BlogPostId == model.BlogPostId).ToListAsync();
+                foreach (var m in allMedia)
+                {
+                    m.IsCoverImage = false;
+                }
+
+                // Then mark selected media as the cover image
+                media.IsCoverImage = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Cover image status updated successfully." });
+        }
+
+        [Authorize]
+        [HttpDelete("Delete-Media/{mediaId}")]
+        public async Task<IActionResult> DeleteMedia(int mediaId)
+        {
+            // Fetch the media item to be deleted
+            var mediaItem = await _context.BlogMedia.FindAsync(mediaId);
+            if (mediaItem == null)
+            {
+                return NotFound(new { Error = "Media not found." });
+            }
+
+            // Disallow if media item is marked as a cover image
+            if (mediaItem.IsCoverImage)
+            {
+                return BadRequest(new { Error = "Cannot delete a cover image." });
+            }
+
+            // Delete file from S3 bucket
+            var deleteObjectRequest = new DeleteObjectRequest
+            {
+                BucketName = _configuration.GetValue<string>("EnvironmentVariables:BUCKETNAME"),
+                Key = mediaItem.FilePath
+            };
+
+            try
+            {
+                var response = await _s3Client.DeleteObjectAsync(deleteObjectRequest);
+                if (response.HttpStatusCode != System.Net.HttpStatusCode.NoContent)
+                {
+                    // If response is not NoContent, deletion wasn't successful
+                    throw new Exception("Failed to delete media from S3 bucket.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Error = $"Error deleting media from storage: {ex.Message}" });
+            }
+
+            // Proceed with deletion from database if successful S3 deletion
+            _context.BlogMedia.Remove(mediaItem);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Media deleted successfully." });
+        }
+
 
         // Compresses and resizes image
         private static async Task<Stream> CompressAndResizeImageAsync(Stream imageStream, string contentType)

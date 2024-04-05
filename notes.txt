@@ -26,7 +26,7 @@ Nessecary to-dos:
 - ✔ Fix view using same casing as in models (for better clarity)
 - ✔ CSRF-token missing
 - ✔ Admin auth
-- Image upload
+- Media upload
 - ✔ Add edited date and sort /Admin/Blogs based on newest
 - ✔ Fix both using attribute routing and conventional routing (simplify routing)
 - ✔ Fix multiple namespaces

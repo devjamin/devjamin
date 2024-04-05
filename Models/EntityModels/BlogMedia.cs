@@ -1,16 +1,20 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace devjamin.Models
 {
     public class BlogMedia
     {
-        public int Id { get; set; }
+        [Key]
+        public int MediaId { get; set; }
 
         public required string FilePath { get; set; }
 
         public required string ContentType { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public bool IsCoverImage { get; set; } = false;
 
         public required int BlogPostId { get; set; }
 
