@@ -238,7 +238,7 @@ namespace devjamin.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("MediaId"));
 
-                    b.Property<int>("BlogPostId")
+                    b.Property<int?>("BlogPostId")
                         .HasColumnType("int");
 
                     b.Property<string>("ContentType")
@@ -361,9 +361,7 @@ namespace devjamin.Migrations
                 {
                     b.HasOne("devjamin.Models.BlogPost", "BlogPost")
                         .WithMany("Media")
-                        .HasForeignKey("BlogPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogPostId");
 
                     b.Navigation("BlogPost");
                 });

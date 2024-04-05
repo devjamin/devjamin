@@ -22,5 +22,8 @@ namespace devjamin.Models
         public string Content { get; set; } = string.Empty;
 
         public string? IsPublished { get; set; }
+
+        // Include media files
+        public List<BlogMediaViewModel> Media { get; set; } = [];
     }
 }

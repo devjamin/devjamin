@@ -4,12 +4,18 @@
 
     Supported file types: JPEG, PNG, MP4
 
-    POST: /API/Upload-Media
-    Form data:
-    {
-        "File": File
-        "BlogPostId": int
-    }
+    - POST: /API/Upload-Media
+        IFormFile:
+        {
+            "File": File,
+            "BlogPostId": int (optional, don't have yet when creating a new blog post)
+        }
+    - POST: /API/Select-Cover-Image
+        {
+            "MediaId": int,
+            "BlogPostId": int (optional, don't have yet when creating a new blog post)
+        }
+    - DELETE: /API/Delete-Media/{mediaId}
 */
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -39,7 +45,6 @@ namespace devjamin.Controllers
             ];
 
         // POST: API/Upload-Media
-        [Authorize]
         [HttpPost("Upload-Media")]
         public async Task<IActionResult> UploadMedia(IFormFile file)
         {
@@ -49,16 +54,18 @@ namespace devjamin.Controllers
                 return BadRequest(new { Error = "Upload a file." });
             }
 
-            // Ensure it contains blogPostId
-            if (!Request.Form.TryGetValue("blogPostId", out var blogPostIdValues))
-            {
-                return BadRequest(new { Error = "BlogPostId is required." });
-            }
+            // Try to get BlogPostId from the form data; it's now optional
+            Request.Form.TryGetValue("blogPostId", out var blogPostIdValues);
+            int? blogPostId = null;
 
-            // Convert blogPostId from StringValues to int
-            if (!int.TryParse(blogPostIdValues, out int blogPostId))
+            // If a BlogPostId is provided, try to parse it
+            if (!string.IsNullOrWhiteSpace(blogPostIdValues))
             {
-                return BadRequest(new { Error = "Invalid BlogPostId." });
+                if (!int.TryParse(blogPostIdValues, out int parsedBlogPostId))
+                {
+                    return BadRequest(new { Error = "Invalid BlogPostId." });
+                }
+                blogPostId = parsedBlogPostId;
             }
 
             var contentType = file.ContentType;
@@ -85,10 +92,6 @@ namespace devjamin.Controllers
             }
             catch (Exception exp)
             {
-                if (exp == null)
-                {
-                    return BadRequest(new { Error = "Internal server error." });
-                }
                 return BadRequest(new { Error = exp.Message });
             }
             finally
@@ -97,13 +100,14 @@ namespace devjamin.Controllers
             }
         }
 
+
         // Uploads file to S3 bucket
         private class UploadResult
         {
             public int MediaId { get; set; }
             public string FilePath { get; set; } = "";
         }
-        private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int blogPostId)
+        private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int? blogPostId)
         {
             // Generate unique key name
             var keyName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
@@ -126,7 +130,7 @@ namespace devjamin.Controllers
                     ContentType = contentType,
                     BlogPostId = blogPostId,
                     FilePath = keyName,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 };
                 _context.BlogMedia.Add(blogMedia);
                 await _context.SaveChangesAsync();
@@ -152,7 +156,6 @@ namespace devjamin.Controllers
             public int MediaId { get; set; }
         }
         // POST: API/Select-Cover-Image
-        [Authorize]
         [HttpPost("Select-Cover-Image")]
         public async Task<IActionResult> SelectCoverImage([FromBody] CoverImageSelectionModel model)
         {
@@ -199,7 +202,7 @@ namespace devjamin.Controllers
             return Ok(new { Message = "Cover image status updated successfully." });
         }
 
-        [Authorize]
+        // DELETE: API/Delete-Media/{mediaId}
         [HttpDelete("Delete-Media/{mediaId}")]
         public async Task<IActionResult> DeleteMedia(int mediaId)
         {
@@ -243,7 +246,6 @@ namespace devjamin.Controllers
 
             return Ok(new { Message = "Media deleted successfully." });
         }
-
 
         // Compresses and resizes image
         private static async Task<Stream> CompressAndResizeImageAsync(Stream imageStream, string contentType)

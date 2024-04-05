@@ -12,6 +12,8 @@
     - GET & POST: /Admin/Blogs/Edit/[BlogPostId]
     - GET: /Admin/Blogs/Delete/[BlogPostId]
 */
+using Amazon.S3;
+using Amazon.S3.Model;
 using devjamin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,11 +24,13 @@ namespace devjamin.Controllers
 {
     [Route("Admin")]
     [Authorize]
-    public class AdminController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BlogDbContext context) : Controller
+    public class AdminController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BlogDbContext context, IAmazonS3 s3Client, IConfiguration configuration) : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly BlogDbContext _context = context;
+        private readonly IAmazonS3 _s3Client = s3Client;
+        private readonly IConfiguration _configuration = configuration;
 
         // GET: /Admin
         [HttpGet("")]
@@ -172,7 +176,10 @@ namespace devjamin.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts.FindAsync(id);
+            var blogPost = await _context.BlogPosts
+                .Include(p => p.Media) // Include media files
+                .FirstOrDefaultAsync(p => p.BlogPostId == id);
+
             if (blogPost == null)
             {
                 return NotFound();
@@ -185,11 +192,18 @@ namespace devjamin.Controllers
                 Slug = blogPost.Slug,
                 Description = blogPost.Description,
                 Content = blogPost.Content,
-                IsPublished = blogPost.IsPublished ? "on" : "" // Convert IsPublished bool to string for checkbox
+                IsPublished = blogPost.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
+                Media = blogPost.Media.Select(m => new BlogMediaViewModel
+                {
+                    MediaId = m.MediaId,
+                    FilePath = m.FilePath,
+                    IsCoverImage = m.IsCoverImage
+                }).ToList()
             };
 
             return View("~/Views/Admin/Blogs/Edit.cshtml", viewModel);
         }
+
 
         // POST: Admin/Blogs/Edit/{BlogPostId}
         [HttpPost("Blogs/Edit/{BlogPostId:int}")]
@@ -252,12 +266,34 @@ namespace devjamin.Controllers
             }
 
             var blogPost = await _context.BlogPosts
+                .Include(b => b.Media)
                 .FirstOrDefaultAsync(m => m.BlogPostId == blogPostId);
             if (blogPost == null)
             {
                 return NotFound();
             }
 
+            // Delete associated images from S3 bucket
+            foreach (var mediaItem in blogPost.Media.ToList())
+            {
+                var deleteObjectRequest = new DeleteObjectRequest
+                {
+                    BucketName = _configuration.GetValue<string>("EnvironmentVariables:BUCKETNAME"),
+                    Key = mediaItem.FilePath
+                };
+
+                // Should notify user if deletion fails, but it is not critical
+                try
+                {
+                    var response = await _s3Client.DeleteObjectAsync(deleteObjectRequest);
+                }
+                catch (Exception)
+                {
+                    // log exception 
+                }
+            }
+
+            // Deletion from database
             _context.BlogPosts.Remove(blogPost);
             await _context.SaveChangesAsync();
 
