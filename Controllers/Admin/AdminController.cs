@@ -89,7 +89,7 @@ namespace devjamin.Controllers
         public async Task<IActionResult> GetBlogs()
         {
             var activeBlogs = await _context.BlogPosts
-                .Where(b => b.IsPublished)
+                .Where(b => b.IsPublished && !b.IsDraft)
                 .OrderByDescending(b => b.EditedDate)
                 .Select(b => new BlogPostCardViewModel
                 {
@@ -101,7 +101,7 @@ namespace devjamin.Controllers
                 .ToListAsync();
 
             var nonActiveBlogs = await _context.BlogPosts
-                .Where(b => !b.IsPublished)
+                .Where(b => !b.IsPublished && !b.IsDraft)
                 .OrderByDescending(b => b.EditedDate)
                 .Select(b => new BlogPostCardViewModel
                 {
@@ -124,48 +124,80 @@ namespace devjamin.Controllers
 
 
         // GET: Admin/Blogs/Create
+        // Create a new empty blog post in the background, then redirect to the create page
+        // Upon form submission, the blog post will be modified
         [HttpGet("Blogs/Create")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var BlogPostCreateEditViewModel = new BlogPostCreateEditViewModel();
-            return View("~/Views/Admin/Blogs/Create.cshtml", BlogPostCreateEditViewModel);
+            // Get current user
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+            {
+                return Challenge();
+            }
+
+            // create new empty blog
+            var DateNow = DateTime.UtcNow;
+            var blogPost = new BlogPost
+            {
+                Title = "",
+                Slug = "",
+                Description = "",
+                Content = "",
+                AuthorId = currentUser.Id,
+                PublishedDate = DateNow,
+                EditedDate = DateNow,
+                IsPublished = false
+            };
+
+            _context.BlogPosts.Add(blogPost);
+            await _context.SaveChangesAsync();
+
+            var blogPostCreateViewModel = new BlogPostCreateEditViewModel
+            {
+                Method = BlogPostCreateEditMethodViewModel.Create,
+                BlogPostId = blogPost.BlogPostId,
+                Title = blogPost.Title,
+                Slug = blogPost.Slug,
+                Description = blogPost.Description,
+                Content = blogPost.Content,
+                IsPublished = blogPost.IsPublished ? "on" : ""
+            };
+
+            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", blogPostCreateViewModel);
         }
 
         // POST: Admin/Blogs/Create
         [HttpPost("Blogs/Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BlogPostCreateEditViewModel BlogPostCreateEditViewModel)
+        public async Task<IActionResult> Create(BlogPostCreateEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Get current user
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser == null)
+                // Get the existing blog post using the ID
+                var existingBlogPost = await _context.BlogPosts.FindAsync(model.BlogPostId);
+                if (existingBlogPost == null)
                 {
-                    return Challenge();
+                    return NotFound();
                 }
 
-                var DateNow = DateTime.UtcNow;
-                var blogPost = new BlogPost
-                {
-                    Title = BlogPostCreateEditViewModel.Title,
-                    Slug = BlogPostCreateEditViewModel.Slug,
-                    Description = BlogPostCreateEditViewModel.Description,
-                    Content = BlogPostCreateEditViewModel.Content,
-                    AuthorId = currentUser.Id,
-                    PublishedDate = DateNow,
-                    EditedDate = DateNow,
-                    IsPublished = BlogPostCreateEditViewModel.IsPublished == "on" // BlogPostCreateEditViewModel.IsPublished is a checkbox string (on/null), convert to bool
-                };
+                // Update the existing blog post properties
+                existingBlogPost.IsDraft = false; // No longer a draft
+                existingBlogPost.Title = model.Title;
+                existingBlogPost.Slug = model.Slug;
+                existingBlogPost.Description = model.Description;
+                existingBlogPost.Content = model.Content;
+                existingBlogPost.IsPublished = model.IsPublished == "on";
+                existingBlogPost.EditedDate = DateTime.UtcNow;
 
-                _context.BlogPosts.Add(blogPost);
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Blogs", "Admin"); // Redirect to /Admin/Blogs
+                return RedirectToAction("Blogs", "Admin");
             }
 
-            return View("~/Views/Admin/Blogs/Create.cshtml", BlogPostCreateEditViewModel);
+            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", model);
         }
+
 
         // GET: Admin/Blogs/Edit/{BlogPostId}
         [HttpGet("Blogs/Edit/{id:int}")]
@@ -187,6 +219,7 @@ namespace devjamin.Controllers
 
             var viewModel = new BlogPostCreateEditViewModel
             {
+                Method = BlogPostCreateEditMethodViewModel.Edit,
                 BlogPostId = blogPost.BlogPostId,
                 Title = blogPost.Title,
                 Slug = blogPost.Slug,
@@ -201,7 +234,7 @@ namespace devjamin.Controllers
                 }).ToList()
             };
 
-            return View("~/Views/Admin/Blogs/Edit.cshtml", viewModel);
+            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", viewModel);
         }
 
 

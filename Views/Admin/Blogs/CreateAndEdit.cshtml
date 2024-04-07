@@ -1,6 +1,7 @@
 @model devjamin.Models.BlogPostCreateEditViewModel
 @{
-    ViewData["Title"] = "Edit Blog";
+    ViewData["Title"] = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create Blog" : "Edit Blog";
+    var formAction = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create" : "Edit";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -9,7 +10,7 @@
 <script src="~/lib/quill@2.0.0-rc.3/quill.js"></script>
 @* Our JS *@
 <script src="~/js/blogCreateEdit.js" defer></script>
-<script src="~/js/mediaUpload.js" defer></script>
+<script src="~/js/blogMedia.js" defer></script>
 
 <style>
     @* Highlight active nav link *@
@@ -20,10 +21,10 @@
     }
 </style>
 
-<h1 class="ceTitle">Edit Blog</h1>
+<h1 class="ceTitle">@ViewData["Title"]</h1>
 
 @* Blog editor form *@
-<form class="ceForm" asp-action="Edit" method="post">
+<form class="ceForm" asp-action="@formAction" method="post">
     <input type="hidden" id="BlogPostId" name="BlogPostId" value="@Model.BlogPostId" />
     <div class="ceForm__groupContainer">
         <div class="ceForm__group">
@@ -37,7 +38,7 @@
     </div>
     <div class="ceForm__group">
         <label class="ceForm__label" for="Description">Description</label>
-        <textarea class="ceForm__textarea" id="Description" name="Description" cols="30"
+        <textarea class="ceForm__textarea" id="Description" name="Description" cols="30" placeholder="Description"
             rows="10">@Model.Description</textarea>
     </div>
     <div class="ceForm__group">

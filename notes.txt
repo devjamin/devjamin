@@ -26,14 +26,15 @@ Nessecary to-dos:
 - ✔ Fix view using same casing as in models (for better clarity)
 - ✔ CSRF-token missing
 - ✔ Admin auth
-- Media upload
+- ✔ Media upload
+- ✔ Create/edit blog
 - ✔ Add edited date and sort /Admin/Blogs based on newest
 - ✔ Fix both using attribute routing and conventional routing (simplify routing)
 - ✔ Fix multiple namespaces
 - Add a layout for login, probably redesign that part a bit
 - Logging
 - Use env CDNBASEPATH everywhere
-- Delete associated blog images on blog delete
+- ✔ Delete associated blog images on blog delete
 - Active border on Quill
 
 Nice to haves:

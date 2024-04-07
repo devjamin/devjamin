@@ -12,8 +12,8 @@ using devjamin.Models;
 namespace devjamin.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240405152044_renameToMediaId")]
-    partial class renameToMediaId
+    [Migration("20240407143208_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -287,6 +287,9 @@ namespace devjamin.Migrations
 
                     b.Property<DateTime>("EditedDate")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsDraft")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("tinyint(1)");

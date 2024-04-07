@@ -6,7 +6,7 @@
 }
 
 <style>
-    /* Highlight active nav link */
+    @* Highlight active nav link *@
     #blogNavItem a,
     #blogNavItem svg {
         color: #160042;
@@ -28,7 +28,7 @@ else
     @if (Model.ActiveBlogs.Count != 0)
     {
         <section id="activeBlogs" class="blogs">
-    <h2 class="blogs__title">Active blogs</h2>
+    <h2 class="blogs__title">Published blogs</h2>
     <div class="blogs__container">
         @foreach (var blog in Model.ActiveBlogs)
                 {
@@ -58,7 +58,7 @@ else
     @if (Model.NonActiveBlogs.Count != 0)
     {
         <section id="nonActiveBlogs" class="blogs">
-    <h2 class="blogs__title">Non-active blogs</h2>
+    <h2 class="blogs__title">Non-published blogs</h2>
     <div class="blogs__container">
         @foreach (var blog in Model.NonActiveBlogs)
                 {

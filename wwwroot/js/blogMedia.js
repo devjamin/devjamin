@@ -1,3 +1,11 @@
+/*
+    mediaUpload.js, a script for everything js related to media handling at create/edit blog.
+
+    - Uploads files to our API endpoint (/API/Upload-Media) and adds them to the media container.
+    - Adds event listeners to the media elements for adding them to the editor, deleting them, and selecting a cover image.
+    - Loads existing media from the hidden input field.
+    - Drag & drop support.
+*/
 const blogPostId = document.getElementById("BlogPostId").value;
 const mediaEl = document.getElementById("media");
 const addMediaBtn = document.getElementById("addMediaBtn");
@@ -85,7 +93,6 @@ function addMediaElement(isVideo, mediaId, filePath, isCoverImage = false) {
     // Construct mediaElement's innerHTML including the toolbar
     constructMediaElementInnerHTML(mediaElement, element, isVideo, isCoverImage);
 
-    // Add Event Listeners for buttons
     setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePath);
 
     mediaEl.appendChild(mediaElement);
@@ -94,7 +101,7 @@ function addMediaElement(isVideo, mediaId, filePath, isCoverImage = false) {
     mediaEmptyOverlay.style.display = "none";
 }
 
-// This function sets up event listeners for the buttons inside mediaElement.
+// Sets up event listeners for the buttons inside a mediaElement
 function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePath) {
     const addBtn = mediaElement.querySelector(".ceForm__mediaElementToolbarElement--add");
     const coverBtn = mediaElement.querySelector(".ceForm__mediaElementToolbarElement--cover");
@@ -107,7 +114,9 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
             // No editor selection guard clause
             if (!range) alert("No active selection");
 
-            if (range) {
+            if (isVideo) {
+                quill.insertEmbed(range.index, "video", `https://devjamin.fra1.cdn.digitaloceanspaces.com/${filePath}`);
+            } else {
                 quill.insertEmbed(range.index, "image", `https://devjamin.fra1.cdn.digitaloceanspaces.com/${filePath}`);
             }
         };
@@ -187,8 +196,6 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
 
                     return;
                 }
-
-                const responseData = await response.json();
 
                 mediaElement.remove();
 

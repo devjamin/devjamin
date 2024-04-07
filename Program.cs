@@ -28,6 +28,8 @@ builder.Services.AddAWSService<Amazon.S3.IAmazonS3>(new Amazon.Extensions.NETCor
     DefaultClientConfig = { ServiceURL = builder.Configuration["AWS:ServiceURL"] }
 });
 
+builder.Services.AddHostedService<devjamin.DraftCleanupService>();
+
 var app = builder.Build();
 
 // Ensure database creation (use migrations in production)

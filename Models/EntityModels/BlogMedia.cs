@@ -17,7 +17,7 @@ namespace devjamin.Models
         public bool IsCoverImage { get; set; } = false;
 
         // Nullable as we don't have BlogPostId until it's created
-        public required int? BlogPostId { get; set; }
+        public required int BlogPostId { get; set; }
 
         [ForeignKey("BlogPostId")]
         public virtual BlogPost? BlogPost { get; set; }

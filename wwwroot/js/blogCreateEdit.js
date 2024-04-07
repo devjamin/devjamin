@@ -1,5 +1,11 @@
 /*
-  Everything for the Quill-editor (WYSIWYG)
+    blogCreateEdit.js, a script for everything but media upload in the create/edit blog.
+
+    - Init Quill (WYSIWYG editor)
+    - Set Quill content from hidden input
+    - Set hidden input value from Quill content
+    - Prevent drop of Base64 images in Quill
+    - Generate slug from title
 */
 const options = {
     debug: "info",
@@ -40,7 +46,7 @@ if (editorContainer) {
 
 // Periodically check for images and remove them if they are Base64.
 // Quill doesn't support disabeling drop of Base64 images, so we have to remove them manually.
-setInterval(() => removeBase64Images(quill), 1000);
+setInterval(() => removeBase64Images(quill), 2500);
 
 function removeBase64Images(quill) {
     let imageDropped = false;
@@ -61,9 +67,7 @@ function removeBase64Images(quill) {
     }
 }
 
-/*
-  Prevent default drop behaviour, so browser doesn't replace window with the file
-*/
+// Prevent default drop behaviour, so browser doesn't replace window with the file
 document.addEventListener(
     "drop",
     function (e) {
@@ -72,9 +76,7 @@ document.addEventListener(
     false
 );
 
-/*
-  Generate slug on title change and replace in slug input (lowercases and replaces spaces with hyphens)
-*/
+// Generate slug on title change and replace in slug input (lowercases and replaces spaces with hyphens)
 const titleInput = document.getElementById("Title");
 const slugInput = document.getElementById("Slug");
 

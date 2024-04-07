@@ -28,6 +28,8 @@ namespace devjamin.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public required DateTime EditedDate { get; set; } = DateTime.UtcNow;
 
+        public bool IsDraft { get; set; } = true;
+
         public required bool IsPublished { get; set; } = false;
 
         public required string AuthorId { get; set; }

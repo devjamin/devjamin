@@ -5,8 +5,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace devjamin.Models
 {
+    // DRY principle, create an enum for the method
+    // This is to determine if the view model is for creating or editing blog post
+    public enum BlogPostCreateEditMethodViewModel
+    {
+        Create,
+        Edit
+    }
+
     public class BlogPostCreateEditViewModel
     {
+        // method can either be create or edit
+        public BlogPostCreateEditMethodViewModel Method { get; set; }
+
         public int BlogPostId { get; set; }
 
         [Required(ErrorMessage = "Please enter a title.")]

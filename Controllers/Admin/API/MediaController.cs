@@ -54,18 +54,10 @@ namespace devjamin.Controllers
                 return BadRequest(new { Error = "Upload a file." });
             }
 
-            // Try to get BlogPostId from the form data; it's now optional
-            Request.Form.TryGetValue("blogPostId", out var blogPostIdValues);
-            int? blogPostId = null;
-
-            // If a BlogPostId is provided, try to parse it
-            if (!string.IsNullOrWhiteSpace(blogPostIdValues))
+            // Get BlogPostId from the form data and ensure it's a valid integer
+            if (!Request.Form.TryGetValue("BlogPostId", out var blogPostIdValues) || !int.TryParse(blogPostIdValues, out int blogPostId))
             {
-                if (!int.TryParse(blogPostIdValues, out int parsedBlogPostId))
-                {
-                    return BadRequest(new { Error = "Invalid BlogPostId." });
-                }
-                blogPostId = parsedBlogPostId;
+                return BadRequest(new { Error = "A valid BlogPostId is required." });
             }
 
             var contentType = file.ContentType;
@@ -107,7 +99,7 @@ namespace devjamin.Controllers
             public int MediaId { get; set; }
             public string FilePath { get; set; } = "";
         }
-        private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int? blogPostId)
+        private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int blogPostId)
         {
             // Generate unique key name
             var keyName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
