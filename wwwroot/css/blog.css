@@ -26,20 +26,31 @@ h2 {
 }
 
 /* Share */
-.blogTop__share {
+.share {
     display: flex;
+    align-items: flex-start;
     gap: 24px;
     flex-direction: column;
     list-style: none;
     margin-top: 56px;
 }
 
-.blogTop__share svg {
+.share button {
+    /* Remove default button styles */
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.share button:hover > svg {
+    fill: #160042;
+}
+
+.share svg {
     width: 20px;
     height: 20px;
     fill: #9ca3af;
 }
-.blogTop__share a:hover > svg {
+.share a:hover > svg {
     fill: #160042;
 }
 

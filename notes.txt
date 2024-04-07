@@ -16,7 +16,7 @@ Launch specific profile (from launchSettings.json):
 dotnet run --launch-profile https
 
 Nessecary to-dos:
-- Implement share links
+- ✔ Implement share links
 - Implement Open Graph
 - Refactor (✔ controllers | ✔ models | X views & css)
 - Contact form
@@ -36,6 +36,9 @@ Nessecary to-dos:
 - Use env CDNBASEPATH everywhere
 - ✔ Delete associated blog images on blog delete
 - Active border on Quill
+
+TEST:
+- Share links (ngrok when Open Graph done)
 
 Nice to haves:
 - Cache pages (whole HTML for some hours)

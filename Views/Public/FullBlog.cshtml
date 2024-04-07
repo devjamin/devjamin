@@ -1,26 +1,38 @@
 @model devjamin.Models.BlogPostViewModel
+@using Microsoft.AspNetCore.Http.Extensions
 
 @{
     ViewData["Title"] = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var CDNBASEPATH = ViewData["CDNBASEPATH"];
+
+    @* Share links *@
+    var currentUrl = new Uri(Context.Request.GetDisplayUrl());
+    @* Add www. before devjamin.com, as twitter requires that to recognize link *@
+    var correctedUrl = currentUrl.ToString().Replace("devjamin.com", "www.devjamin.com");
+    var encodedUrl = Uri.EscapeDataString(correctedUrl);
+
+    var shareText = $"Check out this blog post: {Model.Title}";
+    var twitterShareUrl = $"https://twitter.com/intent/tweet?text={Uri.EscapeDataString(shareText)}&url={encodedUrl}";
+    var linkedInShareUrl = $"https://www.linkedin.com/sharing/share-offsite/?url={encodedUrl}";
+    var facebookShareUrl = $"https://www.facebook.com/sharer/sharer.php?u={encodedUrl}";
 }
 
 <link href="~/css/blog.css" rel="stylesheet" asp-append-version="true" />
 
 <div class="blogWrapper">
     <div class="blogTop">
-        <ul class="blogTop__share">
-            <li>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank">
+        <ul class="share">
+            <li id="webShareBtn">
+                <button href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                             d="M5 7c2.761 0 5 2.239 5 5s-2.239 5-5 5-5-2.239-5-5 2.239-5 5-5zm11.122 12.065c-.073.301-.122.611-.122.935 0 2.209 1.791 4 4 4s4-1.791 4-4-1.791-4-4-4c-1.165 0-2.204.506-2.935 1.301l-5.488-2.927c-.23.636-.549 1.229-.943 1.764l5.488 2.927zm7.878-15.065c0-2.209-1.791-4-4-4s-4 1.791-4 4c0 .324.049.634.122.935l-5.488 2.927c.395.535.713 1.127.943 1.764l5.488-2.927c.731.795 1.77 1.301 2.935 1.301 2.209 0 4-1.791 4-4z" />
                     </svg>
-                </a>
+                </button>
             </li>
             <li>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank">
+                <a href="@twitterShareUrl" target="_blank" rel="noopener noreferrer">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                             d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
@@ -28,11 +40,16 @@
                 </a>
             </li>
             <li>
-                <a href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank">
+                <a href="@linkedInShareUrl" target="_blank" rel="noopener noreferrer">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                         <path
                             d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z" />
                     </svg>
+                </a>
+            </li>
+            <li>
+                <a href="@facebookShareUrl" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
                 </a>
             </li>
         </ul>
@@ -64,3 +81,19 @@
     <img class="contentImg" src="~/images/benjamin_nielsen.jpg" alt="Author">
     @Html.Raw(Model.Content)
 </div>
+
+<script>
+    @* Web Share API is available then add event to webShareBtn otherwise remove it *@
+    const webShareBtn = document.getElementById("webShareBtn");
+    if (navigator.share) {
+        webShareBtn.addEventListener("click", () => {
+            navigator.share({
+                title: "@Model.Title",
+                text: "@shareText",
+                url: window.location.href
+            }).catch(error => console.error("Error sharing:", error));
+        });
+    } else {
+        webShareBtn.remove();
+    }
+</script>
