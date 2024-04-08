@@ -33,7 +33,7 @@ builder.Services.AddAWSService<Amazon.S3.IAmazonS3>(new Amazon.Extensions.NETCor
 // Cleanup service for draft posts
 builder.Services.AddHostedService<DraftCleanupService>();
 // Email service and settings
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<EmailService.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddSingleton<IEmailService, EmailService>();
 
 // Configure CORS policy

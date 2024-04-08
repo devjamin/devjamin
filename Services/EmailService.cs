@@ -10,7 +10,7 @@ namespace devjamin.Services
 {
     public interface IEmailService
     {
-        Task SendEmailAsync(string from, string subject, string body);
+        Task SendEmailAsync(string name, string from, string subject, string body);
     }
 
     public class EmailService : IEmailService
@@ -26,15 +26,16 @@ namespace devjamin.Services
             }
         }
 
-        public async Task SendEmailAsync(string from, string subject, string body)
+        public async Task SendEmailAsync(string name, string from, string subject, string body)
         {
-            if (string.IsNullOrWhiteSpace(from) || string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(body))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(from) ||
+                string.IsNullOrWhiteSpace(subject) || string.IsNullOrWhiteSpace(body))
             {
-                throw new ArgumentException("From, subject, and body fields must not be empty.");
+                throw new ArgumentException("Name, from, subject, and body fields must not be empty.");
             }
 
             var emailMessage = new MimeMessage();
-            emailMessage.From.Add(MailboxAddress.Parse(from));
+            emailMessage.From.Add(new MailboxAddress(name, from));
             emailMessage.To.Add(MailboxAddress.Parse(_emailSettings.To)); // Always to email address from settings
             emailMessage.Subject = subject;
             emailMessage.Body = new TextPart("html") { Text = body };
@@ -62,15 +63,15 @@ namespace devjamin.Services
                 await client.DisconnectAsync(true);
             }
         }
-    }
 
-    public class EmailSettings
-    {
-        public string? To { get; set; }
-        public string? SmtpServer { get; set; }
-        public int SmtpPort { get; set; }
-        public string? SmtpUsername { get; set; }
-        public string? SmtpPassword { get; set; }
-        public bool EnableSSL { get; set; } = true;
+        public class EmailSettings
+        {
+            public string? To { get; set; }
+            public string? SmtpServer { get; set; }
+            public int SmtpPort { get; set; }
+            public string? SmtpUsername { get; set; }
+            public string? SmtpPassword { get; set; }
+            public bool EnableSSL { get; set; } = true;
+        }
     }
 }

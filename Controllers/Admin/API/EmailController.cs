@@ -25,7 +25,7 @@ namespace devjamin.Controllers
 
             try
             {
-                await _emailService.SendEmailAsync(request.From, request.Subject, request.Body);
+                await _emailService.SendEmailAsync(request.Name, request.From, request.Subject, request.Body);
                 return Ok("Email sent successfully.");
             }
             catch (Exception ex)
@@ -37,10 +37,9 @@ namespace devjamin.Controllers
 
     public class EmailRequest
     {
+        public required string Name { get; set; }
         public required string From { get; set; }
-
         public required string Subject { get; set; }
-
         public required string Body { get; set; }
     }
 }
