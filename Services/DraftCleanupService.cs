@@ -6,7 +6,7 @@
 */
 using devjamin.Models;
 
-namespace devjamin
+namespace devjamin.Services
 {
     public class DraftCleanupService(IServiceProvider serviceProvider, ILogger<DraftCleanupService> logger) : IHostedService, IDisposable
     {

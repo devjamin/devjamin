@@ -8,6 +8,10 @@ Installed packages:
 - AWSSDK.S3
 - AWSSDK.Extensions.NETCore.Setup
 - SixLabors.ImageSharp
+- MailKit
+- AspNetCoreRateLimit
+- IpRateLimitMiddleware
+
 
 SSL certificate (for development):
 dotnet dev-certs https --trust

@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using devjamin.Models;
+using devjamin.Services;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +30,37 @@ builder.Services.AddAWSService<Amazon.S3.IAmazonS3>(new Amazon.Extensions.NETCor
     DefaultClientConfig = { ServiceURL = builder.Configuration["AWS:ServiceURL"] }
 });
 
-builder.Services.AddHostedService<devjamin.DraftCleanupService>();
+// Cleanup service for draft posts
+builder.Services.AddHostedService<DraftCleanupService>();
+// Email service and settings
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddSingleton<IEmailService, EmailService>();
+
+// Configure CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("SameOriginPolicy",
+        builder =>
+        {
+            builder.WithOrigins("https://www.devjamin.com")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+});
+
+// Rate limiting services
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 var app = builder.Build();
+
+// Use CORS policy
+app.UseCors("SameOriginPolicy");
+
+// Use rate limiting middleware
+app.UseIpRateLimiting();
 
 // Ensure database creation (use migrations in production)
 using (var scope = app.Services.CreateScope())
