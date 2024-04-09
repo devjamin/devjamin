@@ -38,7 +38,14 @@ namespace devjamin.Services
             emailMessage.From.Add(new MailboxAddress(name, from));
             emailMessage.To.Add(MailboxAddress.Parse(_emailSettings.To)); // Always to email address from settings
             emailMessage.Subject = subject;
-            emailMessage.Body = new TextPart("html") { Text = body };
+
+            // Replace newlines with HTML line breaks
+            var formattedBody = body.Replace("\n", "<br>");
+            var bodyBuilder = new BodyBuilder
+            {
+                HtmlBody = formattedBody
+            };
+            emailMessage.Body = bodyBuilder.ToMessageBody();
 
             using var client = new SmtpClient();
             try

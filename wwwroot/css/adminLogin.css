@@ -62,8 +62,7 @@
     margin-bottom: 16px;
 }
 
-.login__input,
-.login__textarea {
+.login__input {
     height: 56px;
     border: 1px solid #c4cad4;
     border-radius: 16px;
@@ -73,12 +72,6 @@
 .login__input:focus,
 .login__textarea:focus {
     outline: 1px solid #5d53a2;
-}
-
-.login__textarea {
-    height: 128px;
-    resize: none;
-    padding-top: 16px;
 }
 
 .login__btn {
@@ -93,7 +86,7 @@
 }
 
 .login__btn:hover,
-.login__btn:focus {
+.login__btn:focus-visible {
     background-color: #fff;
     color: #5d53a2;
     border: 1px solid #5d53a2;
