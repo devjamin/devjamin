@@ -46,6 +46,13 @@ namespace devjamin.Controllers
             var allPublishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished)
                 .OrderByDescending(b => b.PublishedDate)
+                .Select(blog => new BlogPostCardViewModel
+                {
+                    BlogPostId = blog.BlogPostId,
+                    Title = blog.Title,
+                    Slug = blog.Slug,
+                    Description = blog.Description
+                })
                 .ToListAsync();
 
             return View("~/Views/Public/BlogsListing.cshtml", allPublishedBlogs);

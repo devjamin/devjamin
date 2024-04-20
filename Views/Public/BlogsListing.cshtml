@@ -1,6 +1,24 @@
+@model IEnumerable<devjamin.Models.BlogPostCardViewModel>
 @{
     ViewData["Title"] = "Blogs";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>All blogs</h2>
+<link href="~/css/blogsListing.css" rel="stylesheet" asp-append-version="true" />
+
+<div class="sectionWrapper blogsListing">
+    <h2 class="blogsListing__title">All Blogs</h2>
+    <div class="blogsListing__blogs">
+        @foreach (var blogCard in Model)
+        {
+            <article class="blog">
+                <a class="blog__anchor" href="/Blog/@blogCard.Slug">
+                    <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Image of Benjamin Nielsen">
+                    <span class="blog__tag">Craftsmanship</span>
+                    <h3 class="blog__title">@blogCard.Title</h3>
+                    <p class="blog__description">@blogCard.Description</p>
+                </a>
+            </article>
+        }
+    </div>
+</div>

@@ -23,7 +23,9 @@ Nessecary to-dos:
 - ✔ Implement share links
 - Implement Open Graph
 - Refactor (✔ controllers | ✔ models | X views & css)
-- Contact form
+- ✔ Contact form
+- Toast (instead of alerts on admin panel)
+- Add media button broken (only D&D works)
 - Model validation errors at admin panel
 - Responsiveness
 - Add global 404 and blog specific
