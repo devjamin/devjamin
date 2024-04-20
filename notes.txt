@@ -12,6 +12,7 @@ Installed packages:
 - AspNetCoreRateLimit
 - IpRateLimitMiddleware
 
+dotnet tool install --global dotnet-outdated-tool
 
 SSL certificate (for development):
 dotnet dev-certs https --trust
@@ -68,5 +69,9 @@ Database via Entity Framework (ef):
 - dotnet ef database update (applies migrations)
 - dotnet ef migrations remove (remove latest migration)
 - dotnet ef database update PreviousMigrationName (rolling back to specific migration, use with causion)
+
+Check outdated packages via dotnet-outdated-tool:
+- dotnet outdated
+- dotnet outdated -u (upgrades them)
 
 Always check migration files for any wrongdoings
