@@ -92,6 +92,7 @@ h6 {
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
     border: 1px solid #f3f5fb;
     text-decoration: none;
+    height: 100%;
 }
 .blog__anchor:hover > .blog__title {
     text-decoration: underline;

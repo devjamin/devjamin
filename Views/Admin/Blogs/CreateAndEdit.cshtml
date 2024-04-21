@@ -74,9 +74,12 @@
             <label class="ceForm__bottomLabel" for="IsPublished">Publish blog</label>
         </div>
         <div class="ceForm__btnWrapper">
+            @if (Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Edit)
+            {
             <a href="/Admin/Blogs/Delete/@Model.BlogPostId"
                 onclick="return confirm('Are you sure you want to delete this blog post?');"
                 class="ceForm__btn ceForm__btn--danger">Delete</a>
+            }
             <button class="ceForm__btn">Save</button>
         </div>
     </div>

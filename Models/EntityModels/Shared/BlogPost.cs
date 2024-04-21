@@ -22,7 +22,7 @@ namespace devjamin.Models
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public required DateTime PublishedDate { get; set; } = DateTime.UtcNow;
+        public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -39,5 +39,8 @@ namespace devjamin.Models
 
         // Navigation property for media files
         public virtual ICollection<BlogMedia> Media { get; set; } = [];
+
+        // Navigation property for related tags
+        public virtual ICollection<BlogTag> Tags { get; set; } = [];
     }
 }

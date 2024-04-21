@@ -12,18 +12,33 @@ using devjamin.Models;
 namespace devjamin.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240407143208_Init")]
-    partial class Init
+    [Migration("20240421183520_AddBlogTagDescription")]
+    partial class AddBlogTagDescription
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("BlogPostBlogTag", b =>
+                {
+                    b.Property<int>("BlogPostsBlogPostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TagsBlogTagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BlogPostsBlogPostId", "TagsBlogTagId");
+
+                    b.HasIndex("TagsBlogTagId");
+
+                    b.ToTable("BlogPostTags", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -161,6 +176,40 @@ namespace devjamin.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("devjamin.BlogTag", b =>
+                {
+                    b.Property<int>("BlogTagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BlogTagId"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("EditedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("BlogTagId");
+
+                    b.ToTable("BlogTags");
+                });
+
             modelBuilder.Entity("devjamin.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -248,7 +297,7 @@ namespace devjamin.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("FilePath")
@@ -281,6 +330,9 @@ namespace devjamin.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -293,9 +345,6 @@ namespace devjamin.Migrations
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime>("PublishedDate")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Slug")
                         .IsRequired()
@@ -310,6 +359,21 @@ namespace devjamin.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("BlogPosts");
+                });
+
+            modelBuilder.Entity("BlogPostBlogTag", b =>
+                {
+                    b.HasOne("devjamin.Models.BlogPost", null)
+                        .WithMany()
+                        .HasForeignKey("BlogPostsBlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("devjamin.BlogTag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsBlogTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

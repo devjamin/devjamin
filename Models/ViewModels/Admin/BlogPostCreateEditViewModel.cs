@@ -15,7 +15,7 @@ namespace devjamin.Models
 
     public class BlogPostCreateEditViewModel
     {
-        // method can either be create or edit
+        // Method can either be create or edit
         public BlogPostCreateEditMethodViewModel Method { get; set; }
 
         public int BlogPostId { get; set; }

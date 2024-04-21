@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace devjamin.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -70,6 +70,25 @@ namespace devjamin.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "BlogTags",
+                columns: table => new
+                {
+                    BlogTagId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Slug = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EditedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogTags", x => x.BlogTagId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -214,7 +233,7 @@ namespace devjamin.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Content = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PublishedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     EditedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsDraft = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     IsPublished = table.Column<bool>(type: "tinyint(1)", nullable: false),
@@ -243,7 +262,7 @@ namespace devjamin.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ContentType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsCoverImage = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     BlogPostId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -255,6 +274,31 @@ namespace devjamin.Migrations
                         column: x => x.BlogPostId,
                         principalTable: "BlogPosts",
                         principalColumn: "BlogPostId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "BlogPostTags",
+                columns: table => new
+                {
+                    BlogPostsBlogPostId = table.Column<int>(type: "int", nullable: false),
+                    TagsBlogTagId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogPostTags", x => new { x.BlogPostsBlogPostId, x.TagsBlogTagId });
+                    table.ForeignKey(
+                        name: "FK_BlogPostTags_BlogPosts_BlogPostsBlogPostId",
+                        column: x => x.BlogPostsBlogPostId,
+                        principalTable: "BlogPosts",
+                        principalColumn: "BlogPostId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BlogPostTags_BlogTags_TagsBlogTagId",
+                        column: x => x.TagsBlogTagId,
+                        principalTable: "BlogTags",
+                        principalColumn: "BlogTagId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -305,6 +349,11 @@ namespace devjamin.Migrations
                 name: "IX_BlogPosts_AuthorId",
                 table: "BlogPosts",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlogPostTags_TagsBlogTagId",
+                table: "BlogPostTags",
+                column: "TagsBlogTagId");
         }
 
         /// <inheritdoc />
@@ -329,10 +378,16 @@ namespace devjamin.Migrations
                 name: "BlogMedia");
 
             migrationBuilder.DropTable(
+                name: "BlogPostTags");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "BlogPosts");
+
+            migrationBuilder.DropTable(
+                name: "BlogTags");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

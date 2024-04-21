@@ -25,7 +25,7 @@ namespace devjamin.Controllers
         {
             var latestThreePublishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished)
-                .OrderByDescending(b => b.PublishedDate)
+                .OrderByDescending(b => b.CreatedDate)
                 .Take(3)
                 .Select(blog => new BlogPostCardViewModel
                 {
@@ -45,7 +45,7 @@ namespace devjamin.Controllers
         {
             var allPublishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished)
-                .OrderByDescending(b => b.PublishedDate)
+                .OrderByDescending(b => b.CreatedDate)
                 .Select(blog => new BlogPostCardViewModel
                 {
                     BlogPostId = blog.BlogPostId,
@@ -70,7 +70,7 @@ namespace devjamin.Controllers
                   Title = bp.Title,
                   Slug = bp.Slug,
                   Description = bp.Description,
-                  PublishedDate = bp.PublishedDate,
+                  CreatedDate = bp.CreatedDate,
                   Content = bp.Content,
                   AuthorFullName = bp.Author!.FullName, // Author is always present
                   AuthorProfilePicturePath = bp.Author.ProfilePicturePath,

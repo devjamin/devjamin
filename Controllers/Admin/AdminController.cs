@@ -145,7 +145,7 @@ namespace devjamin.Controllers
                 Description = "",
                 Content = "",
                 AuthorId = currentUser.Id,
-                PublishedDate = DateNow,
+                CreatedDate = DateNow,
                 EditedDate = DateNow,
                 IsPublished = false
             };
@@ -339,6 +339,170 @@ namespace devjamin.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Public");
+        }
+
+        // GET: /Admin/Tags
+        [HttpGet("Tags")]
+        public async Task<IActionResult> Tags()
+        {
+            var tags = await _context.BlogTags
+                .OrderByDescending(t => t.EditedDate)
+                .Select(t => new BlogTagViewModel
+                {
+                    BlogTagId = t.BlogTagId,
+                    Name = t.Name,
+                    Description = t.Description,
+                    Slug = t.Slug
+                })
+                .ToListAsync();
+
+            return View("~/Views/Admin/Tags/Index.cshtml", tags);
+        }
+
+        // GET: Admin/Tags/Create
+        [HttpGet("Tags/Create")]
+        public IActionResult CreateTag()
+        {
+            var blogTagCreateViewModel = new BlogTagCreateEditViewModel
+            {
+                Method = BlogTagCreateEditMethodViewModel.Create,
+                Name = "",
+                Slug = "",
+                Description = ""
+            };
+
+            return View("~/Views/Admin/Tags/CreateAndEdit.cshtml", blogTagCreateViewModel);
+        }
+
+        // POST: Admin/Tags/Create
+        [HttpPost("Tags/Create")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateTag(BlogTagCreateEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Get current user
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    return Challenge();
+                }
+
+                var DateNow = DateTime.UtcNow;
+                var blogTag = new BlogTag
+                {
+                    Name = model.Name,
+                    Slug = model.Slug,
+                    Description = model.Description,
+                    CreatedDate = DateNow,
+                    EditedDate = DateNow
+                };
+
+                _context.BlogTags.Add(blogTag);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Tags", "Admin");
+            }
+
+            return View("~/Views/Admin/Tags/CreateAndEdit.cshtml", model);
+        }
+
+        // GET: Admin/Tags/Edit/{BlogTagId}
+        [HttpGet("Tags/Edit/{id:int}")]
+        public async Task<IActionResult> EditTag(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var blogTag = await _context.BlogTags.FindAsync(id);
+            if (blogTag == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new BlogTagCreateEditViewModel
+            {
+                Method = BlogTagCreateEditMethodViewModel.Edit,
+                BlogTagId = blogTag.BlogTagId,
+                Name = blogTag.Name,
+                Slug = blogTag.Slug,
+                Description = blogTag.Description
+            };
+
+            return View("~/Views/Admin/Tags/CreateAndEdit.cshtml", viewModel);
+        }
+
+        // POST: Admin/Tags/Edit/{BlogTagId}
+        [HttpPost("Tags/Edit/{BlogTagId:int}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditTag(int blogTagId, BlogTagCreateEditViewModel BlogTagCreateEditViewModel)
+        {
+            if (blogTagId != BlogTagCreateEditViewModel.BlogTagId) // From hidden input in form
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                var blogTag = await _context.BlogTags.FindAsync(blogTagId);
+                if (blogTag == null)
+                {
+                    return NotFound();
+                }
+
+                // Update blog tag with new data
+                blogTag.Name = BlogTagCreateEditViewModel.Name;
+                blogTag.Slug = BlogTagCreateEditViewModel.Slug;
+                blogTag.Description = BlogTagCreateEditViewModel.Description;
+                blogTag.EditedDate = DateTime.UtcNow;
+
+                try
+                {
+                    _context.Update(blogTag);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    // Check if blog tag exists
+                    if (!_context.BlogTags.Any(e => e.BlogTagId == blogTagId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                // Redirect to /Admin/Tags after successful update
+                return Redirect("/Admin/Tags");
+            }
+
+            return View("~/Views/Admin/Tags/Edit.cshtml", BlogTagCreateEditViewModel);
+        }
+
+        // GET: Admin/Tags/Delete/{BlogTagId}
+        [HttpGet("Tags/Delete/{blogTagId:int}")]
+        public async Task<IActionResult> DeleteTag(int? blogTagId)
+        {
+            if (blogTagId == null)
+            {
+                return NotFound();
+            }
+
+            var blogTag = await _context.BlogTags.FindAsync(blogTagId);
+            if (blogTag == null)
+            {
+                return NotFound();
+            }
+
+            // Deletion from database
+            _context.BlogTags.Remove(blogTag);
+            await _context.SaveChangesAsync();
+
+            return Redirect("/Admin/Tags");
         }
     }
 }

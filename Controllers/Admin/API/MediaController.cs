@@ -122,7 +122,7 @@ namespace devjamin.Controllers
                     ContentType = contentType,
                     BlogPostId = blogPostId,
                     FilePath = keyName,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow
                 };
                 _context.BlogMedia.Add(blogMedia);
                 await _context.SaveChangesAsync();

@@ -486,3 +486,64 @@ body {
     display: block;
     background-color: #46ce4d;
 }
+
+/* 
+    Tags
+*/
+
+/* Move buttons to right */
+.ceForm--tags .ceForm__bottom {
+    margin-left: auto;
+}
+
+.tags__container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 16px;
+}
+
+/* Tag card */
+.tag {
+    position: relative;
+    background-color: #fff;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    border: 1px solid #f3f5fb;
+    text-decoration: none;
+}
+.tag__editLink {
+    text-decoration: none;
+    padding: 24px;
+}
+.tag__name {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+.tag__description {
+    font-size: 14px;
+    color: #666666;
+}
+.tag__edit {
+    display: none;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    box-sizing: content-box;
+    justify-content: center;
+    align-items: center;
+    top: 16px;
+    right: 16px;
+    background-color: #ffffff;
+    padding: 16px;
+    border-radius: 10px;
+    transition: transform 0.3s, filter 0.3s;
+}
+.tag__editLink:hover {
+    text-decoration: none;
+}
+.tag__editLink:hover .tag__edit {
+    display: block;
+}

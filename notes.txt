@@ -21,6 +21,8 @@ Launch specific profile (from launchSettings.json):
 dotnet run --launch-profile https
 
 Nessecary to-dos:
+- Select tags in blog
+- Disallow tag deletion that is active in any blogs
 - ✔ Implement share links
 - Implement Open Graph
 - Refactor (✔ controllers | ✔ models | X views & css)
