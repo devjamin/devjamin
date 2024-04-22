@@ -8,6 +8,9 @@
 @* Quill library (WYSIWYG-editor) *@
 <link href="~/lib/quill@2.0.0-rc.3/quill.snow.css" rel="stylesheet" />
 <script src="~/lib/quill@2.0.0-rc.3/quill.js"></script>
+@* Choices.js (Select) *@
+<link rel="stylesheet" href="~/lib/choices.js/choices.min.css">
+<script src="~/lib/choices.js/choices.min.js"></script>
 @* Our JS *@
 <script src="~/js/blogCreateEdit.js" defer></script>
 <script src="~/js/blogMedia.js" defer></script>
@@ -40,6 +43,10 @@
         <label class="ceForm__label" for="Description">Description</label>
         <textarea class="ceForm__textarea" id="Description" name="Description" cols="30" placeholder="Description"
             rows="10">@Model.Description</textarea>
+    </div>
+    <div class="ceForm__group">
+        <label class="ceForm__label" for="tags">Tags</label>
+        <select class="ceForm__input" id="tags" name="SelectedTagIds" placeholder="Select tags" multiple></select>
     </div>
     <div class="ceForm__group">
         <label class="ceForm__label" for="Content">Content</label>
@@ -84,6 +91,33 @@
         </div>
     </div>
 </form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    var tagsElement = document.getElementById('tags');
+    var choices = new Choices(tagsElement, {
+        removeItemButton: true,
+        itemSelectText: '',
+        searchPlaceholderValue: 'Search tags',
+        shouldSort: false,
+        searchEnabled: true,
+        placeholder: true,
+        placeholderValue: 'Select tags',
+        noResultsText: 'No tags found',
+        noChoicesText: 'No tags to choose from'
+    });
+
+    // Populate select with tags using available tags and check for selected IDs
+    choices.setChoices(
+        @Html.Raw(Json.Serialize(Model.AvailableTags.Select(tag => new {
+            value = tag.BlogTagId.ToString(),
+            label = tag.Name,
+            selected = Model.SelectedTagIds.Contains(tag.BlogTagId) // Check if the ID is in the selected IDs list
+        })))
+    );
+});
+
+</script>
 
 @* Hidden input for media upload *@
 <input type="file" id="mediaInput" hidden/>

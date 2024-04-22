@@ -122,7 +122,6 @@ namespace devjamin.Controllers
         }
 
 
-
         // GET: Admin/Blogs/Create
         // Create a new empty blog post in the background, then redirect to the create page
         // Upon form submission, the blog post will be modified
@@ -153,6 +152,23 @@ namespace devjamin.Controllers
             _context.BlogPosts.Add(blogPost);
             await _context.SaveChangesAsync();
 
+            if (blogPost == null)
+            {
+                return NotFound();
+            }
+
+            // Fetch all tags and prepare the view models for available and selected tags
+            var allTags = await _context.BlogTags.ToListAsync();
+            var availableTags = allTags.Select(t => new BlogTagViewModel
+            {
+                BlogTagId = t.BlogTagId,
+                Name = t.Name,
+                Slug = t.Slug,
+                Description = t.Description
+            }).ToList();
+
+            var selectedTagIds = new List<int>(blogPost.Tags.Select(t => t.BlogTagId));
+
             var blogPostCreateViewModel = new BlogPostCreateEditViewModel
             {
                 Method = BlogPostCreateEditMethodViewModel.Create,
@@ -161,7 +177,15 @@ namespace devjamin.Controllers
                 Slug = blogPost.Slug,
                 Description = blogPost.Description,
                 Content = blogPost.Content,
-                IsPublished = blogPost.IsPublished ? "on" : ""
+                IsPublished = blogPost.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
+                Media = blogPost.Media.Select(m => new BlogMediaViewModel
+                {
+                    MediaId = m.MediaId,
+                    FilePath = m.FilePath,
+                    IsCoverImage = m.IsCoverImage
+                }).ToList(),
+                AvailableTags = availableTags,
+                SelectedTagIds = selectedTagIds
             };
 
             return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", blogPostCreateViewModel);
@@ -174,25 +198,60 @@ namespace devjamin.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Get the existing blog post using the ID
-                var existingBlogPost = await _context.BlogPosts.FindAsync(model.BlogPostId);
-                if (existingBlogPost == null)
+                var blogPost = await _context.BlogPosts
+                    .Include(p => p.Tags)
+                    .FirstOrDefaultAsync(p => p.BlogPostId == model.BlogPostId);
+                if (blogPost == null)
                 {
                     return NotFound();
                 }
 
-                // Update the existing blog post properties
-                existingBlogPost.IsDraft = false; // No longer a draft
-                existingBlogPost.Title = model.Title;
-                existingBlogPost.Slug = model.Slug;
-                existingBlogPost.Description = model.Description;
-                existingBlogPost.Content = model.Content;
-                existingBlogPost.IsPublished = model.IsPublished == "on";
-                existingBlogPost.EditedDate = DateTime.UtcNow;
+                // Update blog post with new data
+                blogPost.Title = model.Title;
+                blogPost.Slug = model.Slug;
+                blogPost.Description = model.Description;
+                blogPost.Content = model.Content;
+                blogPost.EditedDate = DateTime.UtcNow;
+                blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
+                blogPost.IsDraft = false; // It's now a posted blog, not "draft"
 
-                await _context.SaveChangesAsync();
+                // Update tags
+                if (model.SelectedTagIds != null)
+                {
+                    blogPost.Tags.Clear(); // Remove existing tags
+                    var selectedTags = await _context.BlogTags
+                                        .Where(t => model.SelectedTagIds.Contains(t.BlogTagId))
+                                        .ToListAsync(); // Fetch the tags to be added
+                    foreach (var tag in selectedTags)
+                    {
+                        blogPost.Tags.Add(tag); // Add new selected tags
+                    }
+                }
+                else
+                {
+                    blogPost.Tags.Clear(); // Remove all tags
+                }
 
-                return RedirectToAction("Blogs", "Admin");
+                try
+                {
+                    _context.Update(blogPost);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    // Check if blog post exists
+                    if (!_context.BlogPosts.Any(e => e.BlogPostId == model.BlogPostId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                // Redirect to /Admin/Blogs after successful update
+                return Redirect("/Admin/Blogs");
             }
 
             return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", model);
@@ -210,12 +269,26 @@ namespace devjamin.Controllers
 
             var blogPost = await _context.BlogPosts
                 .Include(p => p.Media) // Include media files
+                .Include(p => p.Tags) // Include tags
                 .FirstOrDefaultAsync(p => p.BlogPostId == id);
 
             if (blogPost == null)
             {
                 return NotFound();
             }
+
+            // Fetch all tags and prepare the view models for available and selected tags
+            var allTags = await _context.BlogTags.ToListAsync();
+            var availableTags = allTags.Select(t => new BlogTagViewModel
+            {
+                BlogTagId = t.BlogTagId,
+                Name = t.Name,
+                Slug = t.Slug,
+                Description = t.Description
+            }).ToList();
+
+            var selectedTagIds = new List<int>(blogPost.Tags.Select(t => t.BlogTagId));
+
 
             var viewModel = new BlogPostCreateEditViewModel
             {
@@ -231,7 +304,9 @@ namespace devjamin.Controllers
                     MediaId = m.MediaId,
                     FilePath = m.FilePath,
                     IsCoverImage = m.IsCoverImage
-                }).ToList()
+                }).ToList(),
+                AvailableTags = availableTags,
+                SelectedTagIds = selectedTagIds
             };
 
             return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", viewModel);
@@ -250,7 +325,9 @@ namespace devjamin.Controllers
 
             if (ModelState.IsValid)
             {
-                var blogPost = await _context.BlogPosts.FindAsync(blogPostId);
+                var blogPost = await _context.BlogPosts
+                    .Include(p => p.Tags)
+                    .FirstOrDefaultAsync(p => p.BlogPostId == blogPostId);
                 if (blogPost == null)
                 {
                     return NotFound();
@@ -263,6 +340,23 @@ namespace devjamin.Controllers
                 blogPost.Content = BlogPostCreateEditViewModel.Content;
                 blogPost.EditedDate = DateTime.UtcNow;
                 blogPost.IsPublished = BlogPostCreateEditViewModel.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
+
+                // Update tags
+                if (BlogPostCreateEditViewModel.SelectedTagIds != null)
+                {
+                    blogPost.Tags.Clear(); // Remove existing tags
+                    var selectedTags = await _context.BlogTags
+                                        .Where(t => BlogPostCreateEditViewModel.SelectedTagIds.Contains(t.BlogTagId))
+                                        .ToListAsync(); // Fetch the tags to be added
+                    foreach (var tag in selectedTags)
+                    {
+                        blogPost.Tags.Add(tag); // Add new selected tags
+                    }
+                }
+                else
+                {
+                    blogPost.Tags.Clear(); // Remove all tags
+                }
 
                 try
                 {

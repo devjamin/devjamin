@@ -36,5 +36,8 @@ namespace devjamin.Models
 
         // Include media files
         public List<BlogMediaViewModel> Media { get; set; } = [];
+
+        public List<BlogTagViewModel> AvailableTags { get; set; } = [];
+        public List<int> SelectedTagIds { get; set; } = [];
     }
 }

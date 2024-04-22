@@ -505,8 +505,6 @@ body {
 /* Tag card */
 .tag {
     position: relative;
-    background-color: #fff;
-    border-radius: 20px;
     display: flex;
     flex-direction: column;
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
@@ -514,6 +512,8 @@ body {
     text-decoration: none;
 }
 .tag__editLink {
+    border-radius: 20px;
+    background-color: #fff;
     text-decoration: none;
     padding: 24px;
 }
@@ -546,4 +546,52 @@ body {
 }
 .tag__editLink:hover .tag__edit {
     display: block;
+}
+
+/*
+    choises.js overrides
+*/
+/* Match other fields */
+.ceForm__group .choices__inner {
+    border: 1px solid #c4cad4;
+    background-color: #fff;
+    border-radius: 16px;
+    color: #160042;
+    padding: 13px 20px 9px 20px;
+}
+.ceForm__group .choices__inner .choices__input {
+    background-color: #fff;
+}
+/* choises open, use same border to match layout */
+.ceForm__group .choices.is-focused .choices__inner {
+    border-color: #5d53a2;
+    border-radius: 16px 16px 0 0;
+}
+.ceForm__group .choices.is-focused .choices__list {
+    border-color: #5d53a2;
+    border-radius: 0 0 16px 16px;
+}
+/* choises flipped reverse */
+.ceForm__group .choices.is-focused.is-flipped .choices__inner {
+    border-radius: 0 0 16px 16px;
+}
+.ceForm__group .choices.is-focused.is-flipped .choices__list {
+    border-radius: 16px 16px 0 0;
+}
+/* Modify the selected tag */
+.ceForm__group .choices__inner .choices__item {
+    background-color: #5d53a2;
+    color: #fff;
+    border: none;
+}
+.ceForm__group .choices__inner .choices__item .choices__button {
+    border-left: none;
+    padding: 0;
+    margin-right: 6px;
+}
+/* Dont need highlight */
+.ceForm__group .choices__inner .choices__item.is-highlighted {
+    background-color: #5d53a2;
+    color: #fff;
+    border: none;
 }

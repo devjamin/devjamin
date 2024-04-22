@@ -12,8 +12,8 @@ using devjamin.Models;
 namespace devjamin.Migrations
 {
     [DbContext(typeof(BlogDbContext))]
-    [Migration("20240421183520_AddBlogTagDescription")]
-    partial class AddBlogTagDescription
+    [Migration("20240422204120_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
