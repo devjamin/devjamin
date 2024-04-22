@@ -586,10 +586,19 @@ namespace devjamin.Controllers
                 return NotFound();
             }
 
-            var blogTag = await _context.BlogTags.FindAsync(blogTagId);
+            var blogTag = await _context.BlogTags
+                .Include(t => t.BlogPosts)
+                .FirstOrDefaultAsync(t => t.BlogTagId == blogTagId);
+
             if (blogTag == null)
             {
                 return NotFound();
+            }
+
+            // Check if the tag is currently used in any blog posts
+            if (blogTag.BlogPosts.Count != 0)
+            {
+                return RedirectToAction("Tags", "Admin");
             }
 
             // Deletion from database
@@ -598,5 +607,6 @@ namespace devjamin.Controllers
 
             return Redirect("/Admin/Tags");
         }
+
     }
 }
