@@ -12,5 +12,7 @@ namespace devjamin.Models
         public required string Slug { get; set; }
 
         public required string Description { get; set; }
+
+        public List<BlogTagViewModel> Tags { get; set; } = [];
     }
 }

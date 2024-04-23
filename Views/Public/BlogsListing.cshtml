@@ -13,8 +13,19 @@
         {
             <article class="blog">
                 <a class="blog__anchor" href="/Blog/@blogCard.Slug">
-                    <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Image of Benjamin Nielsen">
-                    <span class="blog__tag">Craftsmanship</span>
+                    <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Portrait of Benjamin Nielsen, blog author">
+                    <ul class="blog__tags">
+                        @if (blogCard.Tags.Count > 0)
+                        {
+                            @foreach (var tag in blogCard.Tags)
+                            {
+                                <li class="blog__tag">@tag.Name</li>
+                            }
+                        }
+                        else {
+                            <li class="blog__tag">Uncategorized</li>
+                        }
+                    </ul>
                     <h3 class="blog__title">@blogCard.Title</h3>
                     <p class="blog__description">@blogCard.Description</p>
                 </a>

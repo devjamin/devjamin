@@ -88,7 +88,7 @@ namespace devjamin.Controllers
         [HttpGet("Blogs")]
         public async Task<IActionResult> GetBlogs()
         {
-            var activeBlogs = await _context.BlogPosts
+            var publishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished && !b.IsDraft)
                 .OrderByDescending(b => b.EditedDate)
                 .Select(b => new BlogPostCardViewModel
@@ -97,10 +97,14 @@ namespace devjamin.Controllers
                     Title = b.Title,
                     Slug = b.Slug,
                     Description = b.Description,
+                    Tags = b.Tags.Select(t => new BlogTagViewModel
+                    {
+                        Name = t.Name
+                    }).ToList()
                 })
                 .ToListAsync();
 
-            var nonActiveBlogs = await _context.BlogPosts
+            var nonPublishedBlogs = await _context.BlogPosts
                 .Where(b => !b.IsPublished && !b.IsDraft)
                 .OrderByDescending(b => b.EditedDate)
                 .Select(b => new BlogPostCardViewModel
@@ -109,13 +113,17 @@ namespace devjamin.Controllers
                     Title = b.Title,
                     Slug = b.Slug,
                     Description = b.Description,
+                    Tags = b.Tags.Select(t => new BlogTagViewModel
+                    {
+                        Name = t.Name
+                    }).ToList()
                 })
                 .ToListAsync();
 
             var blogsViewModel = new AllBlogsCardViewModel
             {
-                ActiveBlogs = activeBlogs,
-                NonActiveBlogs = nonActiveBlogs
+                PublishedBlogs = publishedBlogs,
+                NonPublishedBlogs = nonPublishedBlogs
             };
 
             return View("~/Views/Admin/Blogs/Index.cshtml", blogsViewModel);

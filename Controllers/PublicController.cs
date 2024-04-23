@@ -32,7 +32,11 @@ namespace devjamin.Controllers
                     BlogPostId = blog.BlogPostId,
                     Title = blog.Title,
                     Slug = blog.Slug,
-                    Description = blog.Description
+                    Description = blog.Description,
+                    Tags = blog.Tags.Select(tag => new BlogTagViewModel
+                    {
+                        Name = tag.Name // Only need the name for the blog card
+                    }).ToList()
                 })
                 .ToListAsync();
 
@@ -51,7 +55,11 @@ namespace devjamin.Controllers
                     BlogPostId = blog.BlogPostId,
                     Title = blog.Title,
                     Slug = blog.Slug,
-                    Description = blog.Description
+                    Description = blog.Description,
+                    Tags = blog.Tags.Select(tag => new BlogTagViewModel
+                    {
+                        Name = tag.Name
+                    }).ToList()
                 })
                 .ToListAsync();
 
