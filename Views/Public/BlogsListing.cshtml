@@ -13,7 +13,14 @@
         {
             <article class="blog">
                 <a class="blog__anchor" href="/Blog/@blogCard.Slug">
-                    <img class="blog__img" src="../images/benjamin_nielsen.jpg" alt="Portrait of Benjamin Nielsen, blog author">
+                    @if (blogCard.CoverImagePath != null)
+                    {
+                        <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath" alt="Thumbnail image of the blog about: @blogCard.Title">
+                    }
+                    else
+                    {
+                        <div class="blog__noImg"></div>
+                    }
                     <ul class="blog__tags">
                         @if (blogCard.Tags.Count > 0)
                         {

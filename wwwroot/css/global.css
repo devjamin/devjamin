@@ -98,8 +98,15 @@ h6 {
 }
 
 .blog__img {
-    max-height: 220px;
+    height: 220px;
     object-fit: cover;
+    border-radius: 14px;
+    margin: 8px 8px 22px 8px;
+}
+
+.blog__noImg {
+    height: 220px;
+    background-color: #f5f5f5;
     border-radius: 14px;
     margin: 8px 8px 22px 8px;
 }

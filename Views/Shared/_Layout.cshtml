@@ -5,10 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Devjamin</title>
-    <link rel="icon" href="https://devjamin.fra1.cdn.digitaloceanspaces.com/favicon-128x128.png" type="image/png" sizes="128x128">
+    <link rel="icon" href="https://cdn.devjamin.com/favicon-128x128.png" type="image/png" sizes="128x128">
     <link rel="stylesheet" href="~/css/global.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="preload" href="../fonts/Courier_Prime/CourierPrime-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <link rel="preload" href="../fonts/Courier_Prime/CourierPrime-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <link rel="preload" href="../fonts/Montserrat/Montserrat-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <link rel="preload" href="../fonts/Montserrat/Montserrat-Medium.ttf" as="font" type="font/ttf" crossorigin="anonymous">
     <link rel="preconnect" href="https://cdn.devjamin.com">
+    
 </head>
 
 <body>
@@ -19,13 +24,13 @@
             </a>
             <ul class="navigation__list">
                 <li class="navigation__item">
-                    <a class="navigation__link" asp-controller="Home" asp-action="Index">Link One</a>
+                    <a class="navigation__link" asp-controller="Public" asp-action="Index">Home</a>
                 </li>
                 <li class="navigation__item">
-                    <a class="navigation__link" asp-controller="Home" asp-action="Index">Link Two</a>
+                    <a class="navigation__link" asp-controller="Public" asp-action="Blogs">Blogs</a>
                 </li>
                 <li class="navigation__item">
-                    <a class="navigation__link" asp-controller="Home" asp-action="Index">Link Three</a>
+                    <a class="navigation__link" asp-controller="Public" asp-action="Index">Topics</a>
                 </li>
             </ul>
             <a class="navigation__contact" asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact</a>

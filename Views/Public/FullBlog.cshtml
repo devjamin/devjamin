@@ -78,7 +78,10 @@
             </div>
         </div>
     </div>
-    <img class="contentImg" src="~/images/benjamin_nielsen.jpg" alt="Author">
+    @if (Model.CoverImagePath != null)
+    {
+        <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
+    }
     @Html.Raw(Model.Content)
 </div>
 

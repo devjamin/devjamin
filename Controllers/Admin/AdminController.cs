@@ -91,6 +91,7 @@ namespace devjamin.Controllers
             var publishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished && !b.IsDraft)
                 .OrderByDescending(b => b.EditedDate)
+                .Include(b => b.Media)
                 .Select(b => new BlogPostCardViewModel
                 {
                     BlogPostId = b.BlogPostId,
@@ -100,7 +101,8 @@ namespace devjamin.Controllers
                     Tags = b.Tags.Select(t => new BlogTagViewModel
                     {
                         Name = t.Name
-                    }).ToList()
+                    }).ToList(),
+                    CoverImagePath = b.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath
                 })
                 .ToListAsync();
 
@@ -116,7 +118,8 @@ namespace devjamin.Controllers
                     Tags = b.Tags.Select(t => new BlogTagViewModel
                     {
                         Name = t.Name
-                    }).ToList()
+                    }).ToList(),
+                    CoverImagePath = b.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath
                 })
                 .ToListAsync();
 

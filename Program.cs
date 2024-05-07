@@ -48,6 +48,8 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddMemoryCache();
+
 // Rate limiting services
 builder.Services.AddMemoryCache();
 builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
@@ -55,6 +57,8 @@ builder.Services.AddInMemoryRateLimiting();
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
 var app = builder.Build();
+
+app.UseResponseCaching();
 
 // Use CORS policy
 app.UseCors("SameOriginPolicy");

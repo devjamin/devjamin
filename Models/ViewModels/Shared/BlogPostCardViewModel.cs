@@ -13,6 +13,8 @@ namespace devjamin.Models
 
         public required string Description { get; set; }
 
+        public string? CoverImagePath { get; set; }
+
         public List<BlogTagViewModel> Tags { get; set; } = [];
     }
 }

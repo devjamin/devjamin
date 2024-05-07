@@ -84,10 +84,10 @@ function addMediaElement(isVideo, mediaId, filePath, isCoverImage = false) {
 
     const element = document.createElement(isVideo ? "video" : "img");
     if (isVideo) {
-        element.src = `https://devjamin.fra1.cdn.digitaloceanspaces.com/${filePath}`;
+        element.src = `https://cdn.devjamin.com/${filePath}`;
         element.controls = true;
     } else {
-        element.src = `https://devjamin.fra1.cdn.digitaloceanspaces.com/${filePath}`;
+        element.src = `https://cdn.devjamin.com/${filePath}`;
     }
 
     // Construct mediaElement's innerHTML including the toolbar
@@ -115,9 +115,9 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
             if (!range) alert("No active selection");
 
             if (isVideo) {
-                quill.insertEmbed(range.index, "video", `https://devjamin.fra1.cdn.digitaloceanspaces.com/${filePath}`);
+                quill.insertEmbed(range.index, "video", `https://cdn.devjamin.com/${filePath}`);
             } else {
-                quill.insertEmbed(range.index, "image", `https://devjamin.fra1.cdn.digitaloceanspaces.com/${filePath}`);
+                quill.insertEmbed(range.index, "image", `https://cdn.devjamin.com/${filePath}`);
             }
         };
     }
@@ -177,7 +177,7 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
         deleteBtn.onclick = async function () {
             // Ensure media is not in use in the editor
             const range = quill.getSelection();
-            const mediaUrl = `https://devjamin.fra1.cdn.digitaloceanspaces.com/${filePath}`;
+            const mediaUrl = `https://cdn.devjamin.com/${filePath}`;
             const mediaElementInEditor = quill.root.querySelector(`img[src="${mediaUrl}"]`);
             if (mediaElementInEditor) {
                 alert("Media is present in the editor, remove it first.");
