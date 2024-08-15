@@ -7,10 +7,10 @@ namespace devjamin.Models
 {
     public class AdminLoginViewModel
     {
-        [Required(ErrorMessage = "Enter a username.")]
+        [Required(ErrorMessage = "You'll never guess this one.")]
         public string Username { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Enter a password.")]
+        [Required(ErrorMessage = "This is 'admin' backwards.")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
     }

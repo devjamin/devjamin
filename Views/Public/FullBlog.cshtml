@@ -16,6 +16,9 @@
     var twitterShareUrl = $"https://twitter.com/intent/tweet?text={Uri.EscapeDataString(shareText)}&url={encodedUrl}";
     var linkedInShareUrl = $"https://www.linkedin.com/sharing/share-offsite/?url={encodedUrl}";
     var facebookShareUrl = $"https://www.facebook.com/sharer/sharer.php?u={encodedUrl}";
+
+    string title = Model.Title;
+    string displayTitle = title.Length > 16 ? title.Substring(0, 16).TrimEnd() + "…" : title;
 }
 
 <link href="~/css/blog.css" rel="stylesheet" asp-append-version="true" />
@@ -61,7 +64,7 @@
                 <li class="breadcrumb__item">
                     <a class="breadcrumb__link" href="/Blogs">Blogs</a>
                 </li>
-                <li>@Model.Title</li>
+                <li>@displayTitle</li>
             </ul>
             <h1 class="blogTop__title">@Model.Title</h1>
             <p class="blogTop__description">@Model.Description
@@ -78,11 +81,13 @@
             </div>
         </div>
     </div>
-    @if (Model.CoverImagePath != null)
-    {
-        <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
-    }
-    @Html.Raw(Model.Content)
+    <div class="blogBody">
+        @if (Model.CoverImagePath != null)
+        {
+            <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
+        }
+        @Html.Raw(Model.Content)
+    </div>
 </div>
 
 <script>
