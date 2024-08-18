@@ -22,7 +22,11 @@ function initMediaUpload() {
     mediaEl.addEventListener("dragover", dragOverHandler);
     mediaEl.addEventListener("dragleave", dragLeaveHandler);
     addMediaBtn.addEventListener("click", () => mediaInput.click());
-    mediaEl.addEventListener("drop", (e) => void handleFiles(e.dataTransfer.files));
+    mediaEl.addEventListener("drop", (e) => {
+        e.preventDefault()
+
+        void handleFiles(e.dataTransfer.files)
+    });
 }
 
 function dragOverHandler(e) {
@@ -111,14 +115,33 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
         addBtn.onclick = function () {
             var range = quill.getSelection();
 
+            console.log("range")
+            console.log(range)
+
             // No editor selection guard clause
-            if (!range) alert("No active selection");
+            if (!range) {
+                alert("No active selection");
+            }
 
             if (isVideo) {
                 quill.insertEmbed(range.index, "video", `https://cdn.devjamin.com/${filePath}`);
             } else {
                 quill.insertEmbed(range.index, "image", `https://cdn.devjamin.com/${filePath}`);
             }
+
+            // get quill delta and remove 
+            const delta = quill.getContents();
+            const ops = [];
+            delta.ops.forEach((op) => {
+                // remove parent h1 element
+                if (op.insert && op.insert.image && op.insert.image.startsWith("https")) {
+                    ops.push(op);
+
+                }
+            })
+
+            // Move the cursor after inserted media
+            quill.setSelection(range.index + 1, Quill.sources.SILENT);
         };
     }
 

@@ -21,7 +21,12 @@
     string displayTitle = title.Length > 16 ? title.Substring(0, 16).TrimEnd() + "…" : title;
 }
 
+@* Fancyapps (Carousel) *@
+<link rel="stylesheet" href="~/lib/fancyapps/carousel/carousel.min.css">
+<script src="~/lib/fancyapps/carousel/carousel.min.js"></script>
 <link href="~/css/blog.css" rel="stylesheet" asp-append-version="true" />
+@* Our js *@
+<script src="~/js/fullBlog.js" defer></script>
 
 <div class="blogWrapper">
     <div class="blogTop">
@@ -82,10 +87,11 @@
         </div>
     </div>
     <div class="blogBody">
-        @if (Model.CoverImagePath != null)
+        @* @if (Model.CoverImagePath != null)
         {
             <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
         }
+        *@
         @Html.Raw(Model.Content)
     </div>
 </div>

@@ -11,6 +11,9 @@
 @* Choices.js (Select) *@
 <link rel="stylesheet" href="~/lib/choices.js/choices.min.css">
 <script src="~/lib/choices.js/choices.min.js"></script>
+@* Fancyapps (Carousel) *@
+<link rel="stylesheet" href="~/lib/fancyapps/carousel/carousel.min.css">
+<script src="~/lib/fancyapps/carousel/carousel.min.js"></script>
 @* Our JS *@
 <script src="~/js/blogCreateEdit.js" defer></script>
 <script src="~/js/blogMedia.js" defer></script>
@@ -50,7 +53,9 @@
     </div>
     <div class="ceForm__group">
         <label class="ceForm__label" for="Content">Content</label>
-        <div class="ceForm__editor" id="Editor"></div>
+        <div class="ceForm__editor" id="Editor">
+            @Html.Raw(Model.Content)
+        </div>
         <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.Content" name="Content"
             id="Content">
     </div>

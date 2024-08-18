@@ -46,6 +46,7 @@ body {
     gap: 20px;
     padding-left: 80px;
 }
+
 .nav__item--logout {
     margin-top: auto;
     margin-bottom: 80px;
@@ -54,9 +55,11 @@ body {
 .nav__link {
     color: #9ca3af;
 }
+
 .nav__link svg {
     fill: #9ca3af;
 }
+
 .nav__link:hover {
     text-decoration: underline;
 }
@@ -128,7 +131,7 @@ body {
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    filter: drop-shadow(0 1px 1px #0000000d);
     border: 1px solid #f3f5fb;
     text-decoration: none;
     height: 100%;
@@ -137,7 +140,8 @@ body {
 .blog__goToLink {
     text-decoration: none;
 }
-.blog__goToLink:hover > .blog__title {
+
+.blog__goToLink:hover>.blog__title {
     text-decoration: underline;
 }
 
@@ -151,10 +155,12 @@ body {
     display: none;
     transition: transform 0.3s, filter 0.3s;
 }
+
 /* Show when hovering blog card */
 .blog:hover .blog__editLink {
     display: block;
 }
+
 .blog__editLink:hover {
     transform: scale(0.95);
 }
@@ -201,6 +207,7 @@ body {
     color: #160042;
     padding: 0 20px;
 }
+
 .ceForm__input:focus,
 .ceForm__textarea:focus {
     outline: 1px solid #5d53a2;
@@ -217,11 +224,13 @@ body {
     border: none !important;
     min-height: 400px;
 }
+
 .ql-toolbar {
     background: #fff;
     border-radius: 16px 16px 0 0;
     border-bottom: none !important;
 }
+
 .ql-editor {
     border: 1px solid #c4cad4;
     border-radius: 0 0 16px 16px;
@@ -246,11 +255,13 @@ body {
     margin-left: auto;
     transition: background-color 0.3s, color 0.3s;
 }
+
 .ceForm__btn--small {
     padding: 8px 32px;
     font-size: 14px;
     border-radius: 24px;
 }
+
 .ceForm__btn:hover {
     background-color: #fff;
     color: #5d53a2;
@@ -263,6 +274,7 @@ body {
     border: 1px solid #ff4d4f;
     color: #fff;
 }
+
 .ceForm__btn--danger:hover {
     background-color: #fff;
     color: #ff4d4f;
@@ -293,6 +305,7 @@ body {
     user-select: none;
     font-size: 14px;
 }
+
 /* Psuedo checkbox */
 .ceForm__bottomLabel::before {
     content: "";
@@ -307,7 +320,8 @@ body {
     background-color: #fff;
     border: 1px solid #5d53a2;
 }
-.ceForm__bottomCheckbox:checked + .ceForm__bottomLabel::before {
+
+.ceForm__bottomCheckbox:checked+.ceForm__bottomLabel::before {
     content: "✓";
     background-color: #5d53a2;
     color: #fff;
@@ -364,6 +378,7 @@ body {
 .ceForm__mediaOverlay--empty {
     background-color: rgba(255, 255, 255, 1);
 }
+
 .ceForm__mediaOverlay--empty p {
     font-size: 14px;
     text-align: center;
@@ -381,10 +396,12 @@ body {
     fill: #5d53a2;
     animation: spin 1s linear infinite;
 }
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -401,15 +418,18 @@ body {
     break-inside: avoid;
     margin-bottom: 16px;
 }
+
 .ceForm__mediaElement:hover .ceForm__mediaElementToolbarElement {
     display: block;
 }
+
 .ceForm__mediaElement img,
 .ceForm__mediaElement video {
     grid-area: 1/1;
     min-height: 100%;
     object-fit: cover;
 }
+
 /* Toolbar */
 .ceForm__mediaElementToolbar {
     grid-area: 1/1;
@@ -419,6 +439,7 @@ body {
     place-self: start stretch;
     margin: 8px;
 }
+
 .ceForm__mediaElementToolbarElement {
     display: none;
     cursor: pointer;
@@ -473,21 +494,25 @@ body {
     border: 1px solid #f3f5fb;
     text-decoration: none;
 }
+
 .tag__editLink {
     border-radius: 20px;
     background-color: #fff;
     text-decoration: none;
     padding: 24px;
 }
+
 .tag__name {
     font-size: 24px;
     font-weight: 500;
     margin-bottom: 8px;
 }
+
 .tag__description {
     font-size: 14px;
     color: #666666;
 }
+
 .tag__edit {
     display: none;
     position: absolute;
@@ -503,9 +528,11 @@ body {
     border-radius: 10px;
     transition: transform 0.3s, filter 0.3s;
 }
+
 .tag__editLink:hover {
     text-decoration: none;
 }
+
 .tag__editLink:hover .tag__edit {
     display: block;
 }
@@ -521,36 +548,44 @@ body {
     color: #160042;
     padding: 13px 20px 9px 20px;
 }
+
 .ceForm__group .choices__inner .choices__input {
     background-color: #fff;
 }
+
 /* choises open, use same border to match layout */
 .ceForm__group .choices.is-focused .choices__inner {
     border-color: #5d53a2;
     border-radius: 16px 16px 0 0;
 }
+
 .ceForm__group .choices.is-focused .choices__list {
     border-color: #5d53a2;
     border-radius: 0 0 16px 16px;
 }
+
 /* choises flipped reverse */
 .ceForm__group .choices.is-focused.is-flipped .choices__inner {
     border-radius: 0 0 16px 16px;
 }
+
 .ceForm__group .choices.is-focused.is-flipped .choices__list {
     border-radius: 16px 16px 0 0;
 }
+
 /* Modify the selected tag */
 .ceForm__group .choices__inner .choices__item {
     background-color: #5d53a2;
     color: #fff;
     border: none;
 }
+
 .ceForm__group .choices__inner .choices__item .choices__button {
     border-left: none;
     padding: 0;
     margin-right: 6px;
 }
+
 /* Dont need highlight */
 .ceForm__group .choices__inner .choices__item.is-highlighted {
     background-color: #5d53a2;
