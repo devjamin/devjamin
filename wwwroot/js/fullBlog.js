@@ -5,3 +5,9 @@ carouselContainers.forEach(container => {
     transition: "slide"
   });
 });
+
+Fancybox.bind('[data-fancybox="gallery"]', {
+  Carousel: {
+    transition: "slide",
+  },
+});
