@@ -113,35 +113,8 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
 
     if (addBtn) {
         addBtn.onclick = function () {
-            var range = quill.getSelection();
-
-            console.log("range")
-            console.log(range)
-
-            // No editor selection guard clause
-            if (!range) {
-                alert("No active selection");
-            }
-
-            if (isVideo) {
-                quill.insertEmbed(range.index, "video", `https://cdn.devjamin.com/${filePath}`);
-            } else {
-                quill.insertEmbed(range.index, "image", `https://cdn.devjamin.com/${filePath}`);
-            }
-
-            // get quill delta and remove 
-            const delta = quill.getContents();
-            const ops = [];
-            delta.ops.forEach((op) => {
-                // remove parent h1 element
-                if (op.insert && op.insert.image && op.insert.image.startsWith("https")) {
-                    ops.push(op);
-
-                }
-            })
-
-            // Move the cursor after inserted media
-            quill.setSelection(range.index + 1, Quill.sources.SILENT);
+            // Add media to editor at cursor position or inside carousel
+            addMediaAtCursorOrInsideCarousel(filePath, isVideo)
         };
     }
 

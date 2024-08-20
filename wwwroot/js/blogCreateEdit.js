@@ -65,9 +65,6 @@ class QuillCarousel {
     }
 
     reinitCarousels() {
-        // Get all carousel containers in the current content
-        const carouselContainers = document.querySelectorAll(".f-carousel");
-
         this.fixCarouselBeforeInit();
 
         // Reinitialize all carousels
@@ -116,6 +113,84 @@ Quill.register('modules/carousel', QuillCarousel);
 //     // Call the reinitCarousels method
 //     carouselModule.reinitCarousels();
 // })()
+
+async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
+    // Check if the cursor is on the carousel blot
+    const range = quill.getSelection();
+    if (!range) {
+        return false;
+    }
+
+    const [blot, offset] = quill.getLeaf(range.index);
+    if (!blot || blot.statics.blotName !== 'carousel') {
+        // If not inside carousel
+        quill.insertEmbed(range.index, isVideo ? "video" : "image", `https://cdn.devjamin.com/${filePath}`);
+        return;
+    }
+
+    // Find the current slide index
+    const currentDot = blot.domNode.querySelector('ul.f-carousel__dots li.is-current');
+    if (!currentDot) {
+        console.error('No current dot found');
+        return;
+    }
+
+    const currentIndex = parseInt(currentDot.querySelector('button').getAttribute('data-carousel-page'), 10);
+
+    // Get the blot's track element
+    let blotNode = blot.domNode.querySelector('.f-carousel__track');
+
+    // Create the new slide element
+    const newSlide = document.createElement('div');
+    newSlide.className = 'f-carousel__slide';
+    newSlide.setAttribute('data-index', currentIndex + 1);
+    newSlide.setAttribute('data-src', `https://cdn.devjamin.com/${filePath}`);
+    newSlide.innerHTML = `<img src="https://cdn.devjamin.com/${filePath}">`;
+
+    // Insert the new slide after the current one
+    const slides = blotNode.querySelectorAll('.f-carousel__slide');
+    if (slides.length > currentIndex + 1) {
+        slides[currentIndex].insertAdjacentElement('afterend', newSlide);
+    } else {
+        blotNode.appendChild(newSlide);
+    }
+
+    // Insert the new dot into the carousel dots
+    const newDot = document.createElement('li');
+    newDot.setAttribute('role', 'presentation');
+    newDot.innerHTML = `<button type="button" data-carousel-page="${currentIndex + 1}" aria-label="Go to slide #${currentIndex + 2}" role="tab" aria-selected="false"><span class="f-carousel__dot" aria-hidden="true"></span></button>`;
+    currentDot.insertAdjacentElement('afterend', newDot);
+
+    // Update indices for the slides and dots after the new one
+    const updateIndices = (nodes, startIndex) => {
+        for (let i = startIndex; i < nodes.length; i++) {
+            nodes[i].setAttribute('data-index', i);
+            const button = nodes[i].querySelector('button');
+            if (button) {
+                button.setAttribute('data-carousel-page', i);
+                button.setAttribute('aria-label', `Go to slide #${i + 1}`);
+            }
+        }
+    };
+
+    updateIndices(blotNode.querySelectorAll('.f-carousel__slide'), currentIndex + 2);
+    updateIndices(blot.domNode.querySelectorAll('ul.f-carousel__dots li'), currentIndex + 2);
+
+    // Reinitialize the carousel
+    const carouselModule = quill.getModule('carousel');
+    carouselModule.reinitCarousels();
+
+    // Slide carousel instance to the new slide
+    // Hacky? Maybe, but it works :)
+    setTimeout(() => {
+        const carouselInstance = carouselModule.carouselInstances.find(instance => instance.container.dataset.init === blot.domNode.dataset.init);
+
+        carouselInstance.slideTo(currentIndex + 1, {
+            transition: "fade"
+        });
+
+    }, 0)
+}
 
 /*
     Custom quill blot for carousel
@@ -168,31 +243,36 @@ if (contentField) {
     quill.root.innerHTML = contentField.value;
 }
 
+// To get carousel working inside quill WYSIWYG editor we need to remove classes etc. appended on initting it
+function prepareContentForSaving() {
+    // remove all carousel dots
+    const dots = document.querySelectorAll(".f-carousel__dots");
+    dots.forEach(dot => dot.remove());
+    // remove f-carousel dataset
+    const carousels = document.querySelectorAll(".f-carousel");
+    carousels.forEach(carousel => {
+        delete carousel.dataset.init;
+    });
+    // remove style transform from f-carousel__track
+    const carouselTracks = document.querySelectorAll(".f-carousel__track");
+    carouselTracks.forEach(track => {
+        track.removeAttribute("style");
+    })
+
+    // remove all data-index="0" style="" aria-hidden="true" from all slides
+    const carouselSlides = document.querySelectorAll(".f-carousel__slide");
+    carouselSlides.forEach(slide => {
+        slide.removeAttribute("data-index");
+        slide.removeAttribute("style");
+        slide.removeAttribute("aria-hidden");
+    })
+}
+
 const form = document.querySelector("form");
 if (form) {
     form.addEventListener("submit", function () {
         if (contentField) {
-            // remove all carousel dots
-            const dots = document.querySelectorAll(".f-carousel__dots");
-            dots.forEach(dot => dot.remove());
-            // remove f-carousel dataset
-            const carousels = document.querySelectorAll(".f-carousel");
-            carousels.forEach(carousel => {
-                delete carousel.dataset.init;
-            });
-            // remove style transform from f-carousel__track
-            const carouselTracks = document.querySelectorAll(".f-carousel__track");
-            carouselTracks.forEach(track => {
-                track.removeAttribute("style");
-            })
-
-            // remove all data-index="0" style="" aria-hidden="true" from all slides
-            const carouselSlides = document.querySelectorAll(".f-carousel__slide");
-            carouselSlides.forEach(slide => {
-                slide.removeAttribute("data-index");
-                slide.removeAttribute("style");
-                slide.removeAttribute("aria-hidden");
-            })
+            prepareContentForSaving()
 
             contentField.value = quill.root.innerHTML;
         }
