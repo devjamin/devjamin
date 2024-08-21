@@ -7,6 +7,108 @@
     - Prevent drop of Base64 images in Quill
     - Generate slug from title
 */
+var carouselNode = null;
+document.addEventListener('contextmenu', function (event) {
+    const target = event.target;
+
+    // Check if the cursor is on the carousel blot
+    const range = quill.getSelection();
+    if (!range) {
+        return false;
+    }
+
+    const [blot, offset] = quill.getLeaf(range.index);
+
+    // Check if the blot is a carousel
+    if (blot && blot.statics.blotName === 'carousel') {
+        event.preventDefault(); // Prevent the default context menu
+
+        // Get the carousel DOM node
+        carouselNode = blot.domNode;
+
+        // Check if the clicked target is inside a slide
+        const slideNode = target.closest('.f-carousel__slide');
+
+        if (slideNode) {
+            // Show the custom context menu
+            const contextMenu = document.getElementById('carouselContextMenu');
+            contextMenu.style.display = 'block';
+            contextMenu.style.left = `${event.pageX}px`;
+            contextMenu.style.top = `${event.pageY}px`;
+
+            // Store the slide node and carousel node for later use
+            contextMenu.slideNode = slideNode;
+            contextMenu.carouselNode = carouselNode;
+        }
+    }
+});
+
+// Handle context menu actions
+document.getElementById('moveLeft').addEventListener('click', function () {
+    const contextMenu = document.getElementById('carouselContextMenu');
+    const slideNode = contextMenu.slideNode;
+    const carouselNode = contextMenu.carouselNode;
+
+    if (slideNode && carouselNode) {
+        const prevSlide = slideNode.previousElementSibling;
+        if (prevSlide && prevSlide.classList.contains('f-carousel__slide')) {
+            slideNode.parentNode.insertBefore(slideNode, prevSlide);
+        }
+        hideContextMenu();
+
+        // Reinitialize the carousel
+        const carouselModule = quill.getModule('carousel');
+        carouselModule.reinitCarousels();
+    }
+});
+
+
+document.getElementById('moveRight').addEventListener('click', function () {
+    const contextMenu = document.getElementById('carouselContextMenu');
+    const slideNode = contextMenu.slideNode;
+
+    if (slideNode) {
+        const nextSlide = slideNode.nextElementSibling;
+        if (nextSlide && nextSlide.classList.contains('f-carousel__slide')) {
+            slideNode.parentNode.insertBefore(nextSlide, slideNode);
+        }
+        hideContextMenu();
+
+        // Reinitialize the carousel
+        const carouselModule = quill.getModule('carousel');
+        carouselModule.reinitCarousels();
+    }
+});
+
+document.getElementById('removeImage').addEventListener('click', function () {
+    const contextMenu = document.getElementById('carouselContextMenu');
+    const slideNode = contextMenu.slideNode;
+
+    if (slideNode) {
+        slideNode.parentNode.removeChild(slideNode);
+        hideContextMenu();
+
+        // Reinitialize the carousel
+        const carouselModule = quill.getModule('carousel');
+        carouselModule.reinitCarousels();
+
+        checkAndConvertToImage()
+    }
+});
+
+function hideContextMenu() {
+    const contextMenu = document.getElementById('carouselContextMenu');
+    contextMenu.style.display = 'none';
+    contextMenu.slideNode = null;
+    contextMenu.carouselNode = null;
+}
+
+document.addEventListener('click', function () {
+    hideContextMenu(); // Hide the context menu on a click outside
+});
+
+
+
 class QuillCarousel {
     // Keep this in sync with options from blog js
     static carouselOptions = {
@@ -51,8 +153,6 @@ class QuillCarousel {
 
             }
         });
-
-        console.log("Carousel instances", this.carouselInstances);
     }
 
     // Everytime carousel is reinitialized it adds dots, so we remove them first to not have duplicates
@@ -62,6 +162,8 @@ class QuillCarousel {
     }
 
     reinitCarousels() {
+        console.info("Reinit carousels");
+
         // Reinitialize all carousels
         this.carouselInstances.forEach(carousel => {
             carousel.destroy();
@@ -138,6 +240,29 @@ function checkAndConvertToCarousel() {
         }
     }
 }
+
+function checkAndConvertToImage() {
+    // Get the editor's HTML content
+    const editor = document.querySelector('.ql-editor');
+    const carousels = editor.querySelectorAll('.f-carousel');
+
+    carousels.forEach(carousel => {
+        const slides = carousel.querySelectorAll('.f-carousel__slide');
+        if (slides.length === 1) {
+            const imgSrc = slides[0].querySelector('img').getAttribute('src');
+            const imgTag = `<img src="${imgSrc}" />`;
+
+            // Replace the carousel with the single image tag
+            carousel.outerHTML = imgTag;
+        }
+    });
+
+    const carouselModule = quill.getModule('carousel');
+    if (carouselModule) {
+        carouselModule.reinitCarousels();
+    }
+}
+
 
 
 
