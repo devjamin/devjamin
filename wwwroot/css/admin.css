@@ -9,6 +9,10 @@ body {
     background-color: #f5f5f5;
 }
 
+body.hideAdminMenu {
+    grid-template-columns: 0 1fr;
+}
+
 /*
     Navigation
 */
@@ -17,6 +21,7 @@ body {
     display: flex;
     flex-direction: column;
     border-right: 1px solid #c4cad4;
+    overflow: hidden;
 }
 
 .header__logo {
@@ -62,6 +67,12 @@ body {
 
 .nav__link:hover {
     text-decoration: underline;
+}
+
+/* Nav open/close */
+.nav--open {
+    width: 320px;
+    transition: width 0.3s;
 }
 
 /*
@@ -221,7 +232,9 @@ body {
 
 /* Div Quill inits inside */
 .ceForm__editor {
-    border: none !important;
+    background-color: #fff;
+    border: 1px solid #c4cad4;
+    border-radius: 0 0 16px 16px;
     min-height: 400px;
 }
 
@@ -232,11 +245,17 @@ body {
 }
 
 .ql-editor {
-    border: 1px solid #c4cad4;
-    border-radius: 0 0 16px 16px;
-    height: 400px !important;
+    height: 100%;
+    max-height: 400px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px 0 !important;
     overflow: hidden;
     background: #fff;
+}
+
+.hideAdminMenu .ql-editor {
+    max-height: 80dvh;
 }
 
 .ceForm__btnWrapper {

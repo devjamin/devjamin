@@ -124,7 +124,7 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     const [blot, offset] = quill.getLeaf(range.index);
     if (!blot || blot.statics.blotName !== 'carousel') {
         // If not inside carousel
-        quill.insertEmbed(range.index, isVideo ? "video" : "image", `https://cdn.devjamin.com/${filePath}`);
+        quill.insertEmbed(range.index + 1, isVideo ? "video" : "image", `https://cdn.devjamin.com/${filePath}`);
         return;
     }
 

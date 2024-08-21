@@ -57,4 +57,21 @@
     </main>
 </body>
 
+<script>
+    // toggle header class in body on cmd+b
+    const body = document.querySelector('body');
+    document.addEventListener('keydown', (e) => {
+        if (e.metaKey && e.key === 'b') {
+            e.preventDefault()
+            body.classList.toggle('hideAdminMenu');
+            // save to local storage
+            localStorage.setItem('hideAdminMenu', body.classList.contains('hideAdminMenu'));
+        }
+    });
+    // set based on local storage
+    if (localStorage.getItem('hideAdminMenu') === 'true') {
+        body.classList.add('hideAdminMenu');
+    }
+</script>
+
 </html>
