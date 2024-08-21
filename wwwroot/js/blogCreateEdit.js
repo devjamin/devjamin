@@ -180,6 +180,21 @@ class QuillCarousel {
     }
 }
 
+// Prevent key events inside carousel
+document.addEventListener('keydown', function (e) {
+    // check if cursor inside carousel
+    const range = quill.getSelection();
+    if (!range) {
+        return false;
+    }
+
+    const [blot, offset] = quill.getLeaf(range.index);
+    // Check if the blot is a carousel
+    if (blot && blot.statics.blotName === 'carousel') {
+        e.preventDefault()
+    }
+})
+
 // To make carousel work within Quill, we need to remove added attributes etc. before saving to db
 function cleanupCarouselHtmlBeforeSaving() {
     // remove all carousel dots
