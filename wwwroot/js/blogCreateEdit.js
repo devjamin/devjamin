@@ -35,42 +35,46 @@ class QuillCarousel {
 
         // Initialize new carousels
         carouselContainers.forEach(container => {
-
             // Check if this container already has a carousel initialized
             if (!container.dataset.init) {
+                console.info("Init carousel", container);
+
                 // Set a unique data attribute to mark this container as initialized
                 container.dataset.init = Math.random().toString(36).substring(7);
 
-                this.fixCarouselBeforeInit();
+                this.fixCarouselDotsBeforeInit();
 
                 // Initialize the Fancyapps carousel
                 const carouselNew = new Carousel(container, QuillCarousel.carouselOptions);
 
-                console.info("Init carousel");
                 this.carouselInstances.push(carouselNew);
 
             }
         });
 
-        // cleanup in unused instances by checking if dataset is not in the current content
-        this.carouselInstances = this.carouselInstances.filter(instance => {
-            return document.querySelector(`[data-init="${instance.container.dataset.init}"]`);
-        })
+        console.log("Carousel instances", this.carouselInstances);
     }
 
     // Everytime carousel is reinitialized it adds dots, so we remove them first to not have duplicates
-    fixCarouselBeforeInit() {
+    fixCarouselDotsBeforeInit() {
         const dots = document.querySelectorAll(".f-carousel__dots");
         dots.forEach(dot => dot.remove());
     }
 
     reinitCarousels() {
-        this.fixCarouselBeforeInit();
-
         // Reinitialize all carousels
         this.carouselInstances.forEach(carousel => {
-            carousel.reInit();
+            carousel.destroy();
         })
+        this.carouselInstances = [];
+
+        // Remove data-init attribute from all carousels, so initCarousels knows to reinitialize them
+        const carouselContainers = document.querySelectorAll(".f-carousel");
+        carouselContainers.forEach(container => {
+            delete container.dataset.init;
+        })
+
+        this.initCarousels();
     }
 }
 
@@ -101,18 +105,41 @@ function cleanupCarouselHtmlBeforeSaving() {
 
 Quill.register('modules/carousel', QuillCarousel);
 
-// (() => {
-//     // Add slide to blot
-//     let blotNode = document.querySelector('.f-carousel__track');
-//     blotNode.innerHTML += '<div class="f-carousel__slide is-selected" data-index="0"><img src="https://cdn.devjamin.com/d2d8791e-fe58-4e48-872b-4589b940ec48.jpg"></div>'
+function checkAndConvertToCarousel() {
+    // Get the editor's HTML content
+    const editor = document.querySelector('.ql-editor');
+    const htmlContent = editor.innerHTML;
 
-//     // grab quill module class method
-//     // Access the carousel module instance
-//     const carouselModule = quill.getModule('carousel');
+    // Use a regular expression to find consecutive <img> tags
+    const consecutiveImagesPattern = /(<img [^>]*src="[^"]*"[^>]*>)(\s*<img [^>]*src="[^"]*"[^>]*>)+/g;
 
-//     // Call the reinitCarousels method
-//     carouselModule.reinitCarousels();
-// })()
+    // Check if there are consecutive images
+    const matches = htmlContent.match(consecutiveImagesPattern);
+
+    if (matches) {
+        matches.forEach(match => {
+            // Replace consecutive <img> tags with a carousel structure
+            const images = match.match(/<img [^>]*src="[^"]*"[^>]*>/g);
+            const carouselContent = images.map(imgTag => {
+                const src = imgTag.match(/src="([^"]*)"/)[1];
+                return `<div class="f-carousel__slide"><img src="${src}"></div>`;
+            }).join('');
+
+            const carouselWrapper = `<div class="f-carousel">${carouselContent}</div>`;
+
+            // Replace the original consecutive images with the carousel HTML
+            editor.innerHTML = editor.innerHTML.replace(match, carouselWrapper);
+        });
+
+        // Reinitialize carousels if needed
+        const carouselModule = quill.getModule('carousel');
+        if (carouselModule) {
+            carouselModule.reinitCarousels();
+        }
+    }
+}
+
+
 
 async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     // Check if the cursor is on the carousel blot
@@ -123,8 +150,11 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
 
     const [blot, offset] = quill.getLeaf(range.index);
     if (!blot || blot.statics.blotName !== 'carousel') {
-        // If not inside carousel
-        quill.insertEmbed(range.index + 1, isVideo ? "video" : "image", `https://cdn.devjamin.com/${filePath}`);
+        // If not inside carousel, we want just single image to be added at cursor position
+        quill.insertEmbed(range.index, 'customImage', `https://cdn.devjamin.com/${filePath}`, 'user');
+        quill.setSelection(range.index + 1, 0); // Move cursor after the media
+
+        checkAndConvertToCarousel(range.index);
         return;
     }
 
@@ -214,6 +244,24 @@ CarouselBlot.tagName = 'div';
 CarouselBlot.className = 'f-carousel';
 
 Quill.register(CarouselBlot);
+
+class ImageBlot extends BlockEmbed {
+    static create(value) {
+        let node = super.create();
+        node.setAttribute('src', value);
+        return node;
+    }
+
+    static value(node) {
+        return node.getAttribute('src');
+    }
+}
+
+ImageBlot.blotName = 'customImage';
+ImageBlot.tagName = 'img';
+
+// Register the blot with Quill
+Quill.register(ImageBlot);
 
 const options = {
     debug: null, //"info",
