@@ -9,19 +9,28 @@
     display: flex;
     align-items: center;
     height: 88px;
+    position: relative;
+    z-index: 1;
 }
 
 .navigation__logo {
     fill: #160042;
     font-weight: 900;
-    margin-right: 128px;
+    min-width: 40px;
+    margin-right: 6%;
+}
+
+.navigation__menuBtn {
+    display: none;
 }
 
 .navigation__list {
     padding: 0;
     display: flex;
     align-items: center;
+    justify-self: flex-start;
     list-style: none;
+    flex: 3;
 }
 
 .navigation__list {
@@ -47,6 +56,8 @@
     border-radius: 22px;
     text-decoration: none;
     transition: background-color 0.3s, color 0.3s;
+    margin-left: auto;
+    max-width: fit-content;
 }
 
 .navigation__contact:hover {
@@ -603,4 +614,71 @@
 
 .contact__formFeedbackTxt--error {
     border-left: 3px solid #ff0000;
+}
+
+@media (max-width: 500px) {
+    main {
+        padding-top: 70px;
+    }
+
+    header {
+        position: relative;
+        max-width: 100dvw;
+    }
+
+    .navigation {
+        height: 70px;
+        padding: 0 16px;
+        top: 0;
+        position: fixed;
+        max-width: 100dvw;
+        background: #fff;
+        filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    }
+
+    .navigation__menuBtn {
+        display: block;
+    }
+
+    .navigation__list {
+        -will-change: max-width, visibility;
+        visibility: hidden;
+        padding: 0 0 16px 0;
+        max-width: 0;
+        width: 100%;
+        position: fixed;
+        background: #fff;
+        right: 0;
+        top: 70px;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        gap: 16px;
+        transition: max-width 0.2s;
+        overflow: hidden;
+        height: calc(100dvh - 70px);
+
+    }
+
+    #menuToggle:checked+.navigation__list {
+        visibility: visible;
+        max-width: 100dvw;
+    }
+
+    .navigation__link {
+        padding: 0;
+        height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .navigation__contact {
+        padding: 6px 14px;
+        border-radius: 22px;
+        font-size: 12px;
+        text-decoration: none;
+        margin-right: 5%;
+    }
 }
