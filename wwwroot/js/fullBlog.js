@@ -6,8 +6,8 @@ carouselContainers.forEach(container => {
   });
 });
 
-Fancybox.bind('[data-fancybox="gallery"]', {
-  Carousel: {
-    transition: "slide",
-  },
-});
+// Fancybox.bind('[data-fancybox="gallery"]', {
+//   Carousel: {
+//     transition: "slide",
+//   },
+// });

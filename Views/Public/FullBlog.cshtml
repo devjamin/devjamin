@@ -33,7 +33,7 @@
 <link href="~/css/blog.css" rel="stylesheet" asp-append-version="true" />
 
 <div class="blogWrapper">
-    <div class="blogTop">
+    <header class="blogTop">
         <ul class="share">
             <li id="webShareBtn">
                 <button href="https://www.facebook.com/sharer/sharer.php?u=https://www.example.com" target="_blank">
@@ -73,7 +73,7 @@
                 <li class="breadcrumb__item">
                     <a class="breadcrumb__link" href="/Blogs">Blogs</a>
                 </li>
-                <li>@displayTitle</li>
+                <li class="breadcrumb__item">@displayTitle</li>
             </ul>
             <h1 class="blogTop__title">@Model.Title</h1>
             <p class="blogTop__description">@Model.Description
@@ -86,18 +86,20 @@
                         <p class="blogTop__authorReadTime">@Model.ReadTimeMinuteEstimate minute read</p>
                     </div>
                 </div>
-                <p class="blogTop__aboutDate">@Model.CreatedDate.ToString("dd MMMM yyyy")</p>
+                <time class="blogTop__aboutDate" datetime="@Model.CreatedDate.ToString("yyyy-MM-dd")">
+                    @Model.CreatedDate.ToString("dd MMMM, yyyy")
+                </time>
             </div>
         </div>
-    </div>
-    <div class="blogBody">
+    </header>
+    <article class="blogBody">
         @* @if (Model.CoverImagePath != null)
         {
             <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
         }
         *@
         @Html.Raw(Model.Content)
-    </div>
+    </article>
 </div>
 
 <script>

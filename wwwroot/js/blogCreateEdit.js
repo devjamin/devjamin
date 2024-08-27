@@ -191,7 +191,9 @@ document.addEventListener('keydown', function (e) {
     const [blot, offset] = quill.getLeaf(range.index);
     // Check if the blot is a carousel
     if (blot && blot.statics.blotName === 'carousel') {
-        e.preventDefault()
+        if (!e.key.includes("Arrow")) {
+            e.preventDefault()
+        }
     }
 })
 
@@ -513,6 +515,6 @@ const slugInput = document.getElementById("Slug");
 
 titleInput.oninput = function () {
     const title = titleInput.value;
-    const slug = title.toLowerCase().replace(/ /g, "-");
+    const slug = title.replace(/ /g, "-");
     slugInput.value = slug;
 };
