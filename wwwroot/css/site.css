@@ -19,9 +19,88 @@
     margin-right: 6%;
 }
 
-.navigation__menuBtn {
+.navigation__menuToggle {
     display: none;
+    background: none;
+    border: none;
 }
+
+/* Navigation hamburger */
+.navigation__menuSvg {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    /* Safari */
+}
+
+.navigation__menuSvg line {
+    stroke: #192a6b;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+    transition: transform 0.3s, stroke-dashoffset 0.4s;
+    transform-origin: center;
+    -webkit-transform-origin: center;
+    /* Safari */
+    stroke-width: 3px;
+}
+
+.navigation__menuSvg .top {
+    transform: translateY(-35%);
+    -webkit-transform: translateY(-35%);
+    /* Safari */
+}
+
+.navigation__menuSvg .middle {
+    transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+    /* Safari */
+    transition: opacity 0.3s, transform 0.3s;
+    -webkit-transition: opacity 0.3s, -webkit-transform 0.3s;
+    /* Safari */
+}
+
+.navigation__menuSvg .bottom {
+    transform: translateY(33%);
+    -webkit-transform: translateY(33%);
+    /* Safari */
+    stroke-dasharray: 100;
+    stroke-dashoffset: 9px;
+    transition: stroke-dashoffset 0.4s;
+    /* Ensure transition applies */
+    -webkit-transition: stroke-dashoffset 0.4s;
+    /* Safari */
+}
+
+.navigation__menuSvg:hover .bottom {
+    stroke-dashoffset: 0;
+}
+
+.navigation__menuSvg--open .top {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    /* Safari */
+    stroke-linecap: round;
+}
+
+.navigation__menuSvg--open .middle {
+    transform: scaleX(0.1);
+    -webkit-transform: scaleX(0.1);
+    /* Safari */
+    opacity: 0;
+}
+
+.navigation__menuSvg--open .bottom {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    /* Safari */
+    stroke-linecap: round;
+    stroke-dashoffset: 0;
+    -webkit-stroke-dashoffset: 0;
+    /* Safari */
+}
+
 
 .navigation__list {
     padding: 0;
@@ -309,7 +388,7 @@
 }
 
 .blogs__title {
-    font-size: clamp(32px, 5vw, 48px);
+    font-size: clamp(32px, 4vw, 48px);
     font-weight: 900;
     font-family: "Courier New", Courier, monospace;
     max-width: 680px;
@@ -379,7 +458,7 @@
 }
 
 .experience__title {
-    font-size: clamp(32px, 5vw, 48px);
+    font-size: clamp(32px, 4vw, 48px);
     font-weight: 900;
     font-family: "Courier New", Courier, monospace;
     margin-bottom: 8px;
@@ -485,7 +564,7 @@
     border: 1px solid #f3f5fb;
     border-radius: 8px;
     padding: 32px 32px 32px 48px;
-    font-size: clamp(14px, 2.5vw, 16px);
+    font-size: clamp(14px, 2.5vw, 18px);
 }
 
 /*
@@ -508,7 +587,7 @@
 }
 
 .contact__title {
-    font-size: 40px;
+    font-size: clamp(32px, 4vw, 48px);
     font-weight: 900;
     font-family: "Courier New", Courier, monospace;
     margin-bottom: 8px;
@@ -644,18 +723,23 @@
         padding: 0 16px;
         top: 0;
         background-color: #fff;
+        z-index: 1;
     }
 
-    .navigation__menuBtn {
+    .navigation__menuToggle {
         display: block;
+        will-change: transform;
+    }
+
+    .navigation__menuSvg line {
+        will-change: stroke-dashoffset;
     }
 
     .navigation__list {
-        -will-change: max-width, visibility;
-        visibility: hidden;
+        will-change: width;
+        z-index: 2;
         padding: 0 0 16px 0;
-        max-width: 0;
-        width: 100%;
+        width: 0;
         position: fixed;
         background: #fff;
         right: 0;
@@ -664,15 +748,22 @@
         align-items: stretch;
         justify-content: center;
         gap: 16px;
-        transition: max-width 0.2s;
+        transition: width 0.3s;
         overflow: hidden;
         height: calc(100dvh - 70px);
-
     }
 
-    #menuToggle:checked+.navigation__list {
-        visibility: visible;
-        max-width: 100dvw;
+    #navigationMenuOpenOverlay {
+        display: none;
+        opacity: 0;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        height: 100dvh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+        transition: opacity 0.3s;
     }
 
     .navigation__link {

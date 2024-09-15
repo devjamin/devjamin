@@ -4,14 +4,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const blogsContainer = document.querySelector(".blogs__container");
   const blogs = document.querySelectorAll(".blog");
 
-  // Check if device is touch-capable
-  const isTouchDevice = 'ontouchstart' in window || window.matchMedia("(pointer: coarse)").matches;
-
   const numberOfSlides = blogs.length;
   let activeSlide = 0;
 
   function updateArrows() {
-    if (window.innerWidth < 1024 && !isTouchDevice) {
+    if (window.innerWidth <= 1024) {
       arrowLeft.style.display = activeSlide > 0 ? "block" : "none";
       arrowRight.style.display = activeSlide < numberOfSlides - 1 ? "block" : "none";
     } else {

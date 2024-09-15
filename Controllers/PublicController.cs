@@ -81,7 +81,7 @@ namespace devjamin.Controllers
 
         // GET: /Articles
         [HttpGet("/Articles")]
-        public async Task<IActionResult> Blogs()
+        public async Task<IActionResult> Articles()
         {
             var allPublishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished)
