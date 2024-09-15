@@ -4,14 +4,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<script src="~/js/home.js" defer asp-append-version="true"></script>
+
 <section class="sectionWrapper hero">
     <div class="hero__infoBox">
         <p class="hero__name">Benjamin Nielsen</p>
         <h1 class="hero__title">Frontend-developer and DIY enthusiast</h1>
         <p class="hero__description">I love to learn new stuff every day</p>
         <div class="hero__cta">
-            <form class="hero__form" novalidate>
-                <input name="email" class="hero__input" type="email" placeholder="Enter Email" />
+            <form class="hero__form" novalidate autocomplete="off">
+                <input name="email" class="hero__input" id="email" type="email" placeholder="Enter Email" autocomplete="off"/>
                 <button class="hero__contact">Contact</button>
             </form>
             <a class="hero__more" asp-controller="Home" asp-action="Index" asp-fragment="experience">Learn more</a>
@@ -23,40 +25,48 @@
 </section>
 <div id="blogs" class="sectionContrastWrapper">
     <section class="sectionWrapper blogs">
-        <p class="blogs__tag">Devjamin blog</p>
-        <h2 class="blogs__title">Take a look at my latest blog posts</h2>
-        <div class="blogs__container">
-            @foreach (var blogCard in Model)
-            {
-                <article class="blog">
-                    <a class="blog__anchor" href="/Blog/@blogCard.Slug">
-                        @if (blogCard.CoverImagePath != null)
-                        {
-                            <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath" alt="Thumbnail image of the blog about: @blogCard.Title">
-                        }
-                        else
-                        {
-                            <div class="blog__noImg"></div>
-                        }
-                        <ul class="blog__tags">
-                            @if (blogCard.Tags.Count > 0)
+        <p class="blogs__tag">Devjamin Insights</p>
+        <h2 class="blogs__title">Check Out My Latest Articles</h2>
+        <div class="blogs__wrapper">
+            <button id="blogsContainerArrowLeft" class="blogs__containerArrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z"/></svg>
+            </button>
+            <button id="blogsContainerArrowRight" class="blogs__containerArrow blogs__containerArrow--right">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z"/></svg>
+            </button>
+            <div class="blogs__container">
+                @foreach (var blogCard in Model)
+                {
+                    <article class="blog">
+                        <a class="blog__anchor" href="/Article/@blogCard.Slug">
+                            @if (blogCard.CoverImagePath != null)
                             {
-                                @foreach (var tag in blogCard.Tags)
+                                <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath" alt="Thumbnail image of the blog about: @blogCard.Title">
+                            }
+                            else
+                            {
+                                <div class="blog__noImg"></div>
+                            }
+                            <ul class="blog__tags">
+                                @if (blogCard.Tags.Count > 0)
                                 {
-                                    <li class="blog__tag">@tag.Name</li>
+                                    @foreach (var tag in blogCard.Tags)
+                                    {
+                                        <li class="blog__tag">@tag.Name</li>
+                                    }
                                 }
-                            }
-                            else {
-                                <li class="blog__tag">Uncategorized</li>
-                            }
-                        </ul>
-                        <h3 class="blog__title">@blogCard.Title</h3>
-                        <p class="blog__description">@blogCard.Description</p>
-                    </a>
-                </article>
-            }
+                                else {
+                                    <li class="blog__tag">Uncategorized</li>
+                                }
+                            </ul>
+                            <h3 class="blog__title">@blogCard.Title</h3>
+                            <p class="blog__description">@blogCard.Description</p>
+                        </a>
+                    </article>
+                }
+            </div>
         </div>
-        <a class="blogs__more" href="/Blogs">
+        <a class="blogs__more" href="/Articles">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="white" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M8.6944 9.51487C8.39098 9.71716 8.33325 9.90509 8.33325 10C8.33325 10.0949 8.39098 10.2829 8.6944 10.4851C8.992 10.6835 9.45114 10.8333 9.99992 10.8333C10.5487 10.8333 11.0078 10.6835 11.3054 10.4851C11.6089 10.2829 11.6666 10.0949 11.6666 10C11.6666 9.90509 11.6089 9.71716 11.3054 9.51487C11.0078 9.31647 10.5487 9.16668 9.99992 9.16668C9.45114 9.16668 8.992 9.31647 8.6944 9.51487ZM11.6666 12.174C11.1665 12.3863 10.5937 12.5 9.99992 12.5C9.40617 12.5 8.83333 12.3863 8.33325 12.174V15C8.33325 15.0949 8.39098 15.2829 8.6944 15.4851C8.992 15.6835 9.45114 15.8333 9.99992 15.8333C10.5487 15.8333 11.0078 15.6835 11.3054 15.4851C11.6089 15.2829 11.6666 15.0949 11.6666 15V12.174ZM13.3333 10C13.3333 9.17445 12.8313 8.52905 12.2299 8.12812C11.6227 7.72331 10.8318 7.50001 9.99992 7.50001C9.16799 7.50001 8.37712 7.72331 7.7699 8.12812C7.1685 8.52905 6.66659 9.17445 6.66659 10V18.3333C6.66659 18.7936 7.03968 19.1667 7.49992 19.1667C8.31246 19.1667 11.6874 19.1667 12.4999 19.1667C12.9602 19.1667 13.3333 18.7936 13.3333 18.3333V10Z" />
@@ -67,7 +77,7 @@
                 <path
                     d="M15.5288 4.34702C15.6515 4.10161 16.002 4.10161 16.1247 4.34702C16.7534 5.60358 16.8889 5.73891 18.1458 6.36701C18.3914 6.48971 18.3914 6.83993 18.1458 6.96263C16.8889 7.59073 16.7534 7.72606 16.1247 8.98262C16.002 9.22803 15.6515 9.22803 15.5288 8.98262C14.9001 7.72606 14.7646 7.59073 13.5077 6.96263C13.2621 6.83993 13.2621 6.48971 13.5077 6.36701C14.7646 5.73891 14.9001 5.60358 15.5288 4.34702Z" />
             </svg>
-            See All Blogs
+            See All Articles
         </a>
     </section>
 </div>
@@ -152,9 +162,9 @@
 
     heroForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        document.getElementById("email").value = e.target.email.value;
+        document.getElementById("Email").value = e.target.email.value;
         document.getElementById("contact").scrollIntoView();
-        document.getElementById("name").focus();
+        document.getElementById("Name").focus();
     });
 
     @* Validate form and submit *@

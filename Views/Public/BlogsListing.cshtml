@@ -7,12 +7,12 @@
 <link href="~/css/blogsListing.css" rel="stylesheet" asp-append-version="true" />
 
 <div class="sectionWrapper blogsListing">
-    <h2 class="blogsListing__title">Blogs</h2>
+    <h2 class="blogsListing__title">Articles</h2>
     <div class="blogsListing__blogs">
         @foreach (var blogCard in Model)
         {
             <article class="blog">
-                <a class="blog__anchor" href="/Blog/@blogCard.Slug">
+                <a class="blog__anchor" href="/Article/@blogCard.Slug">
                     @if (blogCard.CoverImagePath != null)
                     {
                         <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath" alt="Thumbnail image of the blog about: @blogCard.Title">

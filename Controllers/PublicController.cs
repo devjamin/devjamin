@@ -3,8 +3,8 @@
 
     Admin panel access:
     - GET: /
-    - GET: /Blogs
-    - GET: /Blog/[SLUG]
+    - GET: /Articles
+    - GET: /Article/[SLUG]
 */
 using Microsoft.AspNetCore.Mvc;
 using devjamin.Models;
@@ -79,8 +79,8 @@ namespace devjamin.Controllers
             return View("~/Views/Public/Index.cshtml", latestThreePublishedBlogs);
         }
 
-        // GET: /Blogs
-        [HttpGet("/Blogs")]
+        // GET: /Articles
+        [HttpGet("/Articles")]
         public async Task<IActionResult> Blogs()
         {
             var allPublishedBlogs = await _context.BlogPosts
@@ -104,8 +104,8 @@ namespace devjamin.Controllers
             return View("~/Views/Public/BlogsListing.cshtml", allPublishedBlogs);
         }
 
-        // GET: /Blog/{Slug}
-        [HttpGet("/Blog/{slug}")]
+        // GET: /Article/{Slug}
+        [HttpGet("/Article/{slug}")]
         public async Task<IActionResult> GetSpecificBlog(string slug)
         {
             var blogPostViewModel = await _context.BlogPosts
