@@ -21,16 +21,8 @@
     string displayTitle = title.Length > 16 ? title.Substring(0, 16).TrimEnd() + "…" : title;
 }
 
-@* Fancyapps (Carousel) *@
-<link rel="stylesheet" href="~/lib/fancyapps/carousel/carousel.min.css">
-<script src="~/lib/fancyapps/carousel/carousel.min.js"></script>
-@* Fancyapps (fancybox) *@
-<link rel="stylesheet" href="~/lib/fancyapps/fancybox/fancybox.min.css">
-<script src="~/lib/fancyapps/fancybox/fancybox.min.js"></script>
 @* Our js *@
 <script src="~/js/fullBlog.js" defer></script>
-@* Our css *@
-<link href="~/css/blog.css" rel="stylesheet" asp-append-version="true" />
 
 <div class="blogWrapper">
     <header class="blogTop">
@@ -102,18 +94,9 @@
     </article>
 </div>
 
-<script>
-    @* Web Share API is available then add event to webShareBtn otherwise remove it *@
-    const webShareBtn = document.getElementById("webShareBtn");
-    if (navigator.share) {
-        webShareBtn.addEventListener("click", () => {
-            navigator.share({
-                title: "@Model.Title",
-                text: "@shareText",
-                url: window.location.href
-            }).catch(error => console.error("Error sharing:", error));
-        });
-    } else {
-        webShareBtn.remove();
-    }
-</script>
+@* Fancyapps (Carousel) *@
+<link rel="stylesheet" href="~/lib/fancyapps/carousel/carousel.min.css">
+<script src="~/lib/fancyapps/carousel/carousel.min.js"></script>
+@* Fancyapps (fancybox) *@
+<link rel="stylesheet" href="~/lib/fancyapps/fancybox/fancybox.min.css">
+<script src="~/lib/fancyapps/fancybox/fancybox.min.js"></script>

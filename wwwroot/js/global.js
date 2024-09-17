@@ -99,3 +99,67 @@ class Navigation {
 }
 
 new Navigation()
+
+// Prevent's hamburger line transition on load
+window.addEventListener("load", function () {
+  document.querySelector(".navigation__menuSvg").classList.add("navigation__menuSvg--ready");
+});
+
+
+
+(() => {
+  // Web Share API is available then add event to webShareBtn otherwise remove it
+  const webShareBtn = document.getElementById("webShareBtn");
+
+  // Mission abort
+  if (!webShareBtn) {
+    return;
+  }
+
+  if (navigator.share) {
+    webShareBtn.addEventListener("click", () => {
+      navigator.share({
+        title: "@Model.Title",
+        text: "@shareText",
+        url: window.location.href
+      }).catch(error => console.error("Error sharing:", error));
+    });
+  } else {
+    webShareBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        // todo: show success message
+      });
+    })
+  }
+})()
+
+// Frontpage specific
+const isFrontpage = window.location.pathname === "/";
+if (isFrontpage) {
+  // On tab click within name skip email if valid, because contact from hero fills email from that input and no need
+  // to go there again
+  const nameInput = document.getElementById("Name");
+  const emailInput = document.getElementById("Email");
+  const messageField = document.getElementById("Message");
+
+  // Regex pattern for a valid email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  // Function to check if the email is valid
+  function isEmailValid(email) {
+    return emailRegex.test(email);
+  }
+
+  // On tab key click, skip email if valid
+  nameInput.addEventListener("keydown", (e) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      if (isEmailValid(emailInput.value)) {
+        messageField.focus();
+      } else {
+        emailInput.focus();
+      }
+    }
+  });
+
+}
