@@ -108,13 +108,19 @@ window.addEventListener("load", function () {
 
 
 (() => {
-  // Web Share API is available then add event to webShareBtn otherwise remove it
   const webShareBtn = document.getElementById("webShareBtn");
 
   // Mission abort
   if (!webShareBtn) {
     return;
   }
+
+  // Create tooltip element
+  const tooltip = document.createElement("div");
+  tooltip.className = "copy-tooltip";
+  tooltip.textContent = "Copied";
+  webShareBtn.style.position = "relative";
+  webShareBtn.appendChild(tooltip);
 
   if (navigator.share) {
     webShareBtn.addEventListener("click", () => {
@@ -127,11 +133,17 @@ window.addEventListener("load", function () {
   } else {
     webShareBtn.addEventListener("click", () => {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        // todo: show success message
+        // Show tooltip
+        tooltip.style.opacity = "1";
+
+        // Hide tooltip after 2 seconds
+        setTimeout(() => {
+          tooltip.style.opacity = "0";
+        }, 2000);
       });
-    })
+    });
   }
-})()
+})();
 
 // Frontpage specific
 const isFrontpage = window.location.pathname === "/";
