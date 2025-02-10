@@ -14,25 +14,30 @@ using Microsoft.AspNetCore.Identity;
 using devjamin.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace devjamin.Controllers
 {
     public class SystemInitController : IHostedService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
 
         public SystemInitController(
-            UserManager<ApplicationUser> userManager,
+            IServiceProvider serviceProvider,
             IConfiguration configuration)
         {
-            _userManager = userManager;
+            _serviceProvider = serviceProvider;
             _configuration = configuration;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            // Read admin details from configuration or environment variables
+            // Create a new scope to resolve scoped services
+            using var scope = _serviceProvider.CreateScope();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            // Read admin details from configuration
             var adminEmail = _configuration["AdminUser:Email"];
             var adminUsername = _configuration["AdminUser:UserName"];
             var adminPassword = _configuration["AdminUser:Password"];
@@ -44,7 +49,7 @@ namespace devjamin.Controllers
                 return;
             }
 
-            var userExists = await _userManager.FindByEmailAsync(adminEmail);
+            var userExists = await userManager.FindByEmailAsync(adminEmail);
             if (userExists == null)
             {
                 ApplicationUser user = new()
@@ -55,7 +60,7 @@ namespace devjamin.Controllers
                     ProfilePicturePath = "/images/default-profile-picture.png"
                 };
 
-                var result = await _userManager.CreateAsync(user, adminPassword);
+                var result = await userManager.CreateAsync(user, adminPassword);
                 if (result.Succeeded)
                 {
                     Console.WriteLine("Admin user created successfully.");
