@@ -79,9 +79,9 @@ body.hideAdminMenu {
     Main
 */
 .main {
-    padding: 80px;
     max-height: 100dvh;
     overflow-y: auto;
+    padding-bottom: 80px;
 }
 
 /*
@@ -92,6 +92,7 @@ body.hideAdminMenu {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    padding: 80px 80px 0 80px;
 }
 
 .top__title {
@@ -108,24 +109,46 @@ body.hideAdminMenu {
     padding: 10px 20px;
     border-radius: 22px;
     text-decoration: none;
-    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
+}
+
+#createTagBtn {
+    min-width: 130px;
 }
 
 .top__createBtn:hover {
     background-color: #fff;
     color: #160042;
+    transition: background-color 0.3s, color 0.3s;
 }
+
+.blogs {
+    padding: 0;
+    align-items: flex-start;
+}
+
 
 .blogs__title {
     font-size: 18px;
     font-weight: 500;
     margin-bottom: 16px;
+    padding: 0;
+    margin-left: 80px;
 }
 
 .blogs__container {
     display: flex;
     gap: 16px;
     overflow-x: auto;
+    padding: 0;
+}
+
+.blogs__container .blog:first-child {
+    margin-left: 80px;
+}
+
+.blogs__container .blog:last-child {
+    margin-right: 80px;
 }
 
 #activeBlogs {
@@ -137,7 +160,9 @@ body.hideAdminMenu {
 */
 .blog {
     position: relative;
-    min-width: 400px;
+    min-width: 360px;
+    max-width: 360px;
+    width: 100%;
     background-color: #fff;
     border-radius: 20px;
     display: flex;
@@ -145,7 +170,7 @@ body.hideAdminMenu {
     filter: drop-shadow(0 1px 1px #0000000d);
     border: 1px solid #f3f5fb;
     text-decoration: none;
-    height: 100%;
+    height: 518px;
 }
 
 .blog__goToLink {
@@ -183,13 +208,14 @@ body.hideAdminMenu {
     font-size: 32px;
     font-family: "Courier New", Courier, monospace;
     font-weight: 900;
-    margin-bottom: 32px;
+    margin: 80px 80px 32px 80px;
 }
 
 .ceForm {
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding: 0 80px 0 80px;
 }
 
 .ceForm__groupContainer {
@@ -268,11 +294,12 @@ body.hideAdminMenu {
     background-color: #5d53a2;
     border: 1px solid #5d53a2;
     color: #fff;
-    padding: 16px 64px;
+    padding: 16px 0;
+    width: 200px;
     border-radius: 16px;
     cursor: pointer;
     margin-left: auto;
-    transition: background-color 0.3s, color 0.3s;
+    text-align: center;
 }
 
 .ceForm__btn--small {
@@ -286,6 +313,7 @@ body.hideAdminMenu {
     color: #5d53a2;
     border: 1px solid #5d53a2;
     outline: none;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .ceForm__btn--danger {
@@ -299,6 +327,7 @@ body.hideAdminMenu {
     color: #ff4d4f;
     border: 1px solid #ff4d4f;
     outline: none;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .ceForm__bottom {
@@ -502,6 +531,7 @@ body.hideAdminMenu {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 16px;
+    padding: 0 80px;
 }
 
 /* Tag card */

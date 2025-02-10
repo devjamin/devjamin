@@ -753,13 +753,28 @@ h6 {
 
 /* Notes card */
 .timeline__card {
-    list-style: disc;
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
     border: 1px solid #f3f5fb;
     border-radius: 8px;
     padding: 32px 32px 32px 48px;
-    font-size: clamp(14px, 2.5vw, 18px);
 }
+
+.timeline__card h3 {
+    font-size: clamp(16px, 2.5vw, 18px);
+    font-weight: 900;
+    font-family: "Courier New", Courier, monospace;
+    margin-bottom: 16px;
+}
+
+.timeline__card ul {
+    list-style: disc;
+    font-size: clamp(14px, 2.5vw, 16px);
+}
+
+.timeline__card ul li:not(:last-child) {
+    margin-bottom: 4px;
+}
+
 
 /*
     Contact
