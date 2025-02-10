@@ -2,12 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using devjamin.Models;
 using devjamin.Services;
 using AspNetCoreRateLimit;
+using devjamin.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
 // Add database context
+
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
@@ -19,6 +21,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedEmail = false;
 })
 .AddEntityFrameworkStores<BlogDbContext>();
+
+// Create admin user
+builder.Services.AddHostedService<SystemInitController>();
 
 // Add AWS S3 service
 builder.Services.AddAWSService<Amazon.S3.IAmazonS3>(new Amazon.Extensions.NETCore.Setup.AWSOptions

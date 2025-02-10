@@ -12,43 +12,73 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using devjamin.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace devjamin.Controllers
 {
-    [Route("SystemInit")]
-    public class SystemInitController(UserManager<ApplicationUser> userManager) : Controller
+    public class SystemInitController : IHostedService
     {
-        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IConfiguration _configuration;
 
-        [HttpPost]
-        [Route("CreateAdminUser")]
-        public async Task<IActionResult> CreateAdminUser([FromBody] CreateAdminUserViewModel model)
+        public SystemInitController(
+            UserManager<ApplicationUser> userManager,
+            IConfiguration configuration)
         {
-            if (ModelState.IsValid)
+            _userManager = userManager;
+            _configuration = configuration;
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            // Read admin details from configuration or environment variables
+            var adminEmail = _configuration["AdminUser:Email"];
+            var adminUsername = _configuration["AdminUser:UserName"];
+            var adminPassword = _configuration["AdminUser:Password"];
+            var adminFullName = _configuration["AdminUser:FullName"];
+
+            if (string.IsNullOrEmpty(adminEmail) || string.IsNullOrEmpty(adminPassword))
             {
-                var userExists = await _userManager.FindByEmailAsync(model.Email);
-                if (userExists == null)
+                Console.WriteLine("Admin user configuration not found. Skipping admin user creation.");
+                return;
+            }
+
+            var userExists = await _userManager.FindByEmailAsync(adminEmail);
+            if (userExists == null)
+            {
+                ApplicationUser user = new()
                 {
-                    ApplicationUser user = new()
+                    Email = adminEmail,
+                    UserName = adminUsername,
+                    FullName = adminFullName,
+                    ProfilePicturePath = "/images/default-profile-picture.png"
+                };
+
+                var result = await _userManager.CreateAsync(user, adminPassword);
+                if (result.Succeeded)
+                {
+                    Console.WriteLine("Admin user created successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to create admin user:");
+                    foreach (var error in result.Errors)
                     {
-                        Email = model.Email,
-                        UserName = model.UserName,
-                        FullName = model.FullName,
-                        ProfilePicturePath = model.ProfilePicturePath
-                    };
-                    var result = await _userManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
-                    {
-                        return Ok("Admin user created successfully.");
-                    }
-                    else
-                    {
-                        return BadRequest(result.Errors);
+                        Console.WriteLine($"- {error.Description}");
                     }
                 }
-                return BadRequest("User already exists.");
             }
-            return BadRequest("Invalid payload.");
+            else
+            {
+                Console.WriteLine("Admin user already exists.");
+            }
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 }
+
