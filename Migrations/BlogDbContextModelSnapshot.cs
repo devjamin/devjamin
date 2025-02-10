@@ -358,6 +358,31 @@ namespace devjamin.Migrations
                     b.ToTable("BlogPosts");
                 });
 
+            modelBuilder.Entity("devjamin.Models.BlogPostSlugHistory", b =>
+                {
+                    b.Property<int>("BlogPostSlugHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BlogPostSlugHistoryId"));
+
+                    b.Property<int>("BlogPostId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("OldSlug")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("BlogPostSlugHistoryId");
+
+                    b.HasIndex("BlogPostId");
+
+                    b.ToTable("BlogPostSlugHistory");
+                });
+
             modelBuilder.Entity("BlogPostBlogTag", b =>
                 {
                     b.HasOne("devjamin.Models.BlogPost", null)
@@ -446,9 +471,22 @@ namespace devjamin.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("devjamin.Models.BlogPostSlugHistory", b =>
+                {
+                    b.HasOne("devjamin.Models.BlogPost", "BlogPost")
+                        .WithMany("SlugHistory")
+                        .HasForeignKey("BlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BlogPost");
+                });
+
             modelBuilder.Entity("devjamin.Models.BlogPost", b =>
                 {
                     b.Navigation("Media");
+
+                    b.Navigation("SlugHistory");
                 });
 #pragma warning restore 612, 618
         }

@@ -327,9 +327,9 @@ namespace devjamin.Controllers
         // POST: Admin/Articles/Edit/{BlogPostId}
         [HttpPost("Articles/Edit/{BlogPostId:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int blogPostId, BlogPostCreateEditViewModel BlogPostCreateEditViewModel)
+        public async Task<IActionResult> Edit(int blogPostId, BlogPostCreateEditViewModel model)
         {
-            if (blogPostId != BlogPostCreateEditViewModel.BlogPostId) // From hidden input in form
+            if (blogPostId != model.BlogPostId)
             {
                 return NotFound();
             }
@@ -339,25 +339,38 @@ namespace devjamin.Controllers
                 var blogPost = await _context.BlogPosts
                     .Include(p => p.Tags)
                     .FirstOrDefaultAsync(p => p.BlogPostId == blogPostId);
+
                 if (blogPost == null)
                 {
                     return NotFound();
                 }
 
+                // If slug has changed, save the old one to history
+                if (blogPost.Slug != model.Slug)
+                {
+                    var slugHistory = new BlogPostSlugHistory
+                    {
+                        OldSlug = blogPost.Slug,
+                        BlogPostId = blogPost.BlogPostId,
+                        CreatedDate = DateTime.UtcNow
+                    };
+                    _context.BlogPostSlugHistory.Add(slugHistory);
+                }
+
                 // Update blog post with new data
-                blogPost.Title = BlogPostCreateEditViewModel.Title;
-                blogPost.Slug = BlogPostCreateEditViewModel.Slug;
-                blogPost.Description = BlogPostCreateEditViewModel.Description;
-                blogPost.Content = BlogPostCreateEditViewModel.Content;
+                blogPost.Title = model.Title;
+                blogPost.Slug = model.Slug;
+                blogPost.Description = model.Description;
+                blogPost.Content = model.Content;
                 blogPost.EditedDate = DateTime.UtcNow;
-                blogPost.IsPublished = BlogPostCreateEditViewModel.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
+                blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
 
                 // Update tags
-                if (BlogPostCreateEditViewModel.SelectedTagIds != null)
+                if (model.SelectedTagIds != null)
                 {
                     blogPost.Tags.Clear(); // Remove existing tags
                     var selectedTags = await _context.BlogTags
-                                        .Where(t => BlogPostCreateEditViewModel.SelectedTagIds.Contains(t.BlogTagId))
+                                        .Where(t => model.SelectedTagIds.Contains(t.BlogTagId))
                                         .ToListAsync(); // Fetch the tags to be added
                     foreach (var tag in selectedTags)
                     {
@@ -391,7 +404,7 @@ namespace devjamin.Controllers
                 return Redirect("/Admin/Articles");
             }
 
-            return View("~/Views/Admin/Articles/Edit.cshtml", BlogPostCreateEditViewModel);
+            return View("~/Views/Admin/Articles/Edit.cshtml", model);
         }
 
         // GET: Admin/Articles/Delete/{BlogPostId}

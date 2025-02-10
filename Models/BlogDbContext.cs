@@ -8,6 +8,7 @@ namespace devjamin.Models
 		public DbSet<BlogPost> BlogPosts { get; set; }
 		public DbSet<BlogMedia> BlogMedia { get; set; }
 		public DbSet<BlogTag> BlogTags { get; set; }
+		public DbSet<BlogPostSlugHistory> BlogPostSlugHistory { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{

@@ -42,5 +42,8 @@ namespace devjamin.Models
 
         // Navigation property for related tags
         public virtual ICollection<BlogTag> Tags { get; set; } = [];
+
+        // Add this property to the BlogPost class
+        public virtual ICollection<BlogPostSlugHistory> SlugHistory { get; set; } = [];
     }
 }

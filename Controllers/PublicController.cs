@@ -108,24 +108,46 @@ namespace devjamin.Controllers
         [HttpGet("/Article/{slug}")]
         public async Task<IActionResult> GetSpecificBlog(string slug)
         {
+            // First try to find the blog post with current slug
+            var blogPost = await _context.BlogPosts
+                .Where(bp => bp.Slug == slug && (bp.IsPublished || (User != null && User.Identity != null && User.Identity.IsAuthenticated)))
+                .FirstOrDefaultAsync();
+
+            // If not found, check slug history
+            if (blogPost == null)
+            {
+                var slugHistory = await _context.BlogPostSlugHistory
+                    .Include(sh => sh.BlogPost)
+                    .FirstOrDefaultAsync(sh => sh.OldSlug == slug);
+
+                if (slugHistory != null && slugHistory.BlogPost.IsPublished)
+                {
+                    // Permanent redirect to the new slug
+                    return RedirectPermanent($"/Article/{slugHistory.BlogPost.Slug}");
+                }
+
+                return NotFound();
+            }
+
+            // Rest of your existing GetSpecificBlog logic...
             var blogPostViewModel = await _context.BlogPosts
-              .Where(bp => bp.Slug == slug && (bp.IsPublished || (User != null && User.Identity != null && User.Identity.IsAuthenticated)))
-              .Include(bp => bp.Author)
-              .Include(bp => bp.Media)
-              .Select(bp => new BlogPostViewModel
-              {
-                  BlogPostId = bp.BlogPostId,
-                  Title = bp.Title,
-                  Slug = bp.Slug,
-                  Description = bp.Description,
-                  CreatedDate = bp.CreatedDate,
-                  Content = bp.Content,
-                  AuthorFullName = bp.Author!.FullName, // Author is always present
-                  AuthorProfilePicturePath = bp.Author.ProfilePicturePath,
-                  ReadTimeMinuteEstimate = CalculateReadTime(bp.Content),
-                  CoverImagePath = bp.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath,
-              })
-              .FirstOrDefaultAsync();
+                .Where(bp => bp.BlogPostId == blogPost.BlogPostId)
+                .Include(bp => bp.Author)
+                .Include(bp => bp.Media)
+                .Select(bp => new BlogPostViewModel
+                {
+                    BlogPostId = bp.BlogPostId,
+                    Title = bp.Title,
+                    Slug = bp.Slug,
+                    Description = bp.Description,
+                    CreatedDate = bp.CreatedDate,
+                    Content = bp.Content,
+                    AuthorFullName = bp.Author!.FullName, // Author is always present
+                    AuthorProfilePicturePath = bp.Author.ProfilePicturePath,
+                    ReadTimeMinuteEstimate = CalculateReadTime(bp.Content),
+                    CoverImagePath = bp.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath,
+                })
+                .FirstOrDefaultAsync();
 
             // Add CDN base path
             ViewData["CDNBASEPATH"] = _configuration.GetValue<string>("EnvironmentVariables:CDNBASEPATH");
