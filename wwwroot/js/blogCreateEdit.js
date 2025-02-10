@@ -509,12 +509,14 @@ document.addEventListener(
     false
 );
 
-// Generate slug on title change and replace in slug input (lowercases and replaces spaces with hyphens)
+// Generate URL-friendly slug from title
 const titleInput = document.getElementById("Title");
 const slugInput = document.getElementById("Slug");
-
 titleInput.oninput = function () {
     const title = titleInput.value;
-    const slug = title.replace(/ /g, "-");
+    const slug = title
+        .replace(/[^a-zA-Z0-9]+/g, '-') // Replace any non-alphanumeric characters with a single hyphen
+        .replace(/^-+|-+$/g, '') // Remove leading and trailing hyphens
+        .trim(); // Remove any whitespace
     slugInput.value = slug;
 };

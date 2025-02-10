@@ -47,8 +47,14 @@
 </form>
 
 <script>
-    // Slugify tag name
+    // Generate URL-friendly slug from tag name
     document.getElementById('Name').addEventListener('input', function () {
-        document.getElementById('Slug').value = this.value.toLowerCase().replace(/ /g, '-');
+        const name = this.value;
+        const slug = name
+            .toLowerCase()
+            .replace(/[^a-zA-Z0-9]+/g, '-') // Replace any non-alphanumeric characters with a single hyphen
+            .replace(/^-+|-+$/g, '') // Remove leading and trailing hyphens
+            .trim(); // Remove any whitespace
+        document.getElementById('Slug').value = slug;
     });
 </script>

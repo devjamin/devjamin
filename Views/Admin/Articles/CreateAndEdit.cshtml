@@ -1,6 +1,6 @@
 @model devjamin.Models.BlogPostCreateEditViewModel
 @{
-    ViewData["Title"] = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create Blog" : "Edit Blog";
+    ViewData["Title"] = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create Article" : "Edit Article";
     var formAction = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create" : "Edit";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
