@@ -3,6 +3,8 @@ using devjamin.Models;
 using devjamin.Services;
 using AspNetCoreRateLimit;
 using devjamin.Controllers;
+using Microsoft.AspNetCore.ResponseCompression;
+using WebMarkupMin.AspNetCore6;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +63,56 @@ builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection(
 builder.Services.AddInMemoryRateLimiting();
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
+// Add compression services
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+        options.Providers.Add<BrotliCompressionProvider>();
+        options.Providers.Add<GzipCompressionProvider>();
+    });
+
+    // Configure compression level
+    builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+    {
+        options.Level = System.IO.Compression.CompressionLevel.Optimal;
+    });
+
+    builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+    {
+        options.Level = System.IO.Compression.CompressionLevel.Optimal;
+    });
+}
+
+// Add WebMarkupMin services
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddWebMarkupMin(options =>
+    {
+        options.AllowMinificationInDevelopmentEnvironment = true;
+        options.AllowCompressionInDevelopmentEnvironment = true;
+    })
+    .AddHtmlMinification(options =>
+    {
+        options.MinificationSettings.RemoveRedundantAttributes = true;
+        options.MinificationSettings.RemoveHttpProtocolFromAttributes = true;
+        options.MinificationSettings.RemoveHttpsProtocolFromAttributes = true;
+        options.MinificationSettings.MinifyEmbeddedCssCode = true;
+        options.MinificationSettings.MinifyInlineCssCode = true;
+        options.MinificationSettings.MinifyEmbeddedJsCode = true;
+        options.MinificationSettings.MinifyInlineJsCode = true;
+        options.MinificationSettings.RemoveOptionalEndTags = false;
+    });
+}
+
 var app = builder.Build();
+
+// Add compression middleware
+if (!app.Environment.IsDevelopment())
+{
+    app.UseResponseCompression();
+}
 
 app.UseResponseCaching();
 
@@ -93,6 +144,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Add WebMarkupMin middleware (add this after UseRouting but before UseEndpoints)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseWebMarkupMin();
+}
 
 app.MapControllerRoute(
     name: "default",
