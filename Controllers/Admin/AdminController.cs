@@ -153,6 +153,7 @@ namespace devjamin.Controllers
                 Title = "",
                 Slug = "",
                 Description = "",
+                MetaDescription = "",
                 Content = "",
                 AuthorId = currentUser.Id,
                 CreatedDate = DateNow,
@@ -221,6 +222,7 @@ namespace devjamin.Controllers
                 blogPost.Title = model.Title;
                 blogPost.Slug = model.Slug;
                 blogPost.Description = model.Description;
+                blogPost.MetaDescription = model.MetaDescription;
                 blogPost.Content = model.Content;
                 blogPost.EditedDate = DateTime.UtcNow;
                 blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
@@ -300,7 +302,6 @@ namespace devjamin.Controllers
 
             var selectedTagIds = new List<int>(blogPost.Tags.Select(t => t.BlogTagId));
 
-
             var viewModel = new BlogPostCreateEditViewModel
             {
                 Method = BlogPostCreateEditMethodViewModel.Edit,
@@ -308,6 +309,7 @@ namespace devjamin.Controllers
                 Title = blogPost.Title,
                 Slug = blogPost.Slug,
                 Description = blogPost.Description,
+                MetaDescription = blogPost.MetaDescription,
                 Content = blogPost.Content,
                 IsPublished = blogPost.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
                 Media = blogPost.Media.Select(m => new BlogMediaViewModel
@@ -361,6 +363,7 @@ namespace devjamin.Controllers
                 blogPost.Title = model.Title;
                 blogPost.Slug = model.Slug;
                 blogPost.Description = model.Description;
+                blogPost.MetaDescription = model.MetaDescription;
                 blogPost.Content = model.Content;
                 blogPost.EditedDate = DateTime.UtcNow;
                 blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
@@ -404,7 +407,7 @@ namespace devjamin.Controllers
                 return Redirect("/Admin/Articles");
             }
 
-            return View("~/Views/Admin/Articles/Edit.cshtml", model);
+            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", model);
         }
 
         // GET: Admin/Articles/Delete/{BlogPostId}

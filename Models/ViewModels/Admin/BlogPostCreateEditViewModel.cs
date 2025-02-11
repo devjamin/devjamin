@@ -29,6 +29,10 @@ namespace devjamin.Models
         [Required(ErrorMessage = "Please enter a description.")]
         public string Description { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Please enter a meta description.")]
+        [MaxLength(160, ErrorMessage = "Meta description cannot exceed 160 characters.")]
+        public string MetaDescription { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Please enter the content.")]
         public string Content { get; set; } = string.Empty;
 

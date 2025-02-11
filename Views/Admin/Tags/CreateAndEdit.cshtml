@@ -22,16 +22,28 @@
         <div class="ceForm__group">
             <label class="ceForm__label" for="Name">Name</label>
             <input class="ceForm__input" type="text" placeholder="Name" value="@Model.Name" id="Name" name="Name" maxlength="30">
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState["Name"]?.Errors.Count > 0)
+            {
+                <span class="ceForm__error" asp-validation-for="Name"></span>
+            }
         </div>
         <div class="ceForm__group">
             <label class="ceForm__label" for="Slug">Slug</label>
             <input tabindex="-1" class="ceForm__input" type="text" placeholder="Slug" value="@Model.Slug" id="Slug" name="Slug" maxlength="35">
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState["Slug"]?.Errors.Count > 0)
+            {
+                <span class="ceForm__error" asp-validation-for="Slug"></span>
+            }
         </div>
     </div>
     <div class="ceForm__group">
         <label class="ceForm__label" for="Description">Description</label>
         <textarea class="ceForm__textarea" id="Description" name="Description" cols="30" placeholder="Description" maxlength="255"
             rows="10">@Model.Description</textarea>
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState["Description"]?.Errors.Count > 0)
+        {
+            <span class="ceForm__error" asp-validation-for="Description"></span>
+        }
     </div>
     <div class="ceForm__bottom">
         <div class="ceForm__btnWrapper">
@@ -55,5 +67,24 @@
             .replace(/^-+|-+$/g, '') // Remove leading and trailing hyphens
             .trim(); // Remove any whitespace
         document.getElementById('Slug').value = slug;
+    });
+
+    // Remove validation errors on input
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all inputs and textareas
+        const formInputs = document.querySelectorAll('.ceForm__input, .ceForm__textarea');
+        
+        formInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                // Find the associated error span
+                const errorSpan = this.nextElementSibling;
+                if (errorSpan && errorSpan.classList.contains('ceForm__error')) {
+                    // Remove the error span completely
+                    errorSpan.remove();
+                    // Remove validation error class if it exists
+                    this.classList.remove('input-validation-error');
+                }
+            });
+        });
     });
 </script>

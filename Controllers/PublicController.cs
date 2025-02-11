@@ -140,9 +140,10 @@ namespace devjamin.Controllers
                     Title = bp.Title,
                     Slug = bp.Slug,
                     Description = bp.Description,
+                    MetaDescription = bp.MetaDescription,
                     CreatedDate = bp.CreatedDate,
                     Content = bp.Content,
-                    AuthorFullName = bp.Author!.FullName, // Author is always present
+                    AuthorFullName = bp.Author!.FullName,
                     AuthorProfilePicturePath = bp.Author.ProfilePicturePath,
                     ReadTimeMinuteEstimate = CalculateReadTime(bp.Content),
                     CoverImagePath = bp.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath,

@@ -17,6 +17,9 @@ namespace devjamin.Models
 
         public required string Description { get; set; }
 
+        [MaxLength(160)]
+        public required string MetaDescription { get; set; }
+
         [DataType(DataType.MultilineText)]
         public required string Content { get; set; }
 
@@ -43,7 +46,6 @@ namespace devjamin.Models
         // Navigation property for related tags
         public virtual ICollection<BlogTag> Tags { get; set; } = [];
 
-        // Add this property to the BlogPost class
         public virtual ICollection<BlogPostSlugHistory> SlugHistory { get; set; } = [];
     }
 }

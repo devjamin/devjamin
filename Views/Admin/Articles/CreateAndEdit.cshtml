@@ -45,16 +45,38 @@
         <div class="ceForm__group">
             <label class="ceForm__label" for="Title">Title</label>
             <input class="ceForm__input" type="text" placeholder="Title" value="@Model.Title" id="Title" name="Title">
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState["Title"]?.Errors.Count > 0)
+            {
+                <span class="ceForm__error" asp-validation-for="Title"></span>
+            }
         </div>
         <div class="ceForm__group">
             <label class="ceForm__label" for="Slug">Slug</label>
             <input tabindex="-1" class="ceForm__input" type="text" placeholder="Slug" value="@Model.Slug" id="Slug" name="Slug">
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState["Slug"]?.Errors.Count > 0)
+            {
+                <span class="ceForm__error" asp-validation-for="Slug"></span>
+            }
         </div>
     </div>
     <div class="ceForm__group">
         <label class="ceForm__label" for="Description">Description</label>
         <textarea class="ceForm__textarea" id="Description" name="Description" cols="30" placeholder="Description"
             rows="10">@Model.Description</textarea>
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState["Description"]?.Errors.Count > 0)
+        {
+            <span class="ceForm__error" asp-validation-for="Description"></span>
+        }
+    </div>
+    <div class="ceForm__group">
+        <label class="ceForm__label" for="MetaDescription">Meta Description</label>
+        <textarea class="ceForm__textarea ceForm__textarea--small" id="MetaDescription" name="MetaDescription" cols="20" 
+            placeholder="Meta description for search engines (max 160 characters)" 
+            maxlength="160" rows="2">@Model.MetaDescription</textarea>
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState["MetaDescription"]?.Errors.Count > 0)
+        {
+            <span class="ceForm__error" asp-validation-for="MetaDescription"></span>
+        }
     </div>
     <div class="ceForm__group">
         <label class="ceForm__label" for="tags">Tags</label>

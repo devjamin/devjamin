@@ -256,6 +256,10 @@ body.hideAdminMenu {
     padding-top: 16px;
 }
 
+.ceForm__textarea--small {
+    height: 80px;
+}
+
 /* Div Quill inits inside */
 .ceForm__editor {
     background-color: #fff;
@@ -668,4 +672,27 @@ body.hideAdminMenu {
 
 .custom-context-menu ul li:hover {
     background-color: #f0f0f0;
+}
+
+.ceForm__hint {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.ceForm__error {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+.ceForm__input.input-validation-error,
+.ceForm__textarea.input-validation-error {
+    border-color: #dc3545;
+}
+
+.ceForm__input:focus.input-validation-error,
+.ceForm__textarea:focus.input-validation-error {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
 }

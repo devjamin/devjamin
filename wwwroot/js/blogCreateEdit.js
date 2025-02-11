@@ -520,3 +520,19 @@ titleInput.oninput = function () {
         .trim(); // Remove any whitespace
     slugInput.value = slug;
 };
+
+// Remove validation errors on input
+document.addEventListener('DOMContentLoaded', function () {
+    // Get all inputs and textareas
+    const formInputs = document.querySelectorAll('.ceForm__input, .ceForm__textarea');
+
+    formInputs.forEach(input => {
+        input.addEventListener('input', function () {
+            // Find associated error span
+            const errorSpan = this.nextElementSibling;
+            if (errorSpan && errorSpan.classList.contains('ceForm__error')) {
+                errorSpan.remove();
+            }
+        });
+    });
+});

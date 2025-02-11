@@ -343,6 +343,11 @@ namespace devjamin.Migrations
                     b.Property<bool>("IsPublished")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("MetaDescription")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("varchar(160)");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("longtext");
