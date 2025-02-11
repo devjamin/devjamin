@@ -5,6 +5,7 @@ using AspNetCoreRateLimit;
 using devjamin.Controllers;
 using Microsoft.AspNetCore.ResponseCompression;
 using WebMarkupMin.AspNetCore6;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -137,7 +138,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        const int durationInSeconds = 60 * 60 * 24 * 365; // 1 year
+        ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+            $"public, max-age={durationInSeconds}";
+    }
+});
 
 app.UseRouting();
 
