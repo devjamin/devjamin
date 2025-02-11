@@ -51,7 +51,6 @@
     document.getElementById('Name').addEventListener('input', function () {
         const name = this.value;
         const slug = name
-            .toLowerCase()
             .replace(/[^a-zA-Z0-9]+/g, '-') // Replace any non-alphanumeric characters with a single hyphen
             .replace(/^-+|-+$/g, '') // Remove leading and trailing hyphens
             .trim(); // Remove any whitespace

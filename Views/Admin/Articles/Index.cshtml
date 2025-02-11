@@ -78,7 +78,7 @@ else
                 @foreach (var blogCard in Model.NonPublishedBlogs)
                 {
                     <article class="blog">
-                        <a class="blog__editLink" href="/Admin/Blogs/Edit/@blogCard.BlogPostId">
+                        <a class="blog__editLink" href="/Admin/Articles/Edit/@blogCard.BlogPostId">
                             <svg width="24px" height="24px" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
                                 stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -106,7 +106,7 @@ else
                                 <li class="blog__tag">Uncategorized</li>
                             }
                         </ul>
-                        <a class="blog__goToLink" target="_blank" href="/Blog/@blogCard.Slug">
+                        <a class="blog__goToLink" target="_blank" href="/Article/@blogCard.Slug">
                             <h3 class="blog__title">@blogCard.Title</h3>
                         </a>
                         <p class="blog__description">@blogCard.Description</p>
