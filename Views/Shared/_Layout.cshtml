@@ -19,6 +19,36 @@
 </head>
 
 <body>
+    <script>
+        (() => {
+            // Check dark mode preference or from local storage
+            const darkModePreference = localStorage.getItem("darkMode");
+
+            // Enable based on previous selection
+            if (darkModePreference) {
+                if (darkModePreference === "1") {
+                    document.body.classList.add("dark");
+                }
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add("dark");
+                localStorage.setItem("darkMode", "1");
+            }
+        })();
+
+        function toggleDarkMode() {
+            const themeToggle = document.querySelector(".navigation__themeToggle");
+
+            if (document.body.classList.contains("dark")) {
+                document.body.classList.remove("dark");
+                themeToggle.checked = false;
+                localStorage.setItem("darkMode", "0");
+            } else {
+                document.body.classList.add("dark");
+                themeToggle.checked = true;
+                localStorage.setItem("darkMode", "1");
+            }
+        }
+    </script>
     <div id="navigationMenuOpenOverlay"></div>
     <header>
         <nav class="navigation">
@@ -32,7 +62,11 @@
                 <li class="navigation__item">
                     <a class="navigation__link" asp-controller="Public" asp-action="Articles">Articles</a>
                 </li>
+                <li class="navigation__item" id="mobileContact">
+                    <a class="navigation__link" href="/#contact">Contact</a>
+                </li>
             </ul>
+            <input id="toggleTheme" class="navigation__themeToggle" type="checkbox">
             <a class="navigation__contact" asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact</a>
             <button id="menuToggle" class="navigation__menuToggle" title="Toggle navigation menu">
                 <svg class="navigation__menuSvg">
@@ -43,6 +77,31 @@
             </button>
         </nav>
     </header>
+    <script>
+        // Theme toggle
+        const themeToggle = document.querySelector(".navigation__themeToggle");
+        themeToggle.addEventListener("click", () => {
+            toggleDarkMode();
+        });
+        if (document.body.classList.contains("dark")) {
+            themeToggle.checked = true;
+        }
+
+        // Mobile contact
+        // if on home page hide menu
+        if (window.location.pathname === "/") {
+            const mobileContact = document.getElementById("mobileContact");
+            mobileContact.addEventListener("click", (e) => {
+                e.preventDefault();
+                navigation.closeMenu();
+                setTimeout(() => {
+                    // smooth scroll to contact
+                    const contact = document.getElementById("contact");
+                    contact.scrollIntoView({ behavior: "smooth" });
+                }, 300);
+            });
+        }
+    </script>
     <div>
         <main role="main">
             @RenderBody()

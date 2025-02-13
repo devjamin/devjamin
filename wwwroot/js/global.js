@@ -98,7 +98,7 @@ class Navigation {
   }
 }
 
-new Navigation()
+var navigation = new Navigation()
 
 // Prevent's hamburger line transition on load
 window.addEventListener("load", function () {
