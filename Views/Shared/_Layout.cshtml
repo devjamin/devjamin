@@ -66,7 +66,9 @@
                     <a class="navigation__link" href="/#contact">Contact</a>
                 </li>
             </ul>
-            <input id="toggleTheme" class="navigation__themeToggle" type="checkbox">
+            <label for="toggleTheme" class="navigation__themeToggleLabel">
+                <input id="toggleTheme" class="navigation__themeToggle" type="checkbox">
+            </label>
             <a class="navigation__contact" asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact</a>
             <button id="menuToggle" class="navigation__menuToggle" title="Toggle navigation menu">
                 <svg class="navigation__menuSvg">
@@ -80,7 +82,7 @@
     <script>
         // Theme toggle
         const themeToggle = document.querySelector(".navigation__themeToggle");
-        themeToggle.addEventListener("click", () => {
+        themeToggle.addEventListener("change", () => {
             toggleDarkMode();
         });
         if (document.body.classList.contains("dark")) {

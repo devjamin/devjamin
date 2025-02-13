@@ -939,10 +939,14 @@ label {
     cursor: default;
 }
 
+#mobileContact {
+    display: none;
+}
+
 /* Shown on success or failure */
 .contact__formFeedbackTxt {
     display: none;
-    color: #333;
+    color: var(--primary-txt-color);
     padding: 10px;
     margin-top: 24px;
     border-left: 3px solid #5d53a2;
@@ -962,6 +966,10 @@ label {
         top: 0;
         background-color: var(--bg-color);
         z-index: 1;
+    }
+
+    #mobileContact {
+        display: block;
     }
 
     .navigation__menuToggle {
@@ -1446,9 +1454,18 @@ label {
     Dark mode toggle
 */
 
+.navigation__themeToggleLabel {
+    margin-left: auto;
+    display: flex;
+    margin-right: 16px;
+    padding: 8px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
 .navigation__themeToggle {
     --size: 1.5rem;
-    margin-right: 24px;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -1473,7 +1490,6 @@ label {
 
 .navigation__themeToggle {
     z-index: 1;
-    margin-left: auto;
 }
 
 .navigation__themeToggle:checked~.background {
