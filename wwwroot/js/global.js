@@ -175,3 +175,97 @@ if (isFrontpage) {
   });
 
 }
+
+// Logo animation (waterfall matrix effect on logo left squares)
+class LogoAnimation {
+  constructor(svg) {
+    this.svg = svg;
+    this.originalRects = svg.querySelectorAll("rect:not(.rectClone)");
+    this.cloneRects = svg.querySelectorAll(".rectClone");
+    this.svgHeight = svg.viewBox.baseVal.height;
+    this.animationTimeout = null;
+    this.cloneAnimationTimeout = null;
+    this.isAnimationComplete = false;
+
+    this.init();
+  }
+
+  init() {
+    // Initial reset without transition
+    this.originalRects.forEach(rect => {
+      rect.style.transition = "none";
+      rect.style.transform = "translateY(0)";
+      rect.style.opacity = "1";
+    });
+
+    this.cloneRects.forEach(clone => {
+      clone.style.transition = "none";
+      clone.style.transform = "translateY(-100%)";
+      clone.style.opacity = "1";
+    });
+
+    // Add event listeners
+    this.svg.addEventListener("mouseenter", () => this.animateRects());
+    this.svg.addEventListener("mouseleave", () => this.resetAnimation());
+  }
+
+  resetAnimation() {
+    clearTimeout(this.animationTimeout);
+    clearTimeout(this.cloneAnimationTimeout);
+
+    if (!this.isAnimationComplete) {
+      this.originalRects.forEach(rect => {
+        rect.style.transition = "transform 0.5s ease-out";
+        rect.style.transform = "translateY(0)";
+      });
+
+      this.cloneRects.forEach(clone => {
+        clone.style.transition = "transform 0.5s ease-out";
+        clone.style.transform = "translateY(-100%)";
+      });
+    } else {
+      this.originalRects.forEach(rect => {
+        rect.style.transition = "none";
+        rect.style.transform = "translateY(0)";
+      });
+
+      this.cloneRects.forEach(clone => {
+        clone.style.transition = "none";
+        clone.style.transform = "translateY(-100%)";
+      });
+    }
+
+    this.isAnimationComplete = false;
+  }
+
+  animateRects(delay = 0) {
+    this.resetAnimation();
+    this.isAnimationComplete = false;
+
+    // Force reflow
+    void this.svg.offsetHeight;
+
+    this.animationTimeout = setTimeout(() => {
+      this.originalRects.forEach(rect => {
+        rect.style.transition = "transform 0.5s linear";
+        rect.style.transform = `translateY(${this.svgHeight}px)`;
+      });
+
+      this.cloneAnimationTimeout = setTimeout(() => {
+        this.cloneRects.forEach(clone => {
+          clone.style.transition = "transform 0.5s linear";
+          clone.style.transform = "translateY(0)";
+        });
+
+        setTimeout(() => {
+          this.isAnimationComplete = true;
+        }, 500);
+      }, 50);
+    }, delay);
+  }
+}
+
+// Initialize animations for all SVGs with the logoHoverAnimation class
+document.querySelectorAll(".logoHoverAnimation").forEach(svg => {
+  new LogoAnimation(svg);
+});
