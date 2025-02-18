@@ -695,7 +695,6 @@ label {
 .timeline {
     display: flex;
     flex-direction: column;
-    gap: 32px;
     list-style: none;
     padding: 0;
     overflow: hidden;
@@ -705,25 +704,84 @@ label {
     display: grid;
     grid-template-columns: 170px 1fr;
     gap: 64px;
+    position: relative;
+    margin-bottom: 32px;
 }
 
-/* Hover effect */
-.timeline__item:hover .timeline__date {
-    margin-right: -5px;
+.timeline .timeline__item:last-child {
+    margin-bottom: 0;
 }
 
-.timeline__item:hover .timeline__dateTxt {
-    margin-left: 5px;
+/* Hover effects */
+.timeline__dateTxt {
+    line-height: 1.25;
+    background-color: var(--bg-color);
+    position: relative;
+    display: inline-block;
+    padding: 0 8px;
 }
 
-.timeline__item:hover .timeline__date::after {
+.timeline__dateTxt::before {
     content: "";
     position: absolute;
-    top: 32px;
-    right: 17px;
-    width: 1px;
-    height: 100vh;
-    z-index: -2;
+    width: 200%;
+    height: 1px;
+    background-color: var(--primary-txt-color);
+    right: 0;
+    top: 12px;
+    z-index: -1;
+}
+
+.timeline__item:hover .timeline__dateTxt::before {
+    right: -150%;
+    transition: right 0.3s ease;
+}
+
+.timeline__card {
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    border-radius: 8px;
+    padding: 32px 32px 32px 48px;
+    position: relative;
+    background-color: var(--bg-color);
+}
+
+/* Default border */
+.timeline__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    border: 1px solid var(--secondary-bg-color);
+    pointer-events: none;
+}
+
+/* Hover animation border */
+.timeline__card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    padding: 1px;
+    background: linear-gradient(135deg,
+            var(--primary-txt-color) 0%,
+            transparent 50%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.timeline__item:hover .timeline__card::before {
+    transition: opacity 0.3s ease;
+    opacity: 0.5;
+}
+
+.timeline__item::before {
+    display: none;
 }
 
 .timeline__date {
@@ -740,15 +798,14 @@ label {
     height: 24px;
     border-radius: 24px;
     position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* The white dot inside dot */
-.timeline__dot::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.timeline__dotInner {
     background-color: var(--bg-color);
     width: 6px;
     height: 6px;
@@ -756,34 +813,49 @@ label {
 }
 
 /* A white block around timeline dot to hide line is going through */
-.timeline__dot:last-of-type::before {
+.timeline__dot::before {
     content: "";
     position: absolute;
-    top: -16px;
+    top: -32px;
     background-color: var(--bg-color);
     width: 24px;
-    height: 56px;
-    z-index: -1;
+    height: 32px;
+    transform-origin: bottom;
+}
+
+.timeline__dot::after {
+    content: "";
+    position: absolute;
+    bottom: -32px;
+    background-color: var(--bg-color);
+    width: 24px;
+    height: 32px;
+    transform-origin: top;
+
+}
+
+.timeline__item:hover .timeline__dot::before {
+    top: 0;
+    height: 0;
+    transition: top 0.2s ease, height 0.2s ease;
+}
+
+.timeline__item:hover .timeline__dot::after {
+    bottom: 0;
+    height: 0;
+    transition: bottom 0.2s ease, height 0.2s ease;
 }
 
 /* The line */
 .timeline__date::after {
     content: "";
     position: absolute;
-    top: 32px;
+    top: 5px;
     right: 12px;
     background-color: var(--primary-txt-color);
     width: 1px;
     height: 100vh;
-    z-index: -2;
-}
-
-/* Notes card */
-.timeline__card {
-    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
-    border: 1px solid #f3f5fb;
-    border-radius: 8px;
-    padding: 32px 32px 32px 48px;
+    z-index: -1;
 }
 
 .timeline__card h3 {
@@ -971,6 +1043,7 @@ label {
     #mobileContact {
         display: block;
     }
+
 
     .navigation__menuToggle {
         display: block;
@@ -1168,10 +1241,43 @@ label {
         gap: 32px;
     }
 
+    .timeline__card ul {
+        padding-left: 24px;
+    }
+
     .timeline__date {
         flex-direction: row-reverse;
         justify-content: flex-end;
         gap: 12px;
+    }
+
+    .timeline__dateTxt::before {
+        display: none;
+    }
+
+    .timeline__item:hover .timeline__dateTxt::before {
+        display: none;
+    }
+
+    .timeline__item:hover .timeline__dot::before {
+        top: -32px;
+        height: 32px;
+        transition: none;
+    }
+
+    .timeline__item:hover .timeline__dot::after {
+        bottom: -32px;
+        height: 32px;
+        transition: none;
+    }
+
+    .timeline__item:hover .timeline__card::before {
+        transition: none;
+        opacity: 0;
+    }
+
+    .timeline__card {
+        padding: 32px 16px 32px 32px;
     }
 
     /* The line */
