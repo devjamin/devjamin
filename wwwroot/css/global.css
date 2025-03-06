@@ -332,9 +332,9 @@ label {
     align-items: center;
     justify-content: center;
     margin-left: auto;
-    background-color: #160042;
-    border: 1px solid #160042;
-    color: #fff;
+    background-color: var(--primary-txt-color);
+    border: 1px solid var(--primary-txt-color);
+    color: var(--bg-color);
     padding: 10px 20px;
     border-radius: 22px;
     text-decoration: none;
@@ -345,9 +345,14 @@ label {
 
 .navigation__contact:hover {
     background: #fff;
-    color: #160042;
-    border: 1px solid #160042;
+    color: var(--primary-txt-color);
+    border: 1px solid var(--primary-txt-color);
     transition: background-color 0.3s, color 0.3s;
+}
+
+.dark .navigation__contact:hover {
+    background-color: var(--bg-color);
+    color: var(--primary-txt-color)
 }
 
 /*
@@ -444,6 +449,10 @@ label {
     fill: #160042;
 }
 
+.dark .footer__socialLink:hover svg {
+    fill: var(--primary-txt-color);
+}
+
 /*
     Wrapper for individual sections
 */
@@ -511,6 +520,10 @@ label {
     width: 100%;
 }
 
+.dark .hero__form {
+    border: 1px solid var(--secondary-txt-color);
+}
+
 .hero__input {
     background-color: var(--bg-color);
     height: 100%;
@@ -520,7 +533,7 @@ label {
     padding-left: 20px;
     border-radius: 57px;
     width: 100%;
-    color: #160042;
+    color: var(--primary-txt-color);
     padding-right: 116px;
 }
 
@@ -529,13 +542,13 @@ label {
 }
 
 .hero__input::placeholder {
-    color: #b6b9ce;
+    color: var(--secondary-txt-color);
 }
 
 .hero__contact {
     grid-area: 1/1;
     justify-self: flex-end;
-    background-color: #160042;
+    background-color: var(--primary-txt-color);
     border: none;
     color: #fff;
     border-radius: 30px;
@@ -546,6 +559,10 @@ label {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.dark .hero__contact {
+    color: var(--bg-color);
 }
 
 .hero__contact:hover,
@@ -562,6 +579,10 @@ label {
     font-size: 14px;
     color: var(--primary-txt-color);
     text-decoration: underline;
+}
+
+.hero__more:hover {
+    text-decoration: wavy underline;
 }
 
 /* Image */
@@ -755,6 +776,10 @@ label {
     pointer-events: none;
 }
 
+.dark .timeline__card::after {
+    border: 1px solid var(--tertiary-bg-color);
+}
+
 /* Hover animation border */
 .timeline__card::before {
     content: '';
@@ -778,6 +803,13 @@ label {
 .timeline__item:hover .timeline__card::before {
     transition: opacity 0.3s ease;
     opacity: 0.5;
+}
+
+.dark .timeline__item:hover .timeline__card::before {
+    background: linear-gradient(135deg,
+            var(--primary-txt-color) 0%,
+            transparent 50%);
+    opacity: 1;
 }
 
 .timeline__item::before {
@@ -958,6 +990,11 @@ label {
     outline: 1px solid #5d53a2;
 }
 
+.dark .contact__input:focus,
+.dark .contact__textarea:focus {
+    outline: 1px solid var(--primary-txt-color);
+}
+
 .contact__textarea {
     height: 128px;
     resize: none;
@@ -976,6 +1013,12 @@ label {
     display: flex;
     align-items: center;
     gap: 16px;
+}
+
+.dark .contact__btn {
+    background-color: var(--primary-txt-color);
+    border: 1px solid var(--primary-txt-color);
+    color: var(--bg-color);
 }
 
 .contact__btnSpinner {
@@ -1005,11 +1048,24 @@ label {
     outline: none;
 }
 
+.dark .contact__btn:hover,
+.dark .contact__btn:focus-visible {
+    background-color: var(--secondary-bg-color);
+    color: var(--primary-txt-color);
+    border: 1px solid var(--primary-txt-color);
+}
+
 .contact__btn:disabled {
     background-color: #5d53a2;
     border: 1px solid #5d53a2;
     color: #fff;
     cursor: default;
+}
+
+.dark .contact__btn:disabled {
+    background-color: var(--secondary-bg-color);
+    border: 1px solid var(--primary-txt-color);
+    color: var(--primary-txt-color);
 }
 
 #mobileContact {
@@ -1025,6 +1081,10 @@ label {
     border-left: 3px solid #5d53a2;
     flex-direction: column;
     gap: 8px;
+}
+
+.dark .contact__formFeedbackTxt {
+    border-left: 3px solid var(--primary-txt-color);
 }
 
 .contact__formFeedbackTxt--error {
@@ -1361,6 +1421,10 @@ label {
     fill: #160042;
 }
 
+.dark .share button:hover>svg {
+    fill: var(--primary-txt-color);
+}
+
 .share svg {
     width: 20px;
     height: 20px;
@@ -1369,6 +1433,10 @@ label {
 
 .share a:hover>svg {
     fill: #160042;
+}
+
+.dark .share a:hover>svg {
+    fill: var(--primary-txt-color);
 }
 
 /* Breadcrumb */
@@ -1545,6 +1613,11 @@ label {
     z-index: 10;
 }
 
+.dark .copy-tooltip {
+    background: var(--primary-txt-color);
+    color: var(--bg-color);
+}
+
 /* Arrow */
 .copy-tooltip::after {
     content: "";
@@ -1555,6 +1628,10 @@ label {
     border-width: 6px 6px 0 6px;
     border-style: solid;
     border-color: #160042 transparent transparent transparent;
+}
+
+.dark .copy-tooltip::after {
+    border-color: var(--primary-txt-color) transparent transparent transparent;
 }
 
 /*
