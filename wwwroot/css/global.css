@@ -75,6 +75,7 @@ label {
     src: url("../fonts/Courier_Prime/CourierPrime-Regular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
@@ -82,14 +83,15 @@ label {
     src: url("../fonts/Courier_Prime/CourierPrime-Bold.ttf") format("truetype");
     font-weight: 900;
     font-style: normal;
+    font-display: swap;
 }
 
-/* Montserrat */
 @font-face {
     font-family: "Montserrat";
     src: url("../fonts/Montserrat/Montserrat-Regular.ttf") format("truetype");
     font-weight: 400;
     font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
@@ -97,6 +99,7 @@ label {
     src: url("../fonts/Montserrat/Montserrat-Medium.ttf") format("truetype");
     font-weight: 500;
     font-style: normal;
+    font-display: swap;
 }
 
 /* 
@@ -605,6 +608,9 @@ label {
     width: 100%;
     border-radius: 12px;
     filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    height: 100%;
+    object-fit: cover;
+    font-size: 0;
 }
 
 /*
