@@ -138,22 +138,31 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(new StaticFileOptions
+
+// Apply caching but only in production
+if (app.Environment.IsDevelopment())
 {
-    OnPrepareResponse = ctx =>
+    app.UseStaticFiles();
+}
+else
+{
+    app.UseStaticFiles(new StaticFileOptions
     {
-        const int durationInSeconds = 60 * 60 * 24 * 365; // 1 year
-        ctx.Context.Response.Headers[HeaderNames.CacheControl] =
-            $"public, max-age={durationInSeconds}";
-    }
-});
+        OnPrepareResponse = ctx =>
+        {
+            const int durationInSeconds = 60 * 60 * 24 * 365; // 1 year
+            ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+                $"public, max-age={durationInSeconds}";
+        }
+    });
+}
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Add WebMarkupMin middleware (add this after UseRouting but before UseEndpoints)
+// Add WebMarkupMin middleware in production
 if (!app.Environment.IsDevelopment())
 {
     app.UseWebMarkupMin();
