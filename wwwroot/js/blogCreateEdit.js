@@ -293,7 +293,7 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     const [blot, offset] = quill.getLeaf(range.index);
     if (!blot || blot.statics.blotName !== 'carousel') {
         // If not inside carousel, we want just single image to be added at cursor position
-        quill.insertEmbed(range.index, 'customImage', `https://cdn.devjamin.com/${filePath}`, 'user');
+        quill.insertEmbed(range.index, 'customImage', `https://cdn.devjamin.com/${filePath}/w=800,format=auto`, 'user');
         quill.setSelection(range.index + 1, 0); // Move cursor after the media
 
         checkAndConvertToCarousel(range.index);

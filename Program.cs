@@ -28,18 +28,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 // Create admin user
 builder.Services.AddHostedService<SystemInitController>();
 
-// Add AWS S3 service
-builder.Services.AddAWSService<Amazon.S3.IAmazonS3>(new Amazon.Extensions.NETCore.Setup.AWSOptions
-{
-    Credentials = new Amazon.Runtime.BasicAWSCredentials(
-        builder.Configuration["AWS:AccessKey"],
-        builder.Configuration["AWS:SecretKey"]),
-    Region = Amazon.RegionEndpoint.GetBySystemName(builder.Configuration["AWS:Region"]),
-    DefaultClientConfig = { ServiceURL = builder.Configuration["AWS:ServiceURL"] }
-});
-
 // Cleanup service for draft posts
 builder.Services.AddHostedService<DraftCleanupService>();
+
 // Email service and settings
 builder.Services.Configure<EmailService.EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddSingleton<IEmailService, EmailService>();
@@ -106,6 +97,9 @@ if (!builder.Environment.IsDevelopment())
         options.MinificationSettings.RemoveOptionalEndTags = false;
     });
 }
+
+// Add HTTP client factory
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

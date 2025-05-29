@@ -42,7 +42,7 @@ function dragLeaveHandler(e) {
 async function handleFiles(files) {
     if (!files.length) return;
 
-    const allowedFileTypes = ["image/jpeg", "image/png", "video/mp4"];
+    const allowedFileTypes = ["image/jpeg", "image/png"];
     mediaDraggingOverlay.style.display = "none";
     mediaLoadingOverlay.style.display = "flex";
 
@@ -74,30 +74,25 @@ async function uploadMedia(file, fileType) {
         }
 
         const data = await response.json();
-        addMediaElement(fileType === "video/mp4", data.mediaId, data.filePath);
+        addMediaElement(data.mediaId, data.filePath);
     } catch (error) {
         alert(error.message);
     }
 }
 
-function addMediaElement(isVideo, mediaId, filePath, isCoverImage = false) {
+function addMediaElement(mediaId, filePath, isCoverImage = false) {
     const mediaElement = document.createElement("div");
     mediaElement.classList.add("ceForm__mediaElement");
     mediaElement.dataset.filePath = filePath;
     mediaElement.dataset.mediaId = mediaId;
 
-    const element = document.createElement(isVideo ? "video" : "img");
-    if (isVideo) {
-        element.src = `https://cdn.devjamin.com/${filePath}`;
-        element.controls = true;
-    } else {
-        element.src = `https://cdn.devjamin.com/${filePath}`;
-    }
+    const element = document.createElement("img");
+    element.src = `https://cdn.devjamin.com/${filePath}/w=540,format=auto`;
 
     // Construct mediaElement's innerHTML including the toolbar
-    constructMediaElementInnerHTML(mediaElement, element, isVideo, isCoverImage);
+    constructMediaElementInnerHTML(mediaElement, element, isCoverImage);
 
-    setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePath);
+    setupMediaElementEventListeners(mediaElement, mediaId, filePath);
 
     mediaEl.appendChild(mediaElement);
 
@@ -106,7 +101,7 @@ function addMediaElement(isVideo, mediaId, filePath, isCoverImage = false) {
 }
 
 // Sets up event listeners for the buttons inside a mediaElement
-function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePath) {
+function setupMediaElementEventListeners(mediaElement, mediaId, filePath) {
     const addBtn = mediaElement.querySelector(".ceForm__mediaElementToolbarElement--add");
     const coverBtn = mediaElement.querySelector(".ceForm__mediaElementToolbarElement--cover");
     const deleteBtn = mediaElement.querySelector(".ceForm__mediaElementToolbarElement--delete");
@@ -114,11 +109,11 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
     if (addBtn) {
         addBtn.onclick = function () {
             // Add media to editor at cursor position or inside carousel
-            addMediaAtCursorOrInsideCarousel(filePath, isVideo)
+            addMediaAtCursorOrInsideCarousel(filePath, false)
         };
     }
 
-    if (coverBtn && !isVideo) {
+    if (coverBtn) {
         coverBtn.onclick = async function () {
             const data = {
                 BlogPostId: blogPostId,
@@ -208,14 +203,12 @@ function setupMediaElementEventListeners(mediaElement, isVideo, mediaId, filePat
 }
 
 // Constructs the innerHTML of a mediaElement, including the toolbar.
-function constructMediaElementInnerHTML(mediaElement, element, isVideo, isCoverImage = false) {
-    const coverButtonHTML = !isVideo
-        ? `
+function constructMediaElementInnerHTML(mediaElement, element, isCoverImage = false) {
+    const coverButtonHTML = `
         <button title="${isCoverImage ? "Remove this as blog cover image" : "Make this blog cover image"}" type="button" class="ceForm__mediaElementToolbarElement ceForm__mediaElementToolbarElement--cover ${isCoverImage ? "ceForm__mediaElementToolbarElement--coverActive" : ""}">
           <svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7.234 3.004c-2.652 0-5.234 1.829-5.234 5.177 0 3.725 4.345 7.727 9.303 12.54.194.189.446.283.697.283s.503-.094.697-.283c4.977-4.831 9.303-8.814 9.303-12.54 0-3.353-2.58-5.168-5.229-5.168-1.836 0-3.646.866-4.771 2.554-1.13-1.696-2.935-2.563-4.766-2.563zm0 1.5c1.99.001 3.202 1.353 4.155 2.7.14.198.368.316.611.317.243 0 .471-.117.612-.314.955-1.339 2.19-2.694 4.159-2.694 1.796 0 3.729 1.148 3.729 3.668 0 2.671-2.881 5.673-8.5 11.127-5.454-5.285-8.5-8.389-8.5-11.127 0-1.125.389-2.069 1.124-2.727.673-.604 1.625-.95 2.61-.95z" fill-rule="nonzero"/></svg>
           </button>
-      `
-        : "";
+      `;
 
     const addButtonHTML = `
           <button title="Add this media at the current editor cursor position" type="button" class="ceForm__mediaElementToolbarElement ceForm__mediaElementToolbarElement--add">
@@ -246,8 +239,7 @@ function loadExistingMedia() {
         const mediaItems = JSON.parse(mediaDataInput.value);
 
         mediaItems.forEach((media) => {
-            const isVideo = media.filePath.endsWith(".mp4");
-            addMediaElement(isVideo, media.mediaId, media.filePath, media.isCoverImage);
+            addMediaElement(media.mediaId, media.filePath, media.isCoverImage);
         });
     }
 }

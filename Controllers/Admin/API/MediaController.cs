@@ -1,8 +1,8 @@
 /*
-    MediaUploadController.cs, handles uploading media files to an S3 bucket when creating or editing blogs.
-    Image files are compressed and resized based on conditions where videos are uploaded as is.
+    MediaUploadController.cs, handles uploading media files to Cloudflare Images when creating or editing blogs.
+    Image files are compressed and resized.
 
-    Supported file types: JPEG, PNG, MP4
+    Supported file types: JPEG, PNG
 
     - POST: /API/Upload-Media
         IFormFile:
@@ -17,8 +17,6 @@
         }
     - DELETE: /API/Delete-Media/{mediaId}
 */
-using Amazon.S3;
-using Amazon.S3.Model;
 using devjamin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,22 +24,24 @@ using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
+using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace devjamin.Controllers
 {
     [Route("API")]
     [Authorize]
     [ApiController]
-    public class MediaUploadController(IAmazonS3 s3Client, IConfiguration configuration, BlogDbContext context) : Controller
+    public class MediaUploadController(IConfiguration configuration, BlogDbContext context, IHttpClientFactory httpClientFactory) : Controller
     {
-        private readonly IAmazonS3 _s3Client = s3Client;
         private readonly IConfiguration _configuration = configuration;
         private readonly BlogDbContext _context = context;
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         readonly List<string> allowedFileContentTypes =
             [
                 "image/jpeg",
-                "image/png",
-                "video/mp4"
+                "image/png"
             ];
 
         // POST: API/Upload-Media
@@ -71,13 +71,10 @@ namespace devjamin.Controllers
             Stream fileStream = file.OpenReadStream();
             try
             {
-                // If image type, compress and resize
-                if (contentType.Contains("image", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    fileStream = await CompressAndResizeImageAsync(fileStream, contentType);
-                }
+                // Compress and resize image
+                fileStream = await CompressAndResizeImageAsync(fileStream, contentType);
 
-                // Upload file to S3 bucket
+                // Upload file to Cloudflare Images
                 var uploadResult = await UploadFileAsync(file.FileName, fileStream, contentType, blogPostId);
 
                 return Ok(uploadResult);
@@ -92,53 +89,114 @@ namespace devjamin.Controllers
             }
         }
 
-
-        // Uploads file to S3 bucket
+        // Uploads file to Cloudflare Images
         private class UploadResult
         {
             public int MediaId { get; set; }
             public string FilePath { get; set; } = "";
         }
+
         private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int blogPostId)
         {
-            // Generate unique key name
-            var keyName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
+            var accountId = _configuration.GetValue<string>("CloudflareImages:AccountId");
+            var apiKey = _configuration.GetValue<string>("CloudflareImages:ApiKey");
 
-            var putRequest = new PutObjectRequest
+            if (string.IsNullOrEmpty(accountId) || string.IsNullOrEmpty(apiKey))
             {
-                BucketName = _configuration.GetValue<string>("EnvironmentVariables:BUCKETNAME"),
-                Key = keyName,
-                InputStream = fileStream,
+                throw new Exception("Cloudflare configuration is missing.");
+            }
+
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+            // Create custom filename with blog ID while preserving extension
+            var fileExtension = Path.GetExtension(fileName);
+            var customFileName = $"Upload from Devjamin Blog: {blogPostId}{fileExtension}";
+
+            var formData = new MultipartFormDataContent();
+            formData.Add(new StreamContent(fileStream), "file", customFileName);
+
+            var response = await client.PostAsync($"https://api.cloudflare.com/client/v4/accounts/{accountId}/images/v1", formData);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to upload file to Cloudflare Images: {response.StatusCode}. Response: {errorContent}");
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var cloudflareResponse = JsonSerializer.Deserialize<CloudflareResponse>(responseContent);
+
+            if (cloudflareResponse?.Success != true)
+            {
+                throw new Exception($"Failed to upload to Cloudflare Images. Response: {responseContent}");
+            }
+
+            if (string.IsNullOrEmpty(cloudflareResponse.Result?.Id))
+            {
+                throw new Exception($"No image ID returned from Cloudflare. Response: {responseContent}");
+            }
+
+            // Add image to database
+            var blogMedia = new BlogMedia
+            {
                 ContentType = contentType,
-                CannedACL = S3CannedACL.PublicRead // Makes file public
+                BlogPostId = blogPostId,
+                FilePath = cloudflareResponse.Result.Id,
+                CreatedDate = DateTime.UtcNow
+            };
+            _context.BlogMedia.Add(blogMedia);
+            await _context.SaveChangesAsync();
+
+            var result = new UploadResult
+            {
+                MediaId = blogMedia.MediaId,
+                FilePath = blogMedia.FilePath
             };
 
-            var response = await _s3Client.PutObjectAsync(putRequest);
-            if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
-            {
-                // Add image to database
-                var blogMedia = new BlogMedia
-                {
-                    ContentType = contentType,
-                    BlogPostId = blogPostId,
-                    FilePath = keyName,
-                    CreatedDate = DateTime.UtcNow
-                };
-                _context.BlogMedia.Add(blogMedia);
-                await _context.SaveChangesAsync();
+            return result;
+        }
 
-                var result = new UploadResult
-                {
-                    MediaId = blogMedia.MediaId,
-                    FilePath = blogMedia.FilePath
-                };
+        private class CloudflareResponse
+        {
+            [JsonPropertyName("success")]
+            public bool Success { get; set; }
 
-                return result;
-            }
-            else
-            {
-                throw new Exception("Failed to upload file.");
-            }
+            [JsonPropertyName("result")]
+            public CloudflareResult? Result { get; set; }
+
+            [JsonPropertyName("errors")]
+            public List<CloudflareError>? Errors { get; set; }
+
+            [JsonPropertyName("messages")]
+            public List<string>? Messages { get; set; }
+        }
+
+        private class CloudflareResult
+        {
+            [JsonPropertyName("id")]
+            public string? Id { get; set; }
+
+            [JsonPropertyName("filename")]
+            public string? Filename { get; set; }
+
+            [JsonPropertyName("uploaded")]
+            public DateTime? Uploaded { get; set; }
+
+            [JsonPropertyName("requireSignedURLs")]
+            public bool RequireSignedURLs { get; set; }
+
+            [JsonPropertyName("variants")]
+            public List<string>? Variants { get; set; }
+        }
+
+        private class CloudflareError
+        {
+            [JsonPropertyName("code")]
+            public int Code { get; set; }
+
+            [JsonPropertyName("message")]
+            public string? Message { get; set; }
         }
 
         // Model to capture incoming data
@@ -147,6 +205,7 @@ namespace devjamin.Controllers
             public int BlogPostId { get; set; }
             public int MediaId { get; set; }
         }
+
         // POST: API/Select-Cover-Image
         [HttpPost("Select-Cover-Image")]
         public async Task<IActionResult> SelectCoverImage([FromBody] CoverImageSelectionModel model)
@@ -211,28 +270,25 @@ namespace devjamin.Controllers
                 return BadRequest(new { Error = "Cannot delete a cover image." });
             }
 
-            // Delete file from S3 bucket
-            var deleteObjectRequest = new DeleteObjectRequest
-            {
-                BucketName = _configuration.GetValue<string>("EnvironmentVariables:BUCKETNAME"),
-                Key = mediaItem.FilePath
-            };
+            var accountId = _configuration.GetValue<string>("CloudflareImages:AccountId");
+            var apiKey = _configuration.GetValue<string>("CloudflareImages:ApiKey");
 
-            try
+            if (string.IsNullOrEmpty(accountId) || string.IsNullOrEmpty(apiKey))
             {
-                var response = await _s3Client.DeleteObjectAsync(deleteObjectRequest);
-                if (response.HttpStatusCode != System.Net.HttpStatusCode.NoContent)
-                {
-                    // If response is not NoContent, deletion wasn't successful
-                    throw new Exception("Failed to delete media from S3 bucket.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { Error = $"Error deleting media from storage: {ex.Message}" });
+                throw new Exception("Cloudflare configuration is missing.");
             }
 
-            // Proceed with deletion from database if successful S3 deletion
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+            var response = await client.DeleteAsync($"https://api.cloudflare.com/client/v4/accounts/{accountId}/images/v1/{mediaItem.FilePath}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode(500, new { Error = $"Error deleting media from Cloudflare Images: {response.StatusCode}" });
+            }
+
+            // Proceed with deletion from database if successful Cloudflare deletion
             _context.BlogMedia.Remove(mediaItem);
             await _context.SaveChangesAsync();
 
@@ -290,6 +346,5 @@ namespace devjamin.Controllers
                 throw new Exception("Failed to compress image.");
             }
         }
-
     }
 }

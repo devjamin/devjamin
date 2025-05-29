@@ -12,8 +12,6 @@
     - GET & POST: /Admin/Articles/Edit/[BlogPostId]
     - GET: /Admin/Articles/Delete/[BlogPostId]
 */
-using Amazon.S3;
-using Amazon.S3.Model;
 using devjamin.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,12 +22,11 @@ namespace devjamin.Controllers
 {
     [Route("Admin")]
     [Authorize]
-    public class AdminController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BlogDbContext context, IAmazonS3 s3Client, IConfiguration configuration) : Controller
+    public class AdminController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, BlogDbContext context, IConfiguration configuration) : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly BlogDbContext _context = context;
-        private readonly IAmazonS3 _s3Client = s3Client;
         private readonly IConfiguration _configuration = configuration;
 
         // GET: /Admin
@@ -427,25 +424,8 @@ namespace devjamin.Controllers
                 return NotFound();
             }
 
-            // Delete associated images from S3 bucket
-            foreach (var mediaItem in blogPost.Media.ToList())
-            {
-                var deleteObjectRequest = new DeleteObjectRequest
-                {
-                    BucketName = _configuration.GetValue<string>("EnvironmentVariables:BUCKETNAME"),
-                    Key = mediaItem.FilePath
-                };
-
-                // Should notify user if deletion fails, but it is not critical
-                try
-                {
-                    var response = await _s3Client.DeleteObjectAsync(deleteObjectRequest);
-                }
-                catch (Exception)
-                {
-                    // log exception 
-                }
-            }
+            // Note: If using external media storage (like Cloudflare Images), 
+            // you may want to implement cleanup of media files here
 
             // Deletion from database
             _context.BlogPosts.Remove(blogPost);
