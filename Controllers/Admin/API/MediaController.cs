@@ -46,8 +46,8 @@ namespace devjamin.Controllers
 
         // POST: API/Upload-Media
         [HttpPost("Upload-Media")]
-        [RequestSizeLimit(52_428_800)] // 50MB limit
-        [RequestFormLimits(MultipartBodyLengthLimit = 52_428_800)] // 50MB limit for multipart forms
+        [RequestSizeLimit(26_214_400)] // 25MB limit
+        [RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)] // 25MB limit for multipart forms
         public async Task<IActionResult> UploadMedia(IFormFile file)
         {
             // Ensure file is uploaded
