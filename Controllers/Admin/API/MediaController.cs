@@ -46,6 +46,8 @@ namespace devjamin.Controllers
 
         // POST: API/Upload-Media
         [HttpPost("Upload-Media")]
+        [RequestSizeLimit(52_428_800)] // 50MB limit
+        [RequestFormLimits(MultipartBodyLengthLimit = 52_428_800)] // 50MB limit for multipart forms
         public async Task<IActionResult> UploadMedia(IFormFile file)
         {
             // Ensure file is uploaded
@@ -333,7 +335,7 @@ namespace devjamin.Controllers
                 {
                     var encoder = new JpegEncoder
                     {
-                        Quality = 60
+                        Quality = 90
                     };
                     await image.SaveAsJpegAsync(outputStream, encoder);
                 }

@@ -6,10 +6,26 @@ using devjamin.Controllers;
 using Microsoft.AspNetCore.ResponseCompression;
 using WebMarkupMin.AspNetCore6;
 using Microsoft.Net.Http.Headers;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.Http.Features;
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Kestrel server options for file uploads
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 1_048_576; // 1MB global default - media upload endpoint has its own 50MB limit
+});
+
 builder.Services.AddControllersWithViews();
+
+// Configure form options for file uploads
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52_428_800; // 50MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.ValueCountLimit = int.MaxValue;
+});
 
 // Add database context
 

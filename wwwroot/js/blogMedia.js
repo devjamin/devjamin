@@ -22,6 +22,9 @@ function initMediaUpload() {
     mediaEl.addEventListener("dragover", dragOverHandler);
     mediaEl.addEventListener("dragleave", dragLeaveHandler);
     addMediaBtn.addEventListener("click", () => mediaInput.click());
+    mediaInput.addEventListener("change", (e) => {
+        void handleFiles(e.target.files);
+    });
     mediaEl.addEventListener("drop", (e) => {
         e.preventDefault()
 

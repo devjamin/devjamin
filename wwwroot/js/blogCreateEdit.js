@@ -316,8 +316,8 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     const newSlide = document.createElement('div');
     newSlide.className = 'f-carousel__slide';
     newSlide.setAttribute('data-index', currentIndex + 1);
-    newSlide.setAttribute('data-src', `https://cdn.devjamin.com/${filePath}`);
-    newSlide.innerHTML = `<img src="https://cdn.devjamin.com/${filePath}">`;
+    newSlide.setAttribute('data-src', `https://cdn.devjamin.com/${filePath}/w=800,format=auto`);
+    newSlide.innerHTML = `<img src="https://cdn.devjamin.com/${filePath}/w=800,format=auto">`;
 
     // Insert the new slide after the current one
     const slides = blotNode.querySelectorAll('.f-carousel__slide');
