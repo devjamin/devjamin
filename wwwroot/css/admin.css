@@ -340,6 +340,28 @@ body.quill-fullscreen-active {
     background: #fff;
 }
 
+/* Makes Quill editor look like a blog post */
+.ql-editor h2 {
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(22px, 3.5vw, 28px) !important;
+    font-weight: 700;
+    padding-bottom: 8px;
+    line-height: 1.6;
+}
+
+.ql-editor p {
+    line-height: 1.6;
+    font-size: 16px !important;
+}
+
+.ql-editorul,
+.ql-editor ol {
+    padding-left: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .hideAdminMenu .ql-editor {
     max-height: 80dvh;
 }
