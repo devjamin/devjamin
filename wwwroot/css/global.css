@@ -1566,6 +1566,28 @@ label {
     gap: 8px;
 }
 
+.f-carousel__dots {
+    gap: 4px !important;
+    flex-direction: row !important;
+}
+
+/* Carousel tweaks for images */
+.f-carousel__slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.f-carousel__slide img {
+    max-height: 500px;
+}
+
+/* Fancyapps arrows */
+.f-button svg {
+    stroke: #000 !important;
+    filter: drop-shadow(-1.8px 0px 0px rgba(255, 255, 255, 0.6)) !important;
+}
+
 @media screen and (max-width: 1024px) {
 
     /* Share */
