@@ -405,10 +405,72 @@ ImageBlot.tagName = 'img';
 // Register the blot with Quill
 Quill.register(ImageBlot);
 
+// Custom fullscreen handler
+function toggleFullscreen() {
+    const editor = document.querySelector('.ceForm__editor');
+    const toolbar = document.querySelector('.ql-toolbar');
+    const body = document.body;
+
+    if (editor.classList.contains('quill-fullscreen')) {
+        // Exit fullscreen
+        editor.classList.remove('quill-fullscreen');
+        toolbar.classList.remove('quill-fullscreen-toolbar');
+        body.classList.remove('quill-fullscreen-active');
+
+        // Update button icon to expand
+        const fullscreenBtn = document.querySelector('.ql-fullscreen');
+        if (fullscreenBtn) {
+            fullscreenBtn.innerHTML = `
+                <svg viewBox="0 0 18 18">
+                    <polyline class="ql-stroke" points="5,5 1,5 1,1 5,1"></polyline>
+                    <polyline class="ql-stroke" points="13,5 17,5 17,1 13,1"></polyline>
+                    <polyline class="ql-stroke" points="13,13 17,13 17,17 13,17"></polyline>
+                    <polyline class="ql-stroke" points="5,13 1,13 1,17 5,17"></polyline>
+                </svg>
+            `;
+        }
+    } else {
+        // Enter fullscreen
+        editor.classList.add('quill-fullscreen');
+        toolbar.classList.add('quill-fullscreen-toolbar');
+        body.classList.add('quill-fullscreen-active');
+
+        // Update button icon to compress
+        const fullscreenBtn = document.querySelector('.ql-fullscreen');
+        if (fullscreenBtn) {
+            fullscreenBtn.innerHTML = `
+                <svg viewBox="0 0 18 18">
+                    <polyline class="ql-stroke" points="5,1 5,5 1,5"></polyline>
+                    <polyline class="ql-stroke" points="13,1 13,5 17,5"></polyline>
+                    <polyline class="ql-stroke" points="13,17 13,13 17,13"></polyline>
+                    <polyline class="ql-stroke" points="5,17 5,13 1,13"></polyline>
+                </svg>
+            `;
+        }
+    }
+}
+
 const options = {
     debug: null, //"info",
     modules: {
-        toolbar: [[{ header: [1, 2, 3, 4, 5, 6, false] }], ["bold", "italic", "underline", "strike"], [{ list: "ordered" }, { list: "bullet" }], ["blockquote", "code-block"], [{ script: "sub" }, { script: "super" }], [{ indent: "-1" }, { indent: "+1" }], [{ direction: "rtl" }], [{ align: [] }], ["clean"], ["link"]],
+        toolbar: {
+            container: [
+                [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                ["bold", "italic", "underline", "strike"],
+                [{ list: "ordered" }, { list: "bullet" }],
+                ["blockquote", "code-block"],
+                [{ script: "sub" }, { script: "super" }],
+                [{ indent: "-1" }, { indent: "+1" }],
+                [{ direction: "rtl" }],
+                [{ align: [] }],
+                ["clean"],
+                ["link"],
+                ['fullscreen']
+            ],
+            handlers: {
+                'fullscreen': toggleFullscreen
+            }
+        },
         clipboard: {
             matchVisual: false,
         },
@@ -535,4 +597,33 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+});
+
+// Add fullscreen button icon after Quill is initialized
+setTimeout(() => {
+    const fullscreenBtn = document.querySelector('.ql-fullscreen');
+    if (fullscreenBtn) {
+        fullscreenBtn.innerHTML = `
+            <svg viewBox="0 0 18 18">
+                <polyline class="ql-stroke" points="5,5 1,5 1,1 5,1"></polyline>
+                <polyline class="ql-stroke" points="13,5 17,5 17,1 13,1"></polyline>
+                <polyline class="ql-stroke" points="13,13 17,13 17,17 13,17"></polyline>
+                <polyline class="ql-stroke" points="5,13 1,13 1,17 5,17"></polyline>
+            </svg>
+        `;
+        fullscreenBtn.setAttribute('title', 'Toggle fullscreen');
+    }
+}, 100);
+
+// Handle ESC key to exit fullscreen
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        e.preventDefault();
+        const editor = document.querySelector('.ceForm__editor');
+        const toolbar = document.querySelector('.ql-toolbar');
+        if (editor && editor.classList.contains('quill-fullscreen') &&
+            toolbar && toolbar.classList.contains('quill-fullscreen-toolbar')) {
+            toggleFullscreen();
+        }
+    }
 });
