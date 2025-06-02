@@ -6,11 +6,11 @@
     - GET & POST: /Admin/Login (anonymous)
     - GET: /Admin/Logout
 
-    Articles management:
-    - GET: /Admin/Articles
-    - GET & POST: /Admin/Articles/Create
-    - GET & POST: /Admin/Articles/Edit/[BlogPostId]
-    - GET: /Admin/Articles/Delete/[BlogPostId]
+    Blogs management:
+    - GET: /Admin/Blogs
+    - GET & POST: /Admin/Blogs/Create
+    - GET & POST: /Admin/Blogs/Edit/[BlogPostId]
+    - GET: /Admin/Blogs/Delete/[BlogPostId]
 */
 using devjamin.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +36,7 @@ namespace devjamin.Controllers
         {
             if (_signInManager.IsSignedIn(User))
             {
-                return RedirectToAction("Articles", "Admin");
+                return RedirectToAction("Blogs", "Admin");
             }
             else
             {
@@ -68,7 +68,7 @@ namespace devjamin.Controllers
                 var result = await _signInManager.PasswordSignInAsync(adminLoginViewModel.Username, adminLoginViewModel.Password, true, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Articles", "Admin");
+                    return RedirectToAction("Blogs", "Admin");
                 }
 
                 else
@@ -81,9 +81,9 @@ namespace devjamin.Controllers
             return View("~/Views/Admin/Login.cshtml", adminLoginViewModel);
         }
 
-        // GET: Admin/Articles
-        [HttpGet("Articles")]
-        public async Task<IActionResult> GetArticles()
+        // GET: Admin/Blogs
+        [HttpGet("Blogs")]
+        public async Task<IActionResult> GetBlogs()
         {
             var publishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished && !b.IsDraft)
@@ -126,14 +126,14 @@ namespace devjamin.Controllers
                 NonPublishedBlogs = nonPublishedBlogs
             };
 
-            return View("~/Views/Admin/Articles/Index.cshtml", blogsViewModel);
+            return View("~/Views/Admin/Blogs/Index.cshtml", blogsViewModel);
         }
 
 
-        // GET: Admin/Articles/Create
+        // GET: Admin/Blogs/Create
         // Create a new empty blog post in the background, then redirect to the create page
         // Upon form submission, the blog post will be modified
-        [HttpGet("Articles/Create")]
+        [HttpGet("Blogs/Create")]
         public async Task<IActionResult> Create()
         {
             // Get current user
@@ -197,11 +197,11 @@ namespace devjamin.Controllers
                 SelectedTagIds = selectedTagIds
             };
 
-            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", blogPostCreateViewModel);
+            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", blogPostCreateViewModel);
         }
 
         // POST: Admin/Blogs/Create
-        [HttpPost("Articles/Create")]
+        [HttpPost("Blogs/Create")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BlogPostCreateEditViewModel model)
         {
@@ -260,16 +260,16 @@ namespace devjamin.Controllers
                     }
                 }
 
-                // Redirect to /Admin/Articles after successful update
-                return Redirect("/Admin/Articles");
+                // Redirect to /Admin/Blogs after successful update
+                return Redirect("/Admin/Blogs");
             }
 
-            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", model);
+            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", model);
         }
 
 
-        // GET: Admin/Articles/Edit/{BlogPostId}
-        [HttpGet("Articles/Edit/{id:int}")]
+        // GET: Admin/Blogs/Edit/{BlogPostId}
+        [HttpGet("Blogs/Edit/{id:int}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -319,12 +319,12 @@ namespace devjamin.Controllers
                 SelectedTagIds = selectedTagIds
             };
 
-            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", viewModel);
+            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", viewModel);
         }
 
 
-        // POST: Admin/Articles/Edit/{BlogPostId}
-        [HttpPost("Articles/Edit/{BlogPostId:int}")]
+        // POST: Admin/Blogs/Edit/{BlogPostId}
+        [HttpPost("Blogs/Edit/{BlogPostId:int}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int blogPostId, BlogPostCreateEditViewModel model)
         {
@@ -400,15 +400,15 @@ namespace devjamin.Controllers
                     }
                 }
 
-                // Redirect to /Admin/Articles after successful update
-                return Redirect("/Admin/Articles");
+                // Redirect to /Admin/Blogs after successful update
+                return Redirect("/Admin/Blogs");
             }
 
-            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", model);
+            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", model);
         }
 
-        // GET: Admin/Articles/Delete/{BlogPostId}
-        [HttpGet("Articles/Delete/{blogPostId:int}")]
+        // GET: Admin/Blogs/Delete/{BlogPostId}
+        [HttpGet("Blogs/Delete/{blogPostId:int}")]
         public async Task<IActionResult> Delete(int? blogPostId)
         {
             if (blogPostId == null)
@@ -431,7 +431,7 @@ namespace devjamin.Controllers
             _context.BlogPosts.Remove(blogPost);
             await _context.SaveChangesAsync();
 
-            return Redirect("/Admin/Articles");
+            return Redirect("/Admin/Blogs");
         }
 
         // GET: /Admin/Logout

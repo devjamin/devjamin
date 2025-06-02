@@ -1,7 +1,7 @@
 @model devjamin.Models.AllBlogsCardViewModel
 
 @{
-    ViewData["Title"] = "Articles";
+    ViewData["Title"] = "Blogs";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -15,29 +15,29 @@
 </style>
 
 <div class="top">
-    <h1 class="top__title">Article</h1>
-    <a class="top__createBtn" href="/Admin/Articles/Create">Create Article</a>
+    <h1 class="top__title">Blogs</h1>
+    <a class="top__createBtn" href="/Admin/Blogs/Create">Create Blog</a>
 </div>
 
 @if (Model.PublishedBlogs.Count == 0 && Model.NonPublishedBlogs.Count == 0)
 {
-    <p class="blogs__title">No articles found</p>
+    <p class="blogs__title">No blogs found</p>
 }
 else
 {
     @if (Model.PublishedBlogs.Count != 0)
     {
         <section id="activeBlogs" class="blogs">
-            <h2 class="blogs__title">Published articles</h2>
+            <h2 class="blogs__title">Published blogs</h2>
             <div class="blogs__container">
                 @foreach (var blogCard in Model.PublishedBlogs)
                 {
                     <article class="blog">
-                        <a class="blog__editLink" href="/Admin/Articles/Edit/@blogCard.BlogPostId">
+                        <a class="blog__editLink" href="/Admin/Blogs/Edit/@blogCard.BlogPostId">
                             <svg width="24px" height="24px" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
                                 stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
-                                    d="m11.239 15.533c-1.045 3.004-1.238 3.451-1.238 3.84 0 .441.385.627.627.627.272 0 1.108-.301 3.829-1.249zm.888-.888 3.22 3.22 6.408-6.401c.163-.163.245-.376.245-.591 0-.213-.082-.427-.245-.591-.58-.579-1.458-1.457-2.039-2.036-.163-.163-.377-.245-.591-.245-.213 0-.428.082-.592.245zm-3.127-.895c0-.402-.356-.75-.75-.75-2.561 0-2.939 0-5.5 0-.394 0-.75.348-.75.75s.356.75.75.75h5.5c.394 0 .75-.348.75-.75zm5-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75z"
+                                    d="m11.239 15.533c-1.045 3.004-1.238 3.451-1.238 3.84 0 .441.385.627.627.627.272 0 1.108-.301 3.829-1.249zm.888-.888 3.22 3.22 6.408-6.401c.163-.163.245-.376.245-.591 0-.213-.082-.427-.245-.591-.58-.579-1.458-1.457-2.039-2.036-.163-.163-.377-.245-.591-.245-.213 0-.428.082-.592.245zm-3.127-.895c0-.402-.356-.75-.75-.75-2.561 0-2.939 0-5.5 0-.394 0-.75.348-.75.75s.356.75.75.75h5.5c.394 0 .75-.348.75-.75zm5-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.750h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75z"
                                     fill-rule="nonzero" />
                             </svg>
                         </a>
@@ -61,7 +61,7 @@ else
                                 <li class="blog__tag">Uncategorized</li>
                             }
                         </ul>
-                        <a class="blog__goToLink" target="_blank" href="/Article/@blogCard.Slug">
+                        <a class="blog__goToLink" target="_blank" href="/Blog/@blogCard.Slug">
                             <h3 class="blog__title">@blogCard.Title</h3>
                         </a>
                         <p class="blog__description">@blogCard.Description</p>
@@ -73,16 +73,16 @@ else
     @if (Model.NonPublishedBlogs.Count != 0)
     {
         <section id="nonActiveBlogs" class="blogs">
-            <h2 class="blogs__title">Non-published articles</h2>
+            <h2 class="blogs__title">Non-published blogs</h2>
             <div class="blogs__container">
                 @foreach (var blogCard in Model.NonPublishedBlogs)
                 {
                     <article class="blog">
-                        <a class="blog__editLink" href="/Admin/Articles/Edit/@blogCard.BlogPostId">
+                        <a class="blog__editLink" href="/Admin/Blogs/Edit/@blogCard.BlogPostId">
                             <svg width="24px" height="24px" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
                                 stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
-                                    d="m11.239 15.533c-1.045 3.004-1.238 3.451-1.238 3.84 0 .441.385.627.627.627.272 0 1.108-.301 3.829-1.249zm.888-.888 3.22 3.22 6.408-6.401c.163-.163.245-.376.245-.591 0-.213-.082-.427-.245-.591-.58-.579-1.458-1.457-2.039-2.036-.163-.163-.377-.245-.591-.245-.213 0-.428.082-.592.245zm-3.127-.895c0-.402-.356-.75-.75-.75-2.561 0-2.939 0-5.5 0-.394 0-.75.348-.75.75s.356.75.75.75h5.5c.394 0 .75-.348.75-.75zm5-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75z"
+                                    d="m11.239 15.533c-1.045 3.004-1.238 3.451-1.238 3.84 0 .441.385.627.627.627.272 0 1.108-.301 3.829-1.249zm.888-.888 3.22 3.22 6.408-6.401c.163-.163.245-.376.245-.591 0-.213-.082-.427-.245-.591-.58-.579-1.458-1.457-2.039-2.036-.163-.163-.377-.245-.591-.245-.213 0-.428.082-.592.245zm-3.127-.895c0-.402-.356-.75-.75-.75-2.561 0-2.939 0-5.5 0-.394 0-.75.348-.75.75s.356.75.75.75h5.5c.394 0 .75-.348.75-.75zm5-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.750h10.5c.394 0 .75-.348.75-.75zm0-3c0-.402-.356-.75-.75-.75-2.561 0-7.939 0-10.5 0-.394 0-.75.348-.75.75s.356.75.75.75h10.5c.394 0 .75-.348.75-.75z"
                                     fill-rule="nonzero" />
                             </svg>
                         </a>
@@ -106,7 +106,7 @@ else
                                 <li class="blog__tag">Uncategorized</li>
                             }
                         </ul>
-                        <a class="blog__goToLink" target="_blank" href="/Article/@blogCard.Slug">
+                        <a class="blog__goToLink" target="_blank" href="/Blog/@blogCard.Slug">
                             <h3 class="blog__title">@blogCard.Title</h3>
                         </a>
                         <p class="blog__description">@blogCard.Description</p>
@@ -115,4 +115,4 @@ else
             </div>
         </section>
     }
-}
+} 

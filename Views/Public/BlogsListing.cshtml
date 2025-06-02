@@ -1,17 +1,17 @@
 @model IEnumerable<devjamin.Models.BlogPostCardViewModel>
 @{
-    ViewData["Title"] = "Articles";
-    ViewData["MetaDescription"] = "Articles page of devjamin, frontend developer and DIY enthusiast";
+    ViewData["Title"] = "Blogs";
+    ViewData["MetaDescription"] = "Blogs page of devjamin, frontend developer and DIY enthusiast";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="sectionWrapper blogsListing">
-    <h2 class="blogsListing__title">Articles</h2>
+    <h2 class="blogsListing__title">Blogs</h2>
     <div class="blogsListing__blogs">
         @foreach (var blogCard in Model)
         {
             <article class="blog">
-                <a class="blog__anchor" href="/Article/@blogCard.Slug">
+                <a class="blog__anchor" href="/Blog/@blogCard.Slug">
                     @if (blogCard.CoverImagePath != null)
                     {
                         <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath/w=768,format=auto" alt="@blogCard.Title">

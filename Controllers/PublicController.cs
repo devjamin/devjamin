@@ -3,8 +3,8 @@
 
     Admin panel access:
     - GET: /
-    - GET: /Articles
-    - GET: /Article/[SLUG]
+    - GET: /Blogs
+    - GET: /Blog/[SLUG]
 */
 using Microsoft.AspNetCore.Mvc;
 using devjamin.Models;
@@ -79,9 +79,9 @@ namespace devjamin.Controllers
             return View("~/Views/Public/Index.cshtml", latestThreePublishedBlogs);
         }
 
-        // GET: /Articles
-        [HttpGet("/Articles")]
-        public async Task<IActionResult> Articles()
+        // GET: /Blogs
+        [HttpGet("/Blogs")]
+        public async Task<IActionResult> Blogs()
         {
             var allPublishedBlogs = await _context.BlogPosts
                 .Where(b => b.IsPublished)
@@ -104,8 +104,8 @@ namespace devjamin.Controllers
             return View("~/Views/Public/BlogsListing.cshtml", allPublishedBlogs);
         }
 
-        // GET: /Article/{Slug}
-        [HttpGet("/Article/{slug}")]
+        // GET: /Blog/{Slug}
+        [HttpGet("/Blog/{slug}")]
         public async Task<IActionResult> GetSpecificBlog(string slug)
         {
             // First try to find the blog post with current slug
@@ -123,7 +123,7 @@ namespace devjamin.Controllers
                 if (slugHistory != null && slugHistory.BlogPost.IsPublished)
                 {
                     // Permanent redirect to the new slug
-                    return RedirectPermanent($"/Article/{slugHistory.BlogPost.Slug}");
+                    return RedirectPermanent($"/Blog/{slugHistory.BlogPost.Slug}");
                 }
 
                 return NotFound();

@@ -1,6 +1,6 @@
 @model devjamin.Models.BlogPostCreateEditViewModel
 @{
-    ViewData["Title"] = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create Article" : "Edit Article";
+    ViewData["Title"] = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create Blog" : "Edit Blog";
     var formAction = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create" : "Edit";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -158,4 +158,4 @@
 @* Hidden input for media upload *@
 <input type="file" id="mediaInput" hidden/>
 @* Hidden input for loading existing media *@
-<input type="hidden" id="mediaInputExisting" name="mediaInputExisting" value='@Json.Serialize(Model.Media)' />
+<input type="hidden" id="mediaInputExisting" name="mediaInputExisting" value='@Json.Serialize(Model.Media)' /> 
