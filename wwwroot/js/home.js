@@ -1,4 +1,65 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Typewriter effect
+  const typewriterElement = document.getElementById("typewriter-text");
+
+  const quotes = [
+    "Building complex things one bit at a time",
+    "Tinkering, improving, iterating",
+    "Shipping features, not promises",
+    "Fixing that one stupid problem",
+  ];
+
+  let currentQuoteIndex = 0;
+  let currentCharIndex = quotes[0].length; // Start with first quote fully displayed
+  let isDeleting = false;
+  let typewriterTimeout;
+  let hasStarted = false;
+
+  // Display the first quote immediately
+  typewriterElement.textContent = quotes[0];
+
+  function typeWriter() {
+    const currentQuote = quotes[currentQuoteIndex];
+
+    if (!hasStarted) {
+      // First run - wait before starting to delete
+      hasStarted = true;
+      isDeleting = true;
+      typewriterTimeout = setTimeout(typeWriter, 3500); // Pause before deleting first quote
+      return;
+    }
+
+    if (isDeleting) {
+      // Remove characters
+      typewriterElement.textContent = currentQuote.substring(0, currentCharIndex - 1);
+      currentCharIndex--;
+
+      if (currentCharIndex === 0) {
+        isDeleting = false;
+        currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+        typewriterTimeout = setTimeout(typeWriter, 500); // Pause before typing next quote
+        return;
+      }
+
+      typewriterTimeout = setTimeout(typeWriter, 50); // Deleting speed
+    } else {
+      // Add characters
+      typewriterElement.textContent = currentQuote.substring(0, currentCharIndex + 1);
+      currentCharIndex++;
+
+      if (currentCharIndex === currentQuote.length) {
+        isDeleting = true;
+        typewriterTimeout = setTimeout(typeWriter, 2000); // Pause before deleting
+        return;
+      }
+
+      typewriterTimeout = setTimeout(typeWriter, 100); // Typing speed
+    }
+  }
+
+  // Start typewriter effect
+  typeWriter();
+
   const arrowLeft = document.getElementById("blogsContainerArrowLeft");
   const arrowRight = document.getElementById("blogsContainerArrowRight");
   const blogsContainer = document.querySelector(".blogs__container");

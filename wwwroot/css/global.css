@@ -506,6 +506,31 @@ label {
     margin-bottom: clamp(32px, 5vw, 48px);
 }
 
+/* Force min-height so typewriter doesn't change height of hero__description */
+@media (max-width: 450px) {
+    .hero__description {
+        min-height: 48px;
+    }
+}
+
+.typewriter-cursor {
+    color: var(--primary-txt-color);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
 .hero__cta {
     display: flex;
     flex-wrap: wrap;
