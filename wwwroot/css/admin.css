@@ -342,17 +342,35 @@ body.quill-fullscreen-active {
 }
 
 /* Makes Quill editor look like a blog post */
-.ql-editor h2 {
+.ql-editor h2,
+.ql-editor h3,
+.ql-editor h4,
+.ql-editor h5,
+.ql-editor h6 {
     font-family: "Courier New", Courier, monospace;
-    font-size: clamp(22px, 3.5vw, 28px) !important;
     font-weight: 700;
     padding-bottom: 8px;
     line-height: 1.6;
 }
 
+.ql-editor h2 {
+    font-size: clamp(22px, 3.5vw, 28px) !important;
+}
+
+.ql-editor h3 {
+    font-size: clamp(18px, 3vw, 22px) !important;
+}
+
+.ql-editor h4 {
+    font-size: clamp(16px, 2.5vw, 20px) !important;
+}
+
+
+
 .ql-editor p {
     line-height: 1.6;
     font-size: 16px !important;
+    margin-bottom: 16px !important;
 }
 
 .ql-editorul,
@@ -774,4 +792,70 @@ body.quill-fullscreen-active {
 .ceForm__input:focus.input-validation-error,
 .ceForm__textarea:focus.input-validation-error {
     box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Semantic HTML Structure Styles */
+.content-section {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.content-section[data-header-level="1"] {
+    border-left: 4px solid #5d53a2;
+    padding-left: 1rem;
+}
+
+.content-section[data-header-level="2"] {
+    border-left: 3px solid #7b6baa;
+    padding-left: 0.75rem;
+}
+
+.content-section[data-header-level="3"] {
+    border-left: 2px solid #9a8bb3;
+    padding-left: 0.5rem;
+}
+
+.blog-content {
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.blog-content section+section {
+    margin-top: 2rem;
+}
+
+/* Editor semantic preview styles */
+.ql-editor .content-section {
+    margin: 1rem 0;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background: rgba(93, 83, 162, 0.02);
+    border-left: 3px solid rgba(93, 83, 162, 0.3);
+}
+
+.ql-editor .blog-article {
+    border: 1px dashed rgba(93, 83, 162, 0.2);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+/* Improved spacing for semantic content */
+.ql-editor section h1,
+.ql-editor section h2,
+.ql-editor section h3,
+.ql-editor section h4,
+.ql-editor section h5,
+.ql-editor section h6 {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+}
+
+.ql-editor section p {
+    margin-bottom: 1rem;
+}
+
+.ql-editor section p:last-child {
+    margin-bottom: 0;
 }

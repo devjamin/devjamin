@@ -17,7 +17,7 @@ namespace devjamin.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.4")
+                .HasAnnotation("ProductVersion", "8.0.16")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -204,7 +204,7 @@ namespace devjamin.Migrations
 
                     b.HasKey("BlogTagId");
 
-                    b.ToTable("BlogTags");
+                    b.ToTable("BlogTags", (string)null);
                 });
 
             modelBuilder.Entity("devjamin.Models.ApplicationUser", b =>
@@ -308,7 +308,7 @@ namespace devjamin.Migrations
 
                     b.HasIndex("BlogPostId");
 
-                    b.ToTable("BlogMedia");
+                    b.ToTable("BlogMedia", (string)null);
                 });
 
             modelBuilder.Entity("devjamin.Models.BlogPost", b =>
@@ -348,6 +348,9 @@ namespace devjamin.Migrations
                         .HasMaxLength(160)
                         .HasColumnType("varchar(160)");
 
+                    b.Property<string>("QuillContent")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -360,7 +363,7 @@ namespace devjamin.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("BlogPosts");
+                    b.ToTable("BlogPosts", (string)null);
                 });
 
             modelBuilder.Entity("devjamin.Models.BlogPostSlugHistory", b =>
@@ -385,7 +388,7 @@ namespace devjamin.Migrations
 
                     b.HasIndex("BlogPostId");
 
-                    b.ToTable("BlogPostSlugHistory");
+                    b.ToTable("BlogPostSlugHistory", (string)null);
                 });
 
             modelBuilder.Entity("BlogPostBlogTag", b =>

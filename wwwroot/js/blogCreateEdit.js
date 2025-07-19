@@ -1,4 +1,57 @@
 /*
+    Custom Semantic Blots for Better HTML Structure
+*/
+
+// Custom Section Blot to wrap related content
+const Block = Quill.import('blots/block');
+
+class SectionBlot extends Block {
+    static blotName = 'section';
+    static tagName = 'section';
+    static className = 'blogBody__section';
+}
+
+// Custom Article Blot for the main content container
+class ArticleBlot extends Block {
+    static blotName = 'article';
+    static tagName = 'article';
+    static className = 'blog-article';
+}
+
+// Enhanced Header Blot with better semantic structure
+class SemanticHeaderBlot extends Block {
+    static blotName = 'semantic-header';
+    static tagName = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+
+    static create(value) {
+        const level = value?.level || 2; // Default to H2
+        const node = document.createElement(`H${level}`);
+        return node;
+    }
+
+    static formats(node) {
+        const level = parseInt(node.tagName.substring(1));
+        return { level };
+    }
+
+    format(name, value) {
+        if (name === 'semantic-header' && value?.level) {
+            const newNode = SemanticHeaderBlot.create(value);
+            newNode.innerHTML = this.domNode.innerHTML;
+            this.domNode.parentNode.replaceChild(newNode, this.domNode);
+            this.domNode = newNode;
+        } else {
+            super.format(name, value);
+        }
+    }
+}
+
+// Register the semantic blots
+Quill.register(SectionBlot);
+Quill.register(ArticleBlot);
+Quill.register(SemanticHeaderBlot);
+
+/*
     blogCreateEdit.js, a script for everything but media upload in the create/edit blog.
 
     - Init Quill (WYSIWYG editor)
@@ -512,6 +565,17 @@ const options = {
     placeholder: "Compose an epic blog...",
     theme: "snow",
     imageDrop: false,
+    // Enable semantic HTML output
+    formats: [
+        'bold', 'italic', 'underline', 'strike',
+        'header', 'semantic-header',
+        'list', 'bullet',
+        'blockquote', 'code-block',
+        'script', 'indent', 'direction', 'align',
+        'link', 'image', 'video',
+        'section', 'article',
+        'customImage', 'carousel'
+    ]
 };
 
 var quill = new Quill("#Editor", options);
@@ -549,13 +613,100 @@ function prepareContentForSaving() {
     })
 }
 
+/*
+    Post-process HTML to add semantic structure
+    This function automatically wraps headings and their following content in semantic sections
+    with proper hierarchical nesting based on heading levels
+*/
+function createSemanticStructure(html) {
+    // Create a temporary DOM element to work with
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Convert NodeList to Array for easier processing
+    const allNodes = Array.from(tempDiv.childNodes);
+
+    let result = '';
+    let sectionStack = []; // Stack to track nested sections: {level, content}
+
+    // Helper function to close sections down to a specific level
+    function closeSectionsToLevel(targetLevel) {
+        while (sectionStack.length > 0 && sectionStack[sectionStack.length - 1].level >= targetLevel) {
+            const section = sectionStack.pop();
+            const closedSection = `<section class="blogBody__section">${section.content}</section>`;
+
+            if (sectionStack.length > 0) {
+                // Add closed section to parent section
+                sectionStack[sectionStack.length - 1].content += closedSection;
+            } else {
+                // Add closed section to final result
+                result += closedSection;
+            }
+        }
+    }
+
+    // Helper function to add content to the deepest open section or result
+    function addContent(content) {
+        if (sectionStack.length > 0) {
+            sectionStack[sectionStack.length - 1].content += content;
+        } else {
+            result += content;
+        }
+    }
+
+    allNodes.forEach((node, index) => {
+        if (node.nodeType === Node.ELEMENT_NODE && /^h[1-6]$/i.test(node.tagName)) {
+            const level = parseInt(node.tagName.substring(1));
+
+            // Close sections that are at the same level or deeper
+            closeSectionsToLevel(level);
+
+            // Start new section
+            const newSection = {
+                level: level,
+                content: node.outerHTML
+            };
+
+            // Push the new section to the stack
+            sectionStack.push(newSection);
+
+        } else if (node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent.trim())) {
+            // Add content to current section or result
+            const content = node.outerHTML || node.textContent;
+            addContent(content);
+        }
+    });
+
+    // Close all remaining sections
+    closeSectionsToLevel(0);
+
+    // Remove empty paragraph tags before returning
+    const finalDiv = document.createElement('div');
+    finalDiv.innerHTML = result;
+
+    // Find and remove empty <p> tags
+    const emptyParagraphs = finalDiv.querySelectorAll('p');
+    emptyParagraphs.forEach(p => {
+        if (!p.textContent.trim() && p.children.length === 0) {
+            p.remove();
+        }
+    });
+
+    // Wrap everything in an article
+    return finalDiv.innerHTML
+}
+
 const form = document.querySelector("form");
 if (form) {
     form.addEventListener("submit", function () {
         if (contentField) {
             prepareContentForSaving()
 
-            contentField.value = quill.root.innerHTML;
+            // Get semantic HTML and apply post-processing for better structure
+            let semanticHTML = quill.getSemanticHTML();
+            semanticHTML = createSemanticStructure(semanticHTML);
+
+            contentField.value = semanticHTML;
         }
     });
 }

@@ -22,9 +22,9 @@
     string displayTitle = title.Length > 16 ? title.Substring(0, 16).TrimEnd() + "…" : title;
 }
 
-<div class="blogWrapper">
+<article class="blogWrapper">
     <header class="blogTop">
-        <ul class="share">
+        <ul class="share" aria-label="Share this article">
             <li id="webShareBtn">
                 <button title="Copy Link to Clipboard">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -56,38 +56,42 @@
             </li>
         </ul>
         <div class="blogTop__info">
-            <ul class="breadcrumb">
-                <li class="breadcrumb__item">
-                    <a class="breadcrumb__link" href="/">Home</a>
-                </li>
-                <li class="breadcrumb__item">
-                    <a class="breadcrumb__link" href="/Blogs">Blogs</a>
-                </li>
-                <li class="breadcrumb__item">@displayTitle</li>
-            </ul>
+            <nav aria-label="Breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb__item">
+                        <a class="breadcrumb__link" href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb__item">
+                        <a class="breadcrumb__link" href="/Blogs">Blogs</a>
+                    </li>
+                    <li class="breadcrumb__item" aria-current="page">@displayTitle</li>
+                </ul>
+            </nav>
             <h1 class="blogTop__title">@Model.Title</h1>
             <p class="blogTop__description">@Model.Description
             </p>
-            <div class="blogTop__about">
-                <div class="blogTop__author">
-                    <img class="blogTop__authorImg" src="@CDNBASEPATH@Model.AuthorProfilePicturePath" alt="Author">
-                    <div class="blogTop__authorDescription">
-                        <p class="blogTop__authorName">@Model.AuthorFullName</p>
-                        <p class="blogTop__authorReadTime">@Model.ReadTimeMinuteEstimate minute read</p>
-                    </div>
+
+            <aside class="blogTop__about" aria-label="Article metadata">
+                <div class="blogTop__authorBlock">
+                    <address class="blogTop__author">
+                        <img class="blogTop__authorImg" src="@CDNBASEPATH@Model.AuthorProfilePicturePath" alt="Photo of @Model.AuthorFullName">
+                        <span class="blogTop__authorName">@Model.AuthorFullName</span>
+                    </address>
+                    <p class="blogTop__authorReadTime">@Model.ReadTimeMinuteEstimate minute read</p>
                 </div>
                 <time class="blogTop__aboutDate" datetime="@Model.CreatedDate.ToString("yyyy-MM-dd")">
                     @Model.CreatedDate.ToString("dd MMMM, yyyy")
                 </time>
-            </div>
+            </aside>
+
         </div>
     </header>
-    <article class="blogBody">
+    <main class="blogBody">
         @* @if (Model.CoverImagePath != null)
         {
             <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
         }
         *@
         @Html.Raw(Model.Content)
-    </article>
-</div>
+    </main>
+</article>
