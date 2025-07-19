@@ -17,6 +17,8 @@ namespace devjamin.Models
 
         public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
+        public required DateTime UpdatedDate { get; set; } = DateTime.UtcNow;
+
         public required string Content { get; set; }
 
         public required string AuthorFullName { get; set; }

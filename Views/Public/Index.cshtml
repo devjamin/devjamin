@@ -1,9 +1,67 @@
 ﻿@model IEnumerable<devjamin.Models.BlogPostCardViewModel>
 @{
-    ViewData["Title"] = "Home";
-    ViewData["MetaDescription"] = "Home page of devjamin, frontend developer and DIY enthusiast";
+    ViewData["Title"] = "Frontend Developer and DIY Enthusiast";
+    ViewData["MetaDescription"] = "Welcome to my portfolio and blog – I'm sharing my experience as a frontend developer along with personal projects and DIY builds.";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var CDNBASEPATH = ViewData["CDNBASEPATH"];
 }
+
+@* Structured Data for SEO *@
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@graph": [
+    {
+      "@@type": "WebSite",
+      "@@id": "https://www.devjamin.com/#website",
+      "url": "https://www.devjamin.com",
+      "name": "Devjamin - Frontend Developer Portfolio & Blog",
+      "description": "Welcome to my portfolio and blog – I'm sharing my experience as a frontend developer along with personal projects and DIY builds.",
+      "publisher": {
+        "@@id": "https://www.devjamin.com"
+      },
+      "inLanguage": "en-US"
+    },
+    {
+      "@@type": "Person",
+      "@@id": "https://www.devjamin.com/#person",
+      "name": "Devjamin",
+      "url": "https://www.devjamin.com",
+      "image": "@(CDNBASEPATH + "5fcecd76-25ef-4b59-3798-e59ba5e53400/w=800,format=auto")",
+      "description": "Frontend developer and DIY enthusiast building complex things one bit at a time",
+      "jobTitle": "Frontend Developer",
+      "worksFor": {
+        "@@type": "Organization",
+        "name": "Major Online Retailer"
+      },
+      "alumniOf": {
+        "@@type": "EducationalOrganization",
+        "name": "Technical College",
+        "description": "Web Developer Education"
+      },
+      "knowsAbout": ["Frontend Development", "React", "JavaScript", "Git", "Version Control", "CI/CD", "API Development", "UI/UX Design", "System Administration"],
+      "mainEntityOfPage": {
+        "@@type": "WebPage",
+        "@@id": "https://www.devjamin.com"
+      }
+    },
+    {
+      "@@type": "Blog",
+      "@@id": "https://www.devjamin.com/#blog",
+      "url": "https://www.devjamin.com/Blogs",
+      "name": "Devjamin Blog",
+      "description": "Insights and tutorials about frontend development, programming, and DIY projects",
+      "inLanguage": "en-US",
+      "author": {
+        "@@id": "https://www.devjamin.com/#person"
+      },
+      "publisher": {
+        "@@id": "https://www.devjamin.com/#person"
+      }
+    }
+  ]
+}
+</script>
 
 <section class="sectionWrapper hero">
     <div class="hero__infoBox">
