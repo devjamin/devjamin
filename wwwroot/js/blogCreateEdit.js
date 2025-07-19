@@ -24,7 +24,7 @@ document.addEventListener('contextmenu', function (event) {
         event.preventDefault(); // Prevent the default context menu
 
         // Get the carousel DOM node
-        carouselNode = blot.domNode;
+        carouselNode = blot.domNode.querySelector('.f-carousel__slide.is-selected');
 
         // Check if the clicked target is inside a slide
         const slideNode = target.closest('.f-carousel__slide');
@@ -51,6 +51,9 @@ document.getElementById('moveLeft').addEventListener('click', function () {
 
     if (slideNode && carouselNode) {
         const prevSlide = slideNode.previousElementSibling;
+
+        destroyCarousels()
+
         if (prevSlide && prevSlide.classList.contains('f-carousel__slide')) {
             slideNode.parentNode.insertBefore(slideNode, prevSlide);
         }
@@ -69,6 +72,9 @@ document.getElementById('moveRight').addEventListener('click', function () {
 
     if (slideNode) {
         const nextSlide = slideNode.nextElementSibling;
+
+        destroyCarousels()
+
         if (nextSlide && nextSlide.classList.contains('f-carousel__slide')) {
             slideNode.parentNode.insertBefore(nextSlide, slideNode);
         }
@@ -80,19 +86,42 @@ document.getElementById('moveRight').addEventListener('click', function () {
     }
 });
 
+function destroyCarousels() {
+    const carouselModule = quill.getModule('carousel');
+
+    console.log("destroyCarousels", carouselModule.carouselInstances)
+
+    carouselModule.carouselInstances.forEach(instance => {
+        instance.destroy();
+    })
+
+
+    carouselModule.carouselInstances = [];
+
+    cleanupCarouselHtmlBeforeSaving()
+
+    document.querySelectorAll("[data-init]").forEach(container => {
+        delete container.dataset.init;
+        container.classList.add("f-carousel");
+    })
+}
+
 document.getElementById('removeImage').addEventListener('click', function () {
     const contextMenu = document.getElementById('carouselContextMenu');
     const slideNode = contextMenu.slideNode;
 
+    destroyCarousels()
+
     if (slideNode) {
-        slideNode.parentNode.removeChild(slideNode);
+        slideNode.remove();
         hideContextMenu();
 
         // Reinitialize the carousel
         const carouselModule = quill.getModule('carousel');
-        carouselModule.reinitCarousels();
 
         checkAndConvertToImage()
+
+        carouselModule.reinitCarousels();
     }
 });
 
@@ -112,7 +141,10 @@ document.addEventListener('click', function () {
 class QuillCarousel {
     // Keep this in sync with options from blog js
     static carouselOptions = {
-        transition: "slide"
+        transition: "slide",
+        Arrows: {
+            enabled: true
+        }
     }
 
     constructor(quill, options) {
@@ -124,7 +156,7 @@ class QuillCarousel {
         this.container = document.querySelector(options.container);
 
         // Listen for text changes in Quill and initialize carousels accordingly
-        this.quill.on(Quill.events.TEXT_CHANGE, this.initCarousels.bind(this));
+        //this.quill.on(Quill.events.TEXT_CHANGE, this.initCarousels.bind(this));
 
         setTimeout(() => {
             this.initCarousels();
@@ -147,7 +179,9 @@ class QuillCarousel {
                 this.fixCarouselDotsBeforeInit();
 
                 // Initialize the Fancyapps carousel
-                const carouselNew = new Carousel(container, QuillCarousel.carouselOptions);
+                const carouselNew = Carousel(container, QuillCarousel.carouselOptions, { Arrows, Dots }).init();
+
+                console.log("pushing new carousel")
 
                 this.carouselInstances.push(carouselNew);
 
@@ -163,6 +197,12 @@ class QuillCarousel {
 
     reinitCarousels() {
         console.info("Reinit carousels");
+        // Remove data-init attribute from all carousels, so initCarousels knows to reinitialize them
+        const carouselContainers = document.querySelectorAll(".f-carousel__viewport");
+        carouselContainers.forEach(container => {
+            delete container.parentElement.dataset.init;
+            container.parentElement.classList.add("f-carousel");
+        })
 
         // Reinitialize all carousels
         this.carouselInstances.forEach(carousel => {
@@ -170,11 +210,6 @@ class QuillCarousel {
         })
         this.carouselInstances = [];
 
-        // Remove data-init attribute from all carousels, so initCarousels knows to reinitialize them
-        const carouselContainers = document.querySelectorAll(".f-carousel");
-        carouselContainers.forEach(container => {
-            delete container.dataset.init;
-        })
 
         this.initCarousels();
     }
@@ -203,15 +238,11 @@ function cleanupCarouselHtmlBeforeSaving() {
     const dots = document.querySelectorAll(".f-carousel__dots");
     dots.forEach(dot => dot.remove());
     // remove f-carousel dataset
-    const carousels = document.querySelectorAll(".f-carousel");
+    const carousels = document.querySelectorAll("[data-init]");
     carousels.forEach(carousel => {
         delete carousel.dataset.init;
+        carousel.classList.add("f-carousel");
     });
-    // remove style transform from f-carousel__track
-    const carouselTracks = document.querySelectorAll(".f-carousel__track");
-    carouselTracks.forEach(track => {
-        track.removeAttribute("style");
-    })
 
     // remove all data-index="0" style="" aria-hidden="true" from all slides
     const carouselSlides = document.querySelectorAll(".f-carousel__slide");
@@ -220,6 +251,9 @@ function cleanupCarouselHtmlBeforeSaving() {
         slide.removeAttribute("style");
         slide.removeAttribute("aria-hidden");
     })
+
+    const carouselButtons = document.querySelectorAll(".f-carousel__button");
+    carouselButtons.forEach(button => button.remove());
 }
 
 Quill.register('modules/carousel', QuillCarousel);
@@ -301,16 +335,18 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     }
 
     // Find the current slide index
-    const currentDot = blot.domNode.querySelector('ul.f-carousel__dots li.is-current');
+    const currentDot = blot.domNode.querySelector('.f-carousel__dots .is-selected');
     if (!currentDot) {
         console.error('No current dot found');
         return;
     }
 
-    const currentIndex = parseInt(currentDot.querySelector('button').getAttribute('data-carousel-page'), 10);
+    const currentIndex = parseInt(currentDot.getAttribute('data-carousel-go-to'), 10);
+
+
 
     // Get the blot's track element
-    let blotNode = blot.domNode.querySelector('.f-carousel__track');
+    let blotNode = blot.domNode.querySelector('.f-carousel__viewport');
 
     // Create the new slide element
     const newSlide = document.createElement('div');
@@ -318,6 +354,9 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     newSlide.setAttribute('data-index', currentIndex + 1);
     newSlide.setAttribute('data-src', `https://cdn.devjamin.com/${filePath}/w=800,format=auto`);
     newSlide.innerHTML = `<img src="https://cdn.devjamin.com/${filePath}/w=800,format=auto">`;
+
+
+    destroyCarousels()
 
     // Insert the new slide after the current one
     const slides = blotNode.querySelectorAll('.f-carousel__slide');
@@ -328,9 +367,10 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     }
 
     // Insert the new dot into the carousel dots
-    const newDot = document.createElement('li');
-    newDot.setAttribute('role', 'presentation');
-    newDot.innerHTML = `<button type="button" data-carousel-page="${currentIndex + 1}" aria-label="Go to slide #${currentIndex + 2}" role="tab" aria-selected="false"><span class="f-carousel__dot" aria-hidden="true"></span></button>`;
+    const newDot = document.createElement('button');
+    newDot.classList.add('f-carousel__dot');
+    newDot.setAttribute('data-carousel-go-to', currentIndex + 1);
+    newDot.setAttribute('aria-label', `Go to slide #${currentIndex + 2}`);
     currentDot.insertAdjacentElement('afterend', newDot);
 
     // Update indices for the slides and dots after the new one
@@ -339,7 +379,7 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
             nodes[i].setAttribute('data-index', i);
             const button = nodes[i].querySelector('button');
             if (button) {
-                button.setAttribute('data-carousel-page', i);
+                button.setAttribute('data-carousel-go-to', i);
                 button.setAttribute('aria-label', `Go to slide #${i + 1}`);
             }
         }
@@ -351,17 +391,6 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     // Reinitialize the carousel
     const carouselModule = quill.getModule('carousel');
     carouselModule.reinitCarousels();
-
-    // Slide carousel instance to the new slide
-    // Hacky? Maybe, but it works :)
-    setTimeout(() => {
-        const carouselInstance = carouselModule.carouselInstances.find(instance => instance.container.dataset.init === blot.domNode.dataset.init);
-
-        carouselInstance.slideTo(currentIndex + 1, {
-            transition: "fade"
-        });
-
-    }, 0)
 }
 
 /*

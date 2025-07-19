@@ -22,9 +22,6 @@
     string displayTitle = title.Length > 16 ? title.Substring(0, 16).TrimEnd() + "…" : title;
 }
 
-@* Our js *@
-<script src="~/js/fullBlog.js" defer></script>
-
 <div class="blogWrapper">
     <header class="blogTop">
         <ul class="share">
@@ -94,10 +91,3 @@
         @Html.Raw(Model.Content)
     </article>
 </div>
-
-@* Fancyapps (Carousel) *@
-<link rel="stylesheet" href="~/lib/fancyapps/carousel/carousel.min.css">
-<script src="~/lib/fancyapps/carousel/carousel.min.js"></script>
-@* Fancyapps (fancybox) *@
-<link rel="stylesheet" href="~/lib/fancyapps/fancybox/fancybox.min.css">
-<script src="~/lib/fancyapps/fancybox/fancybox.min.js"></script>

@@ -1,9 +1,9 @@
 // query all .f-carousel and init them
 const carouselContainers = document.querySelectorAll(".f-carousel");
 carouselContainers.forEach(container => {
-  const carouselNew = new Carousel(container, {
+  Carousel(container, {
     transition: "slide"
-  });
+  }, { Arrows, Dots }).init();
 });
 
 // Fancybox.bind('[data-fancybox="gallery"]', {
