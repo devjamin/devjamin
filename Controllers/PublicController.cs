@@ -142,6 +142,7 @@ namespace devjamin.Controllers
                     Description = bp.Description,
                     MetaDescription = bp.MetaDescription,
                     CreatedDate = bp.CreatedDate,
+                    UpdatedDate = bp.EditedDate,
                     Content = bp.Content,
                     AuthorFullName = bp.Author!.FullName,
                     AuthorProfilePicturePath = bp.Author.ProfilePicturePath,
