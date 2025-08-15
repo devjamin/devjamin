@@ -36,6 +36,8 @@ namespace devjamin.Models
         [Required(ErrorMessage = "Please enter the content.")]
         public string Content { get; set; } = string.Empty;
 
+        public string? QuillContent { get; set; }
+
         public string? IsPublished { get; set; }
 
         // Include media files

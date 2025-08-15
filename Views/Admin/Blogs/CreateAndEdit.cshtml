@@ -85,10 +85,12 @@
     <div class="ceForm__group">
         <label class="ceForm__label" for="Content">Content</label>
         <div class="ceForm__editor" id="Editor">
-            @Html.Raw(Model.Content)
+            @Html.Raw(Model.QuillContent)
         </div>
         <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.Content" name="Content"
             id="Content">
+        <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.QuillContent" name="QuillContent"
+            id="QuillContent">
     </div>
     <div class="ceForm__group">
         <div class="ceForm__mediaHeader">

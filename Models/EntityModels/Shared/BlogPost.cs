@@ -23,6 +23,9 @@ namespace devjamin.Models
         [DataType(DataType.MultilineText)]
         public required string Content { get; set; }
 
+        [DataType(DataType.MultilineText)]
+        public string? QuillContent { get; set; }
+
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public required DateTime CreatedDate { get; set; } = DateTime.UtcNow;

@@ -204,7 +204,7 @@ namespace devjamin.Migrations
 
                     b.HasKey("BlogTagId");
 
-                    b.ToTable("BlogTags", (string)null);
+                    b.ToTable("BlogTags");
                 });
 
             modelBuilder.Entity("devjamin.Models.ApplicationUser", b =>
@@ -308,7 +308,7 @@ namespace devjamin.Migrations
 
                     b.HasIndex("BlogPostId");
 
-                    b.ToTable("BlogMedia", (string)null);
+                    b.ToTable("BlogMedia");
                 });
 
             modelBuilder.Entity("devjamin.Models.BlogPost", b =>
@@ -363,7 +363,7 @@ namespace devjamin.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("BlogPosts", (string)null);
+                    b.ToTable("BlogPosts");
                 });
 
             modelBuilder.Entity("devjamin.Models.BlogPostSlugHistory", b =>
@@ -388,7 +388,7 @@ namespace devjamin.Migrations
 
                     b.HasIndex("BlogPostId");
 
-                    b.ToTable("BlogPostSlugHistory", (string)null);
+                    b.ToTable("BlogPostSlugHistory");
                 });
 
             modelBuilder.Entity("BlogPostBlogTag", b =>

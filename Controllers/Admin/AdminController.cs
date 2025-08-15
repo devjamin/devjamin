@@ -185,7 +185,9 @@ namespace devjamin.Controllers
                 Title = blogPost.Title,
                 Slug = blogPost.Slug,
                 Description = blogPost.Description,
+                MetaDescription = blogPost.MetaDescription,
                 Content = blogPost.Content,
+                QuillContent = blogPost.QuillContent,
                 IsPublished = blogPost.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
                 Media = blogPost.Media.Select(m => new BlogMediaViewModel
                 {
@@ -221,6 +223,7 @@ namespace devjamin.Controllers
                 blogPost.Description = model.Description;
                 blogPost.MetaDescription = model.MetaDescription;
                 blogPost.Content = model.Content;
+                blogPost.QuillContent = model.QuillContent;
                 blogPost.EditedDate = DateTime.UtcNow;
                 blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
                 blogPost.IsDraft = false; // It's now a posted blog, not "draft"
@@ -308,6 +311,7 @@ namespace devjamin.Controllers
                 Description = blogPost.Description,
                 MetaDescription = blogPost.MetaDescription,
                 Content = blogPost.Content,
+                QuillContent = blogPost.QuillContent,
                 IsPublished = blogPost.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
                 Media = blogPost.Media.Select(m => new BlogMediaViewModel
                 {
@@ -362,6 +366,7 @@ namespace devjamin.Controllers
                 blogPost.Description = model.Description;
                 blogPost.MetaDescription = model.MetaDescription;
                 blogPost.Content = model.Content;
+                blogPost.QuillContent = model.QuillContent;
                 blogPost.EditedDate = DateTime.UtcNow;
                 blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
 

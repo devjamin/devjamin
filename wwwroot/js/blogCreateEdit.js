@@ -51,6 +51,10 @@ Quill.register(SectionBlot);
 Quill.register(ArticleBlot);
 Quill.register(SemanticHeaderBlot);
 
+// Import and register the List format to ensure bullet lists work properly
+const List = Quill.import('formats/list');
+Quill.register(List, true);
+
 /*
     blogCreateEdit.js, a script for everything but media upload in the create/edit blog.
 
@@ -569,7 +573,7 @@ const options = {
     formats: [
         'bold', 'italic', 'underline', 'strike',
         'header', 'semantic-header',
-        'list', 'bullet',
+        'list',
         'blockquote', 'code-block',
         'script', 'indent', 'direction', 'align',
         'link', 'image', 'video',
@@ -581,11 +585,17 @@ const options = {
 var quill = new Quill("#Editor", options);
 
 const contentField = document.getElementById("Content");
+const quillContentField = document.getElementById("QuillContent");
 
 if (contentField) {
     cleanupCarouselHtmlBeforeSaving()
 
-    quill.root.innerHTML = contentField.value;
+    // Use QuillContent for editing if it exists, otherwise fall back to Content
+    if (quillContentField && quillContentField.value) {
+        quill.root.innerHTML = quillContentField.value;
+    } else {
+        quill.root.innerHTML = contentField.value;
+    }
 }
 
 // To get carousel working inside quill WYSIWYG editor we need to remove classes etc. appended on initting it
@@ -702,10 +712,17 @@ if (form) {
         if (contentField) {
             prepareContentForSaving()
 
+            // Save raw Quill content for editing
+            const quillContentField = document.getElementById("QuillContent");
+            if (quillContentField) {
+                quillContentField.value = quill.root.innerHTML;
+            }
+
             // Get semantic HTML and apply post-processing for better structure
             let semanticHTML = quill.getSemanticHTML();
             semanticHTML = createSemanticStructure(semanticHTML);
 
+            // Save processed semantic HTML for display
             contentField.value = semanticHTML;
         }
     });
