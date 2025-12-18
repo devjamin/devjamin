@@ -34,9 +34,9 @@ namespace devjamin.Models
         public string MetaDescription { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Please enter the content.")]
-        public string Content { get; set; } = string.Empty;
+        public string SemanticHTML { get; set; } = string.Empty;
 
-        public string? QuillContent { get; set; }
+        public string? QuillDelta { get; set; }
 
         public string? IsPublished { get; set; }
 

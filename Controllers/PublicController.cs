@@ -143,10 +143,10 @@ namespace devjamin.Controllers
                     MetaDescription = bp.MetaDescription,
                     CreatedDate = bp.CreatedDate,
                     UpdatedDate = bp.EditedDate,
-                    Content = bp.Content,
+                    Content = bp.SemanticHTML,
                     AuthorFullName = bp.Author!.FullName,
                     AuthorProfilePicturePath = bp.Author.ProfilePicturePath,
-                    ReadTimeMinuteEstimate = CalculateReadTime(bp.Content),
+                    ReadTimeMinuteEstimate = CalculateReadTime(bp.SemanticHTML),
                     CoverImagePath = bp.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath,
                 })
                 .FirstOrDefaultAsync();

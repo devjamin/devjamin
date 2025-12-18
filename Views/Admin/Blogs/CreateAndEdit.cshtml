@@ -83,14 +83,14 @@
         <select class="ceForm__input" id="tags" name="SelectedTagIds" placeholder="Select tags" multiple></select>
     </div>
     <div class="ceForm__group">
-        <label class="ceForm__label" for="Content">Content</label>
+        <label class="ceForm__label" for="SemanticHTML">Content</label>
         <div class="ceForm__editor" id="Editor">
-            @Html.Raw(Model.QuillContent)
+            @Html.Raw(Model.QuillDelta)
         </div>
-        <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.Content" name="Content"
-            id="Content">
-        <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.QuillContent" name="QuillContent"
-            id="QuillContent">
+        <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.SemanticHTML" name="SemanticHTML"
+            id="SemanticHTML">
+        <input class="ceForm__input ceForm__input--hidden" type="hidden" value="@Model.QuillDelta" name="QuillDelta"
+            id="QuillDelta">
     </div>
     <div class="ceForm__group">
         <div class="ceForm__mediaHeader">

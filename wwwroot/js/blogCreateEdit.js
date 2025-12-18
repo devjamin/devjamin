@@ -584,17 +584,23 @@ const options = {
 
 var quill = new Quill("#Editor", options);
 
-const contentField = document.getElementById("Content");
-const quillContentField = document.getElementById("QuillContent");
+const semanticHTMLField = document.getElementById("SemanticHTML");
+const quillDeltaField = document.getElementById("QuillDelta");
 
-if (contentField) {
+if (semanticHTMLField) {
     cleanupCarouselHtmlBeforeSaving()
 
-    // Use QuillContent for editing if it exists, otherwise fall back to Content
-    if (quillContentField && quillContentField.value) {
-        quill.root.innerHTML = quillContentField.value;
+    // Use QuillDelta for editing if it exists, otherwise fall back to SemanticHTML
+    if (quillDeltaField && quillDeltaField.value) {
+        try {
+            const delta = JSON.parse(quillDeltaField.value);
+            quill.setContents(delta);
+        } catch (e) {
+            console.warn('Failed to parse QuillDelta, falling back to SemanticHTML:', e);
+            quill.root.innerHTML = semanticHTMLField.value;
+        }
     } else {
-        quill.root.innerHTML = contentField.value;
+        quill.root.innerHTML = semanticHTMLField.value;
     }
 }
 
@@ -709,13 +715,14 @@ function createSemanticStructure(html) {
 const form = document.querySelector("form");
 if (form) {
     form.addEventListener("submit", function () {
-        if (contentField) {
+        if (semanticHTMLField) {
             prepareContentForSaving()
 
-            // Save raw Quill content for editing
-            const quillContentField = document.getElementById("QuillContent");
-            if (quillContentField) {
-                quillContentField.value = quill.root.innerHTML;
+            // Save Quill Delta JSON for editing
+            const quillDeltaField = document.getElementById("QuillDelta");
+            if (quillDeltaField) {
+                const delta = quill.getContents();
+                quillDeltaField.value = JSON.stringify(delta);
             }
 
             // Get semantic HTML and apply post-processing for better structure
@@ -723,7 +730,7 @@ if (form) {
             semanticHTML = createSemanticStructure(semanticHTML);
 
             // Save processed semantic HTML for display
-            contentField.value = semanticHTML;
+            semanticHTMLField.value = semanticHTML;
         }
     });
 }

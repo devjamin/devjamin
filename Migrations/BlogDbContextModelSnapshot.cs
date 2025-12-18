@@ -323,10 +323,6 @@ namespace devjamin.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
@@ -348,7 +344,11 @@ namespace devjamin.Migrations
                         .HasMaxLength(160)
                         .HasColumnType("varchar(160)");
 
-                    b.Property<string>("QuillContent")
+                    b.Property<string>("QuillDelta")
+                        .HasColumnType("json");
+
+                    b.Property<string>("SemanticHTML")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Slug")

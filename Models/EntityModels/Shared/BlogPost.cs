@@ -3,6 +3,7 @@
 */
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace devjamin.Models
 {
@@ -21,10 +22,10 @@ namespace devjamin.Models
         public required string MetaDescription { get; set; }
 
         [DataType(DataType.MultilineText)]
-        public required string Content { get; set; }
+        public required string SemanticHTML { get; set; }
 
-        [DataType(DataType.MultilineText)]
-        public string? QuillContent { get; set; }
+        [Column(TypeName = "json")]
+        public string? QuillDelta { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
