@@ -890,7 +890,10 @@ function createSemanticStructure(html) {
         Array.from(allElements).reverse().forEach(element => {
             // Skip elements that should never be removed even if empty
             const preserveElements = ['img', 'br', 'hr', 'input', 'meta', 'link'];
-            if (preserveElements.includes(element.tagName.toLowerCase())) {
+            const preserveClasses = ['f-carousel', 'f-carousel__slide', 'f-carousel__viewport', 'f-carousel__track'];
+
+            if (preserveElements.includes(element.tagName.toLowerCase()) ||
+                preserveClasses.some(className => element.classList.contains(className))) {
                 return;
             }
 
@@ -927,8 +930,9 @@ if (form) {
                 quillDeltaField.value = JSON.stringify(delta);
             }
 
-            // Get semantic HTML and apply post-processing for better structure
-            let semanticHTML = quill.getSemanticHTML();
+            // Get HTML content directly from editor (includes carousels)
+            // Use root.innerHTML instead of getSemanticHTML() to preserve carousel structure
+            let semanticHTML = quill.root.innerHTML;
             semanticHTML = createSemanticStructure(semanticHTML);
 
             // Save processed semantic HTML for display
