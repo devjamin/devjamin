@@ -98,9 +98,48 @@ document.addEventListener('contextmenu', function (event) {
             contextMenu.carouselNode = carouselNode;
         }
     }
+    // Check if the blot is a single image
+    else if (blot && blot.statics.blotName === 'customImage') {
+        event.preventDefault(); // Prevent the default context menu
+
+        // Show the image context menu
+        const contextMenu = document.getElementById('imageContextMenu');
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = `${event.pageX}px`;
+        contextMenu.style.top = `${event.pageY}px`;
+
+        // Store the image blot for later use
+        contextMenu.imageBlot = blot;
+        contextMenu.imageRange = range;
+    }
 });
 
 // Handle context menu actions
+document.getElementById('editCarouselAltText').addEventListener('click', function () {
+    const contextMenu = document.getElementById('carouselContextMenu');
+    const slideNode = contextMenu.slideNode;
+
+    if (slideNode) {
+        const img = slideNode.querySelector('img');
+        if (img) {
+            // Get current alt text
+            const currentAlt = img.getAttribute('alt') || '';
+
+            // Show modal and populate with current alt text
+            const modal = document.getElementById('altTextModal');
+            const input = document.getElementById('altTextInput');
+            input.value = currentAlt;
+            modal.style.display = 'flex';
+            input.focus();
+
+            // Store the image element in the modal for saving
+            modal.carouselImage = img;
+        }
+    }
+
+    hideContextMenu();
+});
+
 document.getElementById('moveLeft').addEventListener('click', function () {
     const contextMenu = document.getElementById('carouselContextMenu');
     const slideNode = contextMenu.slideNode;
@@ -183,14 +222,103 @@ document.getElementById('removeImage').addEventListener('click', function () {
 });
 
 function hideContextMenu() {
-    const contextMenu = document.getElementById('carouselContextMenu');
-    contextMenu.style.display = 'none';
-    contextMenu.slideNode = null;
-    contextMenu.carouselNode = null;
+    const carouselContextMenu = document.getElementById('carouselContextMenu');
+    carouselContextMenu.style.display = 'none';
+    carouselContextMenu.slideNode = null;
+    carouselContextMenu.carouselNode = null;
+
+    const imageContextMenu = document.getElementById('imageContextMenu');
+    imageContextMenu.style.display = 'none';
+    imageContextMenu.imageBlot = null;
+    imageContextMenu.imageRange = null;
 }
 
 document.addEventListener('click', function () {
     hideContextMenu(); // Hide the context menu on a click outside
+});
+
+// Image context menu handlers
+document.getElementById('editAltText').addEventListener('click', function () {
+    const contextMenu = document.getElementById('imageContextMenu');
+    const imageBlot = contextMenu.imageBlot;
+
+    if (imageBlot) {
+        // Get current alt text
+        const currentAlt = imageBlot.domNode.getAttribute('alt') || '';
+
+        // Show modal and populate with current alt text
+        const modal = document.getElementById('altTextModal');
+        const input = document.getElementById('altTextInput');
+        input.value = currentAlt;
+        modal.style.display = 'flex';
+        input.focus();
+
+        // Store the image blot in the modal for saving
+        modal.imageBlot = imageBlot;
+    }
+
+    hideContextMenu();
+});
+
+document.getElementById('removeImageSingle').addEventListener('click', function () {
+    const contextMenu = document.getElementById('imageContextMenu');
+    const imageBlot = contextMenu.imageBlot;
+    const range = contextMenu.imageRange;
+
+    if (imageBlot && range) {
+        // Remove the image
+        quill.deleteText(range.index, 1);
+    }
+
+    hideContextMenu();
+});
+
+// Alt text modal handlers
+document.getElementById('saveAltText').addEventListener('click', function () {
+    const modal = document.getElementById('altTextModal');
+    const input = document.getElementById('altTextInput');
+    const imageBlot = modal.imageBlot;
+    const carouselImage = modal.carouselImage;
+
+    if (imageBlot) {
+        // Update the alt text for single image
+        imageBlot.domNode.setAttribute('alt', input.value);
+    } else if (carouselImage) {
+        // Update the alt text for carousel image
+        carouselImage.setAttribute('alt', input.value);
+    }
+
+    modal.style.display = 'none';
+    modal.imageBlot = null;
+    modal.carouselImage = null;
+});
+
+document.getElementById('cancelAltText').addEventListener('click', function () {
+    const modal = document.getElementById('altTextModal');
+    modal.style.display = 'none';
+    modal.imageBlot = null;
+    modal.carouselImage = null;
+});
+
+// Close modal on escape key
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('altTextModal');
+        if (modal.style.display === 'flex') {
+            modal.style.display = 'none';
+            modal.imageBlot = null;
+            modal.carouselImage = null;
+        }
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById('altTextModal').addEventListener('click', function (e) {
+    if (e.target === this) {
+        this.style.display = 'none';
+        this.imageBlot = null;
+        this.carouselImage = null;
+    }
 });
 
 
@@ -332,7 +460,9 @@ function checkAndConvertToCarousel() {
             const images = match.match(/<img [^>]*src="[^"]*"[^>]*>/g);
             const carouselContent = images.map(imgTag => {
                 const src = imgTag.match(/src="([^"]*)"/)[1];
-                return `<div class="f-carousel__slide"><img src="${src}"></div>`;
+                const altMatch = imgTag.match(/alt="([^"]*)"/);
+                const alt = altMatch ? altMatch[1] : '';
+                return `<div class="f-carousel__slide"><img src="${src}" alt="${alt}"></div>`;
             }).join('');
 
             const carouselWrapper = `<div class="f-carousel">${carouselContent}</div>`;
@@ -384,7 +514,10 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     const [blot, offset] = quill.getLeaf(range.index);
     if (!blot || blot.statics.blotName !== 'carousel') {
         // If not inside carousel, we want just single image to be added at cursor position
-        quill.insertEmbed(range.index, 'customImage', `https://cdn.devjamin.com/${filePath}/w=800,format=auto`, 'user');
+        quill.insertEmbed(range.index, 'customImage', {
+            src: `https://cdn.devjamin.com/${filePath}/w=800,format=auto`,
+            alt: ''
+        }, 'user');
         quill.setSelection(range.index + 1, 0); // Move cursor after the media
 
         checkAndConvertToCarousel(range.index);
@@ -410,7 +543,7 @@ async function addMediaAtCursorOrInsideCarousel(filePath, isVideo = false) {
     newSlide.className = 'f-carousel__slide';
     newSlide.setAttribute('data-index', currentIndex + 1);
     newSlide.setAttribute('data-src', `https://cdn.devjamin.com/${filePath}/w=800,format=auto`);
-    newSlide.innerHTML = `<img src="https://cdn.devjamin.com/${filePath}/w=800,format=auto">`;
+    newSlide.innerHTML = `<img src="https://cdn.devjamin.com/${filePath}/w=800,format=auto" alt="">`;
 
 
     destroyCarousels()
@@ -476,12 +609,37 @@ Quill.register(CarouselBlot);
 class ImageBlot extends BlockEmbed {
     static create(value) {
         let node = super.create();
-        node.setAttribute('src', value);
+        if (typeof value === 'string') {
+            // Legacy support for string values
+            node.setAttribute('src', value);
+            node.setAttribute('alt', '');
+        } else {
+            // New object format with src and alt
+            node.setAttribute('src', value.src || value);
+            node.setAttribute('alt', value.alt || '');
+        }
         return node;
     }
 
     static value(node) {
-        return node.getAttribute('src');
+        return {
+            src: node.getAttribute('src'),
+            alt: node.getAttribute('alt') || ''
+        };
+    }
+
+    static formats(node) {
+        return {
+            alt: node.getAttribute('alt') || ''
+        };
+    }
+
+    format(name, value) {
+        if (name === 'alt') {
+            this.domNode.setAttribute('alt', value);
+        } else {
+            super.format(name, value);
+        }
     }
 }
 

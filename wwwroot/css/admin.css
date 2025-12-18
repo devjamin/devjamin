@@ -771,6 +771,102 @@ body.quill-fullscreen-active {
     background-color: #f0f0f0;
 }
 
+/* Alt text modal styles - BEM methodology */
+.altTextModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.altTextModal__content {
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.altTextModal__title {
+    margin: 0 0 24px 0;
+    color: #160042;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.altTextModal__label {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #160042;
+    font-weight: 500;
+}
+
+.altTextModal__input {
+    width: 100%;
+    height: 56px;
+    padding: 0 16px;
+    border: 1px solid #c4cad4;
+    border-radius: 16px;
+    font-size: 14px;
+    color: #160042;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+
+.altTextModal__input:focus {
+    outline: 1px solid #5d53a2;
+    border-color: #5d53a2;
+}
+
+.altTextModal__buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.altTextModal__button {
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 100px;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.altTextModal__button--primary {
+    background-color: #5d53a2;
+    border: 1px solid #5d53a2;
+    color: #fff;
+}
+
+.altTextModal__button--primary:hover {
+    background-color: #fff;
+    color: #5d53a2;
+    border: 1px solid #5d53a2;
+}
+
+.altTextModal__button--secondary {
+    background-color: #fff;
+    border: 1px solid #c4cad4;
+    color: #160042;
+}
+
+.altTextModal__button--secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #5d53a2;
+}
+
 .ceForm__hint {
     font-size: 12px;
     color: #666;

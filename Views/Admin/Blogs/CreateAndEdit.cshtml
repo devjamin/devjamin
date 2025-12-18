@@ -30,10 +30,32 @@
 <!-- Custom context menu for carousel control -->
 <div id="carouselContextMenu" class="custom-context-menu">
     <ul>
+        <li id="editCarouselAltText">Edit Alt Text</li>
         <li id="moveLeft">Move Left</li>
         <li id="moveRight">Move Right</li>
         <li id="removeImage">Remove Image</li>
     </ul>
+</div>
+
+<!-- Custom context menu for image alt text -->
+<div id="imageContextMenu" class="custom-context-menu">
+    <ul>
+        <li id="editAltText">Edit Alt Text</li>
+        <li id="removeImageSingle">Remove Image</li>
+    </ul>
+</div>
+
+<!-- Alt text edit modal -->
+<div id="altTextModal" class="altTextModal" style="display: none;">
+    <div class="altTextModal__content">
+        <h3 class="altTextModal__title">Edit Alt Text</h3>
+        <label for="altTextInput" class="altTextModal__label">Alt text (describe the image for accessibility):</label>
+        <input type="text" id="altTextInput" class="altTextModal__input" placeholder="Describe what's in the image..." maxlength="125">
+        <div class="altTextModal__buttons">
+            <button id="saveAltText" type="button" class="altTextModal__button altTextModal__button--primary">Save</button>
+            <button id="cancelAltText" type="button" class="altTextModal__button altTextModal__button--secondary">Cancel</button>
+        </div>
+    </div>
 </div>
 
 <h1 class="ceTitle">@ViewData["Title"]</h1>
