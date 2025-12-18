@@ -541,7 +541,7 @@ const options = {
     modules: {
         toolbar: {
             container: [
-                [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                [{ header: [2, 3, 4, 5, 6, false] }], // Removed H1 (1) from options
                 ["bold", "italic", "underline", "strike"],
                 [{ list: "ordered" }, { list: "bullet" }],
                 ["blockquote", "code-block"],
@@ -631,8 +631,10 @@ function prepareContentForSaving() {
 
 /*
     Post-process HTML to add semantic structure
-    This function automatically wraps headings and their following content in semantic sections
-    with proper hierarchical nesting based on heading levels
+    This function creates sections based on semantic criteria:
+    ✅ Groups multiple paragraphs under one heading
+    ✅ Contains subsections (nested headings)
+    ✅ Represents a real conceptual unit
 */
 function createSemanticStructure(html) {
     // Create a temporary DOM element to work with
@@ -643,73 +645,115 @@ function createSemanticStructure(html) {
     const allNodes = Array.from(tempDiv.childNodes);
 
     let result = '';
-    let sectionStack = []; // Stack to track nested sections: {level, content}
+    let currentSection = null;
+    let currentSectionContent = '';
+    let currentSectionLevel = null;
 
-    // Helper function to close sections down to a specific level
-    function closeSectionsToLevel(targetLevel) {
-        while (sectionStack.length > 0 && sectionStack[sectionStack.length - 1].level >= targetLevel) {
-            const section = sectionStack.pop();
-            const closedSection = `<section class="blogBody__section">${section.content}</section>`;
+    // Helper function to check if content qualifies for a section
+    function shouldCreateSection(content, hasSubheadings = false) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
 
-            if (sectionStack.length > 0) {
-                // Add closed section to parent section
-                sectionStack[sectionStack.length - 1].content += closedSection;
-            } else {
-                // Add closed section to final result
-                result += closedSection;
-            }
-        }
+        const paragraphs = tempDiv.querySelectorAll('p');
+        const hasMultipleParagraphs = paragraphs.length > 1;
+        const hasSubstantialContent = content.trim().length > 100; // Arbitrary threshold for "substantial"
+
+        // Create section if:
+        // - Has multiple paragraphs, OR
+        // - Has subsections (nested headings), OR
+        // - Has substantial content that represents a conceptual unit
+        return hasMultipleParagraphs || hasSubheadings || hasSubstantialContent;
     }
 
-    // Helper function to add content to the deepest open section or result
-    function addContent(content) {
-        if (sectionStack.length > 0) {
-            sectionStack[sectionStack.length - 1].content += content;
-        } else {
-            result += content;
+    // Helper function to close current section if it qualifies
+    function closeCurrentSection() {
+        if (currentSection !== null) {
+            // Check if we have subsections by looking for headings in content
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = currentSectionContent;
+            const hasSubheadings = tempDiv.querySelectorAll('h2, h3, h4, h5, h6').length > 1;
+
+            if (shouldCreateSection(currentSectionContent, hasSubheadings)) {
+                result += `<section class="blogBody__section">${currentSectionContent}</section>`;
+            } else {
+                // Don't wrap in section if it doesn't meet criteria
+                result += currentSectionContent;
+            }
+
+            currentSection = null;
+            currentSectionContent = '';
+            currentSectionLevel = null;
         }
     }
 
     allNodes.forEach((node, index) => {
-        if (node.nodeType === Node.ELEMENT_NODE && /^h[1-6]$/i.test(node.tagName)) {
+        if (node.nodeType === Node.ELEMENT_NODE && /^h[2-6]$/i.test(node.tagName)) {
             const level = parseInt(node.tagName.substring(1));
 
-            // Close sections that are at the same level or deeper
-            closeSectionsToLevel(level);
+            // If we encounter a heading of same or higher level, close current section
+            if (currentSectionLevel !== null && level <= currentSectionLevel) {
+                closeCurrentSection();
+            }
 
-            // Start new section
-            const newSection = {
-                level: level,
-                content: node.outerHTML
-            };
-
-            // Push the new section to the stack
-            sectionStack.push(newSection);
+            // Start new section or add to existing one
+            if (currentSection === null) {
+                currentSection = level;
+                currentSectionLevel = level;
+                currentSectionContent = node.outerHTML;
+            } else {
+                // Add subsection heading to current section
+                currentSectionContent += node.outerHTML;
+            }
 
         } else if (node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent.trim())) {
             // Add content to current section or result
             const content = node.outerHTML || node.textContent;
-            addContent(content);
+
+            if (currentSection !== null) {
+                currentSectionContent += content;
+            } else {
+                result += content;
+            }
         }
     });
 
-    // Close all remaining sections
-    closeSectionsToLevel(0);
+    // Close any remaining section
+    closeCurrentSection();
 
-    // Remove empty paragraph tags before returning
+    // Clean up empty elements before returning
     const finalDiv = document.createElement('div');
     finalDiv.innerHTML = result;
 
-    // Find and remove empty <p> tags
-    const emptyParagraphs = finalDiv.querySelectorAll('p');
-    emptyParagraphs.forEach(p => {
-        if (!p.textContent.trim() && p.children.length === 0) {
-            p.remove();
-        }
-    });
+    // Remove empty elements (paragraphs, divs, spans, etc.)
+    const removeEmptyElements = (container) => {
+        const allElements = container.querySelectorAll('*');
 
-    // Wrap everything in an article
-    return finalDiv.innerHTML
+        // Process elements from innermost to outermost (reverse order)
+        Array.from(allElements).reverse().forEach(element => {
+            // Skip elements that should never be removed even if empty
+            const preserveElements = ['img', 'br', 'hr', 'input', 'meta', 'link'];
+            if (preserveElements.includes(element.tagName.toLowerCase())) {
+                return;
+            }
+
+            // Remove if element has no text content and no non-empty children
+            const hasTextContent = element.textContent.trim().length > 0;
+            const hasNonEmptyChildren = Array.from(element.children).some(child =>
+                child.textContent.trim().length > 0 ||
+                preserveElements.includes(child.tagName.toLowerCase())
+            );
+
+            if (!hasTextContent && !hasNonEmptyChildren) {
+                element.remove();
+            }
+        });
+    };
+
+    // Run cleanup multiple times to catch nested empty elements
+    removeEmptyElements(finalDiv);
+    removeEmptyElements(finalDiv); // Second pass to catch elements that became empty after first pass
+
+    return finalDiv.innerHTML;
 }
 
 const form = document.querySelector("form");

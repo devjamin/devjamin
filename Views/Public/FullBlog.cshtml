@@ -28,7 +28,7 @@
   "@@context": "https://schema.org",
   "@@type": "BlogPosting",
   "headline": @Html.Raw(Json.Serialize(Model.Title)),
-  "description": @Html.Raw(Json.Serialize(Model.MetaDescription ?? Model.Description)),@(Model.CoverImagePath != null ? $"\n  \"image\": \"{CDNBASEPATH}{Model.CoverImagePath}\"," : "")
+  "description": @Html.Raw(Json.Serialize(Model.MetaDescription ?? Model.Description)),@(Model.CoverImagePath != null ? $"\n  \"image\": [\n    \"{CDNBASEPATH}{Model.CoverImagePath}/w=1200,format=auto\"\n  ]," : "")
   "author": {
     "@@type": "Person",
     "name": @Html.Raw(Json.Serialize(Model.AuthorFullName)),
@@ -62,7 +62,7 @@
 }
 </script>
 
-<article class="blogWrapper">
+<main class="blogWrapper">
     <header class="blogTop">
         <ul class="share" aria-label="Share this article">
             <li id="webShareBtn">
@@ -126,12 +126,12 @@
 
         </div>
     </header>
-    <main class="blogBody">
+    <article class="blogBody">
         @* @if (Model.CoverImagePath != null)
         {
             <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
         }
         *@
         @Html.Raw(Model.Content)
-    </main>
-</article>
+    </article>
+</main>
