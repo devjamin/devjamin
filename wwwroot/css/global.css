@@ -724,6 +724,309 @@ label {
 }
 
 /*
+    Projects section
+*/
+.projects {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.projects__tag {
+    background-color: var(--bg-color);
+    font-size: clamp(14px, 2.5vw, 16px);
+    color: var(--primary-txt-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    margin-bottom: 16px;
+    border: 1px solid var(--secondary-bg-color);
+}
+
+.projects__title {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 900;
+    font-family: "Courier New", Courier, monospace;
+    max-width: 680px;
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 12px;
+}
+
+.projects__description {
+    font-size: clamp(16px, 2.5vw, 18px);
+    color: var(--secondary-txt-color);
+    text-align: center;
+    max-width: 560px;
+    margin-bottom: 40px;
+}
+
+.projects__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+    max-width: 1100px;
+}
+
+/*
+    Project showcase
+*/
+.projectShowcase {
+    background-color: var(--bg-color);
+    border-radius: 24px;
+    border: 1px solid var(--secondary-bg-color);
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: stretch;
+    transition: filter 0.25s ease;
+}
+
+.projectShowcase:hover {
+    filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.08));
+}
+
+.projectShowcase__media {
+    display: block;
+    overflow: hidden;
+    background-color: var(--secondary-bg-color);
+    min-height: 320px;
+}
+
+.projectShowcase__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.projectShowcase__media:hover .projectShowcase__img {
+    transform: scale(1.03);
+}
+
+.projectShowcase__body {
+    padding: clamp(28px, 4vw, 44px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.projectShowcase__eyebrow {
+    font-size: 13px;
+    color: var(--secondary-txt-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.projectShowcase__title {
+    font-family: "Courier New", Courier, monospace;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.projectShowcase__description {
+    font-size: clamp(15px, 1.5vw, 17px);
+    color: var(--secondary-txt-color);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.projectShowcase__features {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.projectFeature {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background-color: var(--secondary-bg-color);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary-txt-color);
+}
+
+.projectFeature__icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.projectShowcase__cta {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    background-color: #292929;
+    border: 1px solid #292929;
+    color: #fff;
+    border-radius: 22px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 8px;
+    transition: gap 0.25s ease, background-color 0.3s, color 0.3s;
+}
+
+.projectShowcase__cta:hover,
+.projectShowcase__cta:focus-visible {
+    gap: 12px;
+    background-color: #fff;
+    color: #292929;
+}
+
+@media (max-width: 768px) {
+    .projectShowcase {
+        grid-template-columns: 1fr;
+    }
+
+    .projectShowcase__media {
+        min-height: 0;
+        aspect-ratio: 16 / 10;
+    }
+}
+
+/*
+    Technologies section
+*/
+.technologies {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.technologies__title {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 900;
+    font-family: "Courier New", Courier, monospace;
+    max-width: 680px;
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 12px;
+}
+
+.technologies__description {
+    font-size: clamp(16px, 2.5vw, 18px);
+    color: var(--secondary-txt-color);
+    text-align: center;
+    max-width: 560px;
+    margin-bottom: 40px;
+}
+
+.techCategories {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    width: 100%;
+    max-width: 920px;
+}
+
+.techCategory {
+    width: 100%;
+}
+
+.techCategory__label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 16px 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-weight: 600;
+    color: var(--secondary-txt-color);
+}
+
+.techCategory__label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--tertiary-bg-color), transparent);
+    opacity: 0.5;
+}
+
+.techGrid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.techCard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--secondary-bg-color);
+    border-radius: 14px;
+    filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.techCard:hover {
+    transform: translateY(-3px);
+    filter: drop-shadow(0 8px 16px rgb(0 0 0 / 0.08));
+}
+
+.techCard__icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    transition: transform 0.25s ease;
+}
+
+.techCard:hover .techCard__icon {
+    transform: scale(1.08);
+}
+
+body.dark .techCard__icon--mono {
+    filter: invert(1);
+}
+
+.techCard__name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary-txt-color);
+}
+
+@media (max-width: 480px) {
+    .techGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .techCard {
+        padding: 12px 14px;
+        gap: 12px;
+    }
+
+    .techCard__icon {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/*
     Experience
 */
 .experience {
