@@ -1594,21 +1594,42 @@ label {
 .blogBody h5,
 .blogBody h6 {
     font-family: "Courier New", Courier, monospace;
-    font-weight: 600;
-    margin-bottom: 8px;
-    line-height: 1.5;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: clamp(32px, 5vw, 48px);
+    margin-bottom: 12px;
 }
 
 .blogBody h2 {
-    font-weight: 700;
+    font-size: clamp(24px, 4vw, 32px);
+}
+
+.blogBody h3 {
+    font-weight: 600;
+    font-size: clamp(20px, 3vw, 24px);
+}
+
+.blogBody h4 {
+    font-weight: 600;
+    font-size: clamp(18px, 2.5vw, 20px);
+}
+
+.blogBody h5,
+.blogBody h6 {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.blogBody :is(h2, h3, h4, h5, h6):first-child {
+    margin-top: 0;
 }
 
 .blogBody p,
 .blogBody ul,
 .blogBody ol {
-    line-height: 1.6;
-    font-size: 16px;
-    margin-bottom: 16px;
+    line-height: 1.7;
+    font-size: 17px;
+    margin-bottom: 20px;
 }
 
 .blogBody__section {
