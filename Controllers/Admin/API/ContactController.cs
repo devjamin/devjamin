@@ -19,7 +19,7 @@ namespace devjamin.Controllers
             // Skipped in dev so localhost testing still works
             if (!_env.IsDevelopment())
             {
-                const string allowedOrigin = "https://www.devjamin.com";
+                const string allowedOrigin = "https://devjamin.com";
                 var origin = HttpContext.Request.Headers["Origin"].FirstOrDefault();
                 var referer = HttpContext.Request.Headers["Referer"].FirstOrDefault();
                 var fromAllowedOrigin = origin == allowedOrigin || (referer != null && referer.StartsWith(allowedOrigin + "/"));
