@@ -3,43 +3,43 @@
 */
 using Microsoft.AspNetCore.Mvc;
 using devjamin.Services;
-using Microsoft.AspNetCore.Antiforgery;
 
 namespace devjamin.Controllers
 {
     [Route("API")]
     [ApiController]
-    public class ContactController(IEmailService emailService, IAntiforgery antiforgery) : ControllerBase
+    public class ContactController(IEmailService emailService, IWebHostEnvironment env) : ControllerBase
     {
         private readonly IEmailService _emailService = emailService;
-        private readonly IAntiforgery _antiforgery = antiforgery;
+        private readonly IWebHostEnvironment _env = env;
 
         [HttpPost("Contact")]
         public async Task<IActionResult> SendEmail([FromBody] EmailRequest request)
         {
+            // Skipped in dev so localhost testing still works
+            if (!_env.IsDevelopment())
+            {
+                const string allowedOrigin = "https://www.devjamin.com";
+                var origin = HttpContext.Request.Headers["Origin"].FirstOrDefault();
+                var referer = HttpContext.Request.Headers["Referer"].FirstOrDefault();
+                var fromAllowedOrigin = origin == allowedOrigin || (referer != null && referer.StartsWith(allowedOrigin + "/"));
+                if (!fromAllowedOrigin)
+                {
+                    return BadRequest("Invalid origin");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Please check your input and try again");
             }
 
-            // Extract CSRF token from request headers
-            var csrfTokenHeader = HttpContext.Request.Headers["RequestVerificationToken"].FirstOrDefault();
-            if (string.IsNullOrEmpty(csrfTokenHeader))
+            // Honeypot — silently succeed so bots don't retry with a different shape
+            if (!string.IsNullOrEmpty(request.Website))
             {
-                return BadRequest("Missing CSRF-token");
+                return Ok("Email sent successfully.");
             }
 
-            // Validate CSRF token
-            try
-            {
-                await _antiforgery.ValidateRequestAsync(HttpContext);
-            }
-            catch (AntiforgeryValidationException)
-            {
-                return BadRequest("Invalid CSRF-token");
-            }
-
-            // Input length validation
             if (request.Name.Length > 100 | request.From.Length > 100 || request.Subject.Length > 100 || request.Body.Length > 1000)
             {
                 return BadRequest("Too much content for me to read mate");
@@ -63,5 +63,6 @@ namespace devjamin.Controllers
         public required string From { get; set; }
         public required string Subject { get; set; }
         public required string Body { get; set; }
+        public string? Website { get; set; }
     }
 }

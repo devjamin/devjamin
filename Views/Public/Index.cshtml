@@ -411,7 +411,11 @@
         </span>
         <h2 class="contact__title">Contact me</h2>
         <p class="contact__description">Wanna chat, build something, or just say hi? Shoot me a message.</p>
-        <form id="contactForm" method="POST" class="contact__form" novalidate>
+        <form id="contactForm" method="POST" asp-antiforgery="false" class="contact__form" novalidate>
+            <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+                <label for="Website">Website</label>
+                <input id="Website" name="Website" type="text" tabindex="-1" autocomplete="off"/>
+            </div>
             <div class="contact__inputContainer">
                 <label for="Name" class="contact__label">Name</label>
                 <input id="Name" name="Name" class="contact__input" placeholder="Name" required aria-required="true" maxlength="100"/>
@@ -451,7 +455,6 @@
     const inputs = form.querySelectorAll("input, textarea");
     const button = document.getElementById("contactFormBtn");
     const feedbackTxt = document.getElementById("contactFormFeedbackTxt");
-    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
@@ -463,10 +466,10 @@
 
         @* Check each inputs validity *@
         inputs.forEach(input => {
+            @* Skip honeypot — has no error span and shouldn't be validated *@
+            if (input.name === "Website") return;
+
             const errorSpan = input.nextElementSibling;
-            
-            @* Guard clause for CSRF-Token *@
-            if (input.name === "__RequestVerificationToken") return;
 
             @* Validate input with built-in browser validation *@
             if (!input.validity.valid) {
@@ -484,16 +487,13 @@
 
             const headers = new Headers();
             headers.append('Content-Type', 'application/json');
-            @* Append CSRF token if available *@
-            if (csrfToken) {
-                headers.append('RequestVerificationToken', csrfToken);
-            }
 
             const body = JSON.stringify({
                 Name: e.target.Name.value,
                 From: e.target.Email.value,
                 Subject: "Contact form submission",
-                Body: e.target.Message.value
+                Body: e.target.Message.value,
+                Website: e.target.Website.value
             });
 
             try {
