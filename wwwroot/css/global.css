@@ -1951,6 +1951,40 @@ body.dark .techCard__icon--mono {
     gap: 8px;
 }
 
+.articleBody table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 28px 0;
+    font-size: 16px;
+    line-height: 1.55;
+    table-layout: fixed;
+}
+
+.articleBody table td,
+.articleBody table th {
+    border: 1px solid var(--tertiary-bg-color);
+    padding: 10px 14px;
+    vertical-align: top;
+    word-break: break-word;
+}
+
+.articleBody table th {
+    background-color: var(--secondary-bg-color);
+    font-weight: 600;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .articleBody table {
+        font-size: 14px;
+    }
+
+    .articleBody table td,
+    .articleBody table th {
+        padding: 8px 10px;
+    }
+}
+
 .f-carousel__dots {
     gap: 4px !important;
     flex-direction: row !important;

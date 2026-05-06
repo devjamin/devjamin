@@ -68,6 +68,28 @@ var carouselNode = null;
 document.addEventListener('contextmenu', function (event) {
     const target = event.target;
 
+    // Table cell — show table context menu (handled before Quill blot detection
+    // because right-clicking inside a cell may not have set the Quill selection)
+    const cell = target.closest('.ql-editor td, .ql-editor th');
+    if (cell) {
+        event.preventDefault();
+
+        // Move Quill caret into the cell so tableModule.* operations have context
+        try {
+            const cellBlot = Quill.find(cell, true);
+            if (cellBlot) {
+                const cellIndex = quill.getIndex(cellBlot);
+                quill.setSelection(cellIndex, 0, 'silent');
+            }
+        } catch (e) { /* best-effort */ }
+
+        const tableMenu = document.getElementById('tableContextMenu');
+        tableMenu.style.display = 'block';
+        tableMenu.style.left = `${event.pageX}px`;
+        tableMenu.style.top = `${event.pageY}px`;
+        return;
+    }
+
     // Check if the cursor is on the carousel blot
     const range = quill.getSelection();
     if (!range) {
@@ -231,7 +253,37 @@ function hideContextMenu() {
     imageContextMenu.style.display = 'none';
     imageContextMenu.imageBlot = null;
     imageContextMenu.imageRange = null;
+
+    const tableContextMenu = document.getElementById('tableContextMenu');
+    if (tableContextMenu) tableContextMenu.style.display = 'none';
 }
+
+// Table context menu actions — operate on the cell containing the current selection
+function runTableAction(method) {
+    const tableModule = quill.getModule('table');
+    if (tableModule && typeof tableModule[method] === 'function') {
+        tableModule[method]();
+    } else {
+        console.warn(`Quill table module missing or doesn't expose ${method}().`);
+    }
+    hideContextMenu();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const map = {
+        tableInsertRowAbove: 'insertRowAbove',
+        tableInsertRowBelow: 'insertRowBelow',
+        tableInsertColLeft: 'insertColumnLeft',
+        tableInsertColRight: 'insertColumnRight',
+        tableDeleteRow: 'deleteRow',
+        tableDeleteCol: 'deleteColumn',
+        tableDeleteTable: 'deleteTable'
+    };
+    Object.entries(map).forEach(([id, method]) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', () => runTableAction(method));
+    });
+});
 
 document.addEventListener('click', function () {
     hideContextMenu(); // Hide the context menu on a click outside
@@ -694,6 +746,105 @@ function toggleFullscreen() {
     }
 }
 
+const TABLE_PICKER_MAX_ROWS = 10;
+const TABLE_PICKER_MAX_COLS = 10;
+
+function insertTable(rows, cols) {
+    const tableModule = quill.getModule('table');
+    if (tableModule && typeof tableModule.insertTable === 'function') {
+        tableModule.insertTable(rows, cols);
+        return;
+    }
+    // Fallback: paste raw HTML if the built-in module isn't wired up
+    const range = quill.getSelection() || { index: quill.getLength() };
+    let html = '<table><tbody>';
+    for (let r = 0; r < rows; r++) {
+        html += '<tr>';
+        for (let c = 0; c < cols; c++) {
+            html += r === 0 ? '<th>Header</th>' : '<td>Cell</td>';
+        }
+        html += '</tr>';
+    }
+    html += '</tbody></table>';
+    quill.clipboard.dangerouslyPasteHTML(range.index, html, 'user');
+}
+
+function buildTableSizePickerGrid() {
+    const grid = document.querySelector('#tableSizePicker .tableSizePicker__grid');
+    if (!grid || grid.children.length) return grid;
+    for (let i = 0; i < TABLE_PICKER_MAX_ROWS * TABLE_PICKER_MAX_COLS; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'tableSizePicker__cell';
+        cell.dataset.row = Math.floor(i / TABLE_PICKER_MAX_COLS) + 1;
+        cell.dataset.col = (i % TABLE_PICKER_MAX_COLS) + 1;
+        grid.appendChild(cell);
+    }
+    return grid;
+}
+
+function highlightTableSizePicker(rows, cols) {
+    const picker = document.getElementById('tableSizePicker');
+    if (!picker) return;
+    const cells = picker.querySelectorAll('.tableSizePicker__cell');
+    cells.forEach((c) => {
+        const r = parseInt(c.dataset.row, 10);
+        const cc = parseInt(c.dataset.col, 10);
+        c.classList.toggle('tableSizePicker__cell--active', r <= rows && cc <= cols);
+    });
+    const label = picker.querySelector('.tableSizePicker__label');
+    if (label) label.textContent = `${rows} × ${cols}`;
+}
+
+function hideTableSizePicker() {
+    const picker = document.getElementById('tableSizePicker');
+    if (picker) picker.style.display = 'none';
+    document.removeEventListener('click', onTableSizePickerOutsideClick, true);
+}
+
+function onTableSizePickerOutsideClick(e) {
+    const picker = document.getElementById('tableSizePicker');
+    if (!picker) return;
+    if (!picker.contains(e.target) && !e.target.closest('.ql-table')) {
+        hideTableSizePicker();
+    }
+}
+
+function showTableSizePicker(triggerBtn) {
+    const picker = document.getElementById('tableSizePicker');
+    if (!picker) return;
+    const grid = buildTableSizePickerGrid();
+
+    const rect = triggerBtn.getBoundingClientRect();
+    picker.style.top = `${rect.bottom + window.scrollY + 4}px`;
+    picker.style.left = `${rect.left + window.scrollX}px`;
+    picker.style.display = 'block';
+    highlightTableSizePicker(3, 3);
+
+    grid.onmousemove = (e) => {
+        const cell = e.target.closest('.tableSizePicker__cell');
+        if (!cell) return;
+        highlightTableSizePicker(parseInt(cell.dataset.row, 10), parseInt(cell.dataset.col, 10));
+    };
+    grid.onmouseleave = () => highlightTableSizePicker(3, 3);
+    grid.onclick = (e) => {
+        const cell = e.target.closest('.tableSizePicker__cell');
+        if (!cell) return;
+        const rows = parseInt(cell.dataset.row, 10);
+        const cols = parseInt(cell.dataset.col, 10);
+        hideTableSizePicker();
+        insertTable(rows, cols);
+    };
+
+    // Capture-phase outside-click listener so the picker hides reliably
+    setTimeout(() => document.addEventListener('click', onTableSizePickerOutsideClick, true), 0);
+}
+
+function insertTableHandler() {
+    // The Quill toolbar button click — open the row/col picker positioned under it
+    const btn = document.querySelector('.ql-table');
+    if (btn) showTableSizePicker(btn);
+}
+
 const options = {
     debug: null, //"info",
     modules: {
@@ -709,15 +860,19 @@ const options = {
                 [{ align: [] }],
                 ["clean"],
                 ["link"],
+                ['table'],
                 ['fullscreen']
             ],
             handlers: {
-                'fullscreen': toggleFullscreen
+                'fullscreen': toggleFullscreen,
+                'table': insertTableHandler
             }
         },
         clipboard: {
             matchVisual: false,
         },
+        // Built-in Quill 2 table module — enables row/col helpers via quill.getModule('table')
+        table: true,
         // Custom module
         carousel: {
             container: '#counter',
@@ -736,7 +891,8 @@ const options = {
         'script', 'indent', 'direction', 'align',
         'link', 'image', 'video',
         'section', 'article',
-        'customImage', 'carousel'
+        'customImage', 'carousel',
+        'table', 'table-cell-line', 'table-col'
     ]
 };
 
@@ -1009,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Add fullscreen button icon after Quill is initialized
+// Add fullscreen + table button icons after Quill is initialized
 setTimeout(() => {
     const fullscreenBtn = document.querySelector('.ql-fullscreen');
     if (fullscreenBtn) {
@@ -1022,6 +1178,20 @@ setTimeout(() => {
             </svg>
         `;
         fullscreenBtn.setAttribute('title', 'Toggle fullscreen');
+    }
+
+    const tableBtn = document.querySelector('.ql-table');
+    if (tableBtn && !tableBtn.innerHTML.trim()) {
+        tableBtn.innerHTML = `
+            <svg viewBox="0 0 18 18">
+                <rect class="ql-stroke" x="2" y="3" width="14" height="12" fill="none"></rect>
+                <line class="ql-stroke" x1="2" y1="7" x2="16" y2="7"></line>
+                <line class="ql-stroke" x1="2" y1="11" x2="16" y2="11"></line>
+                <line class="ql-stroke" x1="6" y1="3" x2="6" y2="15"></line>
+                <line class="ql-stroke" x1="11" y1="3" x2="11" y2="15"></line>
+            </svg>
+        `;
+        tableBtn.setAttribute('title', 'Insert table — right-click a cell for row/column actions');
     }
 }, 100);
 
