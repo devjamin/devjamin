@@ -1,5 +1,5 @@
 /*
-    MediaUploadController.cs, handles uploading media files to Cloudflare Images when creating or editing blogs.
+    MediaUploadController.cs, handles uploading media files to Cloudflare Images when creating or editing articles.
     Image files are compressed and resized.
 
     Supported file types: JPEG, PNG
@@ -8,12 +8,12 @@
         IFormFile:
         {
             "File": File,
-            "BlogPostId": int (optional, don't have yet when creating a new blog post)
+            "ArticleId": int (optional, don't have yet when creating a new article)
         }
     - POST: /API/Select-Cover-Image
         {
             "MediaId": int,
-            "BlogPostId": int (optional, don't have yet when creating a new blog post)
+            "ArticleId": int (optional, don't have yet when creating a new article)
         }
     - DELETE: /API/Delete-Media/{mediaId}
 */
@@ -56,10 +56,10 @@ namespace devjamin.Controllers
                 return BadRequest(new { Error = "Upload a file." });
             }
 
-            // Get BlogPostId from the form data and ensure it's a valid integer
-            if (!Request.Form.TryGetValue("BlogPostId", out var blogPostIdValues) || !int.TryParse(blogPostIdValues, out int blogPostId))
+            // Get ArticleId from the form data and ensure it's a valid integer
+            if (!Request.Form.TryGetValue("ArticleId", out var articleIdValues) || !int.TryParse(articleIdValues, out int articleId))
             {
-                return BadRequest(new { Error = "A valid BlogPostId is required." });
+                return BadRequest(new { Error = "A valid ArticleId is required." });
             }
 
             var contentType = file.ContentType;
@@ -77,7 +77,7 @@ namespace devjamin.Controllers
                 fileStream = await CompressAndResizeImageAsync(fileStream, contentType);
 
                 // Upload file to Cloudflare Images
-                var uploadResult = await UploadFileAsync(file.FileName, fileStream, contentType, blogPostId);
+                var uploadResult = await UploadFileAsync(file.FileName, fileStream, contentType, articleId);
 
                 return Ok(uploadResult);
             }
@@ -98,7 +98,7 @@ namespace devjamin.Controllers
             public string FilePath { get; set; } = "";
         }
 
-        private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int blogPostId)
+        private async Task<UploadResult> UploadFileAsync(string fileName, Stream fileStream, string contentType, int articleId)
         {
             var accountId = _configuration.GetValue<string>("CloudflareImages:AccountId");
             var apiKey = _configuration.GetValue<string>("CloudflareImages:ApiKey");
@@ -111,9 +111,9 @@ namespace devjamin.Controllers
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-            // Create custom filename with blog ID while preserving extension
+            // Create custom filename with article ID while preserving extension
             var fileExtension = Path.GetExtension(fileName);
-            var customFileName = $"Upload from Devjamin Blog: {blogPostId}{fileExtension}";
+            var customFileName = $"Upload from Devjamin Article: {articleId}{fileExtension}";
 
             var formData = new MultipartFormDataContent();
             formData.Add(new StreamContent(fileStream), "file", customFileName);
@@ -140,20 +140,20 @@ namespace devjamin.Controllers
             }
 
             // Add image to database
-            var blogMedia = new BlogMedia
+            var media = new BlogMedia
             {
                 ContentType = contentType,
-                BlogPostId = blogPostId,
+                BlogPostId = articleId,
                 FilePath = cloudflareResponse.Result.Id,
                 CreatedDate = DateTime.UtcNow
             };
-            _context.BlogMedia.Add(blogMedia);
+            _context.BlogMedia.Add(media);
             await _context.SaveChangesAsync();
 
             var result = new UploadResult
             {
-                MediaId = blogMedia.MediaId,
-                FilePath = blogMedia.FilePath
+                MediaId = media.MediaId,
+                FilePath = media.FilePath
             };
 
             return result;
@@ -204,7 +204,7 @@ namespace devjamin.Controllers
         // Model to capture incoming data
         public class CoverImageSelectionModel
         {
-            public int BlogPostId { get; set; }
+            public int ArticleId { get; set; }
             public int MediaId { get; set; }
         }
 
@@ -217,18 +217,18 @@ namespace devjamin.Controllers
                 return BadRequest(new { Error = "Invalid request payload." });
             }
 
-            // Validate blog post exists
-            var blogPost = await _context.BlogPosts.FindAsync(model.BlogPostId);
-            if (blogPost == null)
+            // Validate article exists
+            var article = await _context.BlogPosts.FindAsync(model.ArticleId);
+            if (article == null)
             {
-                return NotFound(new { Error = "Blog post not found." });
+                return NotFound(new { Error = "Article not found." });
             }
 
-            // Validate media belongs to blog post
-            var media = await _context.BlogMedia.FirstOrDefaultAsync(m => m.MediaId == model.MediaId && m.BlogPostId == model.BlogPostId);
+            // Validate media belongs to article
+            var media = await _context.BlogMedia.FirstOrDefaultAsync(m => m.MediaId == model.MediaId && m.BlogPostId == model.ArticleId);
             if (media == null)
             {
-                return NotFound(new { Error = "Media not found or does not belong to the specified blog post." });
+                return NotFound(new { Error = "Media not found or does not belong to the specified article." });
             }
 
             // Toggle the IsCoverImage status
@@ -240,7 +240,7 @@ namespace devjamin.Controllers
             else
             {
                 // If not the cover image, first clear any existing cover image flag
-                var allMedia = await _context.BlogMedia.Where(m => m.BlogPostId == model.BlogPostId).ToListAsync();
+                var allMedia = await _context.BlogMedia.Where(m => m.BlogPostId == model.ArticleId).ToListAsync();
                 foreach (var m in allMedia)
                 {
                     m.IsCoverImage = false;

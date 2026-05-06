@@ -1,7 +1,7 @@
-﻿@model IEnumerable<devjamin.Models.BlogPostCardViewModel>
+﻿@model IEnumerable<devjamin.Models.ArticleCardViewModel>
 @{
-    ViewData["Title"] = "Frontend Developer and DIY Enthusiast";
-    ViewData["MetaDescription"] = "Welcome to my portfolio and blog – I'm sharing my experience as a frontend developer along with personal projects and DIY builds.";
+    ViewData["Title"] = "Frontend Developer with Full-Stack and Infrastructure Experience";
+    ViewData["MetaDescription"] = "Welcome to my portfolio and articles – I'm sharing my experience as a frontend developer along with personal projects and DIY builds.";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var CDNBASEPATH = ViewData["CDNBASEPATH"];
 }
@@ -15,8 +15,8 @@
       "@@type": "WebSite",
       "@@id": "https://www.devjamin.com/#website",
       "url": "https://www.devjamin.com",
-      "name": "Devjamin - Frontend Developer Portfolio & Blog",
-      "description": "Welcome to my portfolio and blog – I'm sharing my experience as a frontend developer along with personal projects and DIY builds.",
+      "name": "Devjamin - Frontend Developer Portfolio & Articles",
+      "description": "Welcome to my portfolio and articles – I'm sharing my experience as a frontend developer along with personal projects and DIY builds.",
       "publisher": {
         "@@id": "https://www.devjamin.com"
       },
@@ -28,7 +28,7 @@
       "name": "Devjamin",
       "url": "https://www.devjamin.com",
       "image": "@(CDNBASEPATH + "5fcecd76-25ef-4b59-3798-e59ba5e53400/w=800,format=auto")",
-      "description": "Frontend developer and DIY enthusiast building complex things one bit at a time",
+      "description": "Frontend-Focused Full-Stack Developer",
       "jobTitle": "Frontend Developer",
       "worksFor": {
         "@@type": "Organization",
@@ -47,9 +47,9 @@
     },
     {
       "@@type": "Blog",
-      "@@id": "https://www.devjamin.com/#blog",
-      "url": "https://www.devjamin.com/Blogs",
-      "name": "Devjamin Blog",
+      "@@id": "https://www.devjamin.com/#articles",
+      "url": "https://www.devjamin.com/Articles",
+      "name": "Devjamin Articles",
       "description": "Insights and tutorials about frontend development, programming, and DIY projects",
       "inLanguage": "en-US",
       "author": {
@@ -66,7 +66,7 @@
 <section class="sectionWrapper hero">
     <div class="hero__infoBox">
         <p class="hero__name">Devjamin</p>
-        <h1 class="hero__title">Frontend-developer and DIY enthusiast</h1>
+        <h1 class="hero__title">Frontend-Focused Full-Stack Developer</h1>
         <p class="hero__description">
             <span id="typewriter-text">Building complex things one bit at a time</span><span class="typewriter-cursor">|</span>
         </p>
@@ -93,56 +93,56 @@
             alt="Portrait of devjamin">
     </div>
 </section>
-<div id="blogs" class="sectionContrastWrapper">
-    <section class="sectionWrapper blogs">
-        <p class="blogs__tag">Devjamin Insights</p>
-        <h2 class="blogs__title">Check Out My Latest Blogs</h2>
-        <div class="blogs__wrapper">
-            <button id="blogsContainerArrowLeft" class="blogs__containerArrow">
+<div id="articles" class="sectionContrastWrapper">
+    <section class="sectionWrapper articles">
+        <p class="articles__tag">Devjamin Insights</p>
+        <h2 class="articles__title">Check Out My Latest Articles</h2>
+        <div class="articles__wrapper">
+            <button id="articlesContainerArrowLeft" class="articles__containerArrow">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z"/></svg>
             </button>
-            <button id="blogsContainerArrowRight" class="blogs__containerArrow blogs__containerArrow--right">
+            <button id="articlesContainerArrowRight" class="articles__containerArrow articles__containerArrow--right">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z"/></svg>
             </button>
-            <div class="blogs__container">
-                @foreach (var blogCard in Model)
+            <div class="articles__container">
+                @foreach (var articleCard in Model)
                 {
-                    <article class="blog">
-                        <a class="blog__anchor" href="/Blog/@blogCard.Slug">
-                            @if (blogCard.CoverImagePath != null)
+                    <article class="article">
+                        <a class="article__anchor" href="/Article/@articleCard.Slug">
+                            @if (articleCard.CoverImagePath != null)
                             {
-                                <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath/w=768,format=auto" alt="@blogCard.Title">
+                                <img class="article__img" src="https://cdn.devjamin.com/@articleCard.CoverImagePath/w=768,format=auto" alt="@articleCard.Title">
                             }
                             else
                             {
-                                <div class="blog__noImg"></div>
+                                <div class="article__noImg"></div>
                             }
-                            <ul class="blog__tags">
-                                @if (blogCard.Tags.Count > 0)
+                            <ul class="article__tags">
+                                @if (articleCard.Tags.Count > 0)
                                 {
-                                    @foreach (var tag in blogCard.Tags)
+                                    @foreach (var tag in articleCard.Tags)
                                     {
-                                        <li class="blog__tag">@tag.Name</li>
+                                        <li class="article__tag">@tag.Name</li>
                                     }
                                 }
                                 else {
-                                    <li class="blog__tag">Uncategorized</li>
+                                    <li class="article__tag">Uncategorized</li>
                                 }
                             </ul>
-                            <h3 class="blog__title">@blogCard.Title</h3>
-                            <p class="blog__description">@blogCard.Description</p>
+                            <h3 class="article__title">@articleCard.Title</h3>
+                            <p class="article__description">@articleCard.Description</p>
                         </a>
                     </article>
                 }
             </div>
         </div>
-        <a class="blogs__more" href="/Blogs">
+        <a class="articles__more" href="/Articles">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <span class="blogs__moreText">
-                See All Blogs
+            <span class="articles__moreText">
+                See All Articles
             </span>
         </a>
     </section>

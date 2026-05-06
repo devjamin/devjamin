@@ -60,12 +60,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Start typewriter effect
   typeWriter();
 
-  const arrowLeft = document.getElementById("blogsContainerArrowLeft");
-  const arrowRight = document.getElementById("blogsContainerArrowRight");
-  const blogsContainer = document.querySelector(".blogs__container");
-  const blogs = document.querySelectorAll(".blog");
+  const arrowLeft = document.getElementById("articlesContainerArrowLeft");
+  const arrowRight = document.getElementById("articlesContainerArrowRight");
+  const articlesContainer = document.querySelector(".articles__container");
+  const articles = document.querySelectorAll(".article");
 
-  const numberOfSlides = blogs.length;
+  const numberOfSlides = articles.length;
   let activeSlide = 0;
 
   function updateArrows() {
@@ -80,15 +80,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Scroll to the active slide
   function scrollToSlide() {
-    const maxScrollLeft = blogsContainer.scrollWidth - blogsContainer.clientWidth;
+    const maxScrollLeft = articlesContainer.scrollWidth - articlesContainer.clientWidth;
     const scrollPosition = (activeSlide * maxScrollLeft) / (numberOfSlides - 1);
-    blogsContainer.scrollTo({ left: scrollPosition, behavior: "smooth" });
+    articlesContainer.scrollTo({ left: scrollPosition, behavior: "smooth" });
   }
 
   // Update active slide based on scroll position
   function updateActiveSlide() {
-    const maxScrollLeft = blogsContainer.scrollWidth - blogsContainer.clientWidth;
-    const currentScroll = blogsContainer.scrollLeft;
+    const maxScrollLeft = articlesContainer.scrollWidth - articlesContainer.clientWidth;
+    const currentScroll = articlesContainer.scrollLeft;
     activeSlide = Math.round((currentScroll / maxScrollLeft) * (numberOfSlides - 1));
     updateArrows();
   }
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
   window.addEventListener("resize", updateArrows);
 
   // Update active slide on scroll
-  blogsContainer.addEventListener("scroll", updateActiveSlide);
+  articlesContainer.addEventListener("scroll", updateActiveSlide);
 
   // Init arrows
   updateArrows();

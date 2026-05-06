@@ -13,19 +13,19 @@
     {
         <link rel="stylesheet" href="~/css/frontpage.css" asp-append-version="true"/>
     }
-    @if (Context.Request.Path.Value?.StartsWith("/Blog/") == true)
+    @if (Context.Request.Path.Value?.StartsWith("/Article/") == true)
     {
-        <link rel="stylesheet" href="~/css/blog.css" asp-append-version="true"/>
+        <link rel="stylesheet" href="~/css/article.css" asp-append-version="true"/>
     }
     <script src="~/js/global.js" asp-append-version="true" defer></script>
     @if (Context.Request.Path == "/")
     {
         <script src="~/js/home.js" defer asp-append-version="true"></script>
     }
-    @if (Context.Request.Path.Value?.StartsWith("/Blog/") == true)
+    @if (Context.Request.Path.Value?.StartsWith("/Article/") == true)
     {
         <script src="~/lib/fancyapps/fancyapps.bundle.js" defer asp-append-version="true"></script>
-        <script src="~/js/blog.js" defer asp-append-version="true"></script>
+        <script src="~/js/article.js" defer asp-append-version="true"></script>
     }
     <link rel="preload" href="~/fonts/Courier_Prime/CourierPrime-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
     <link rel="preload" href="~/fonts/Courier_Prime/CourierPrime-Bold.ttf" as="font" type="font/ttf" crossorigin="anonymous">
@@ -94,7 +94,7 @@
                     <a class="navigation__link" asp-controller="Public" asp-action="Index">Home</a>
                 </li>
                 <li class="navigation__item">
-                    <a class="navigation__link" asp-controller="Public" asp-action="Blogs">Blogs</a>
+                    <a class="navigation__link" asp-controller="Public" asp-action="Articles">Articles</a>
                 </li>
                 <li class="navigation__item" id="mobileContact">
                     <a class="navigation__link" href="/#contact">Contact</a>
@@ -170,7 +170,7 @@
                     <a class="footer__topLink" href="/">Home</a>
                 </li>
                 <li>
-                    <a class="footer__topLink" href="/Blogs">Blogs</a>
+                    <a class="footer__topLink" href="/Articles">Articles</a>
                 </li>
             </ul>
         </div>

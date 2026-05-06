@@ -1,6 +1,6 @@
 namespace devjamin
 {
-    public class BlogMediaViewModel
+    public class ArticleMediaViewModel
     {
         public int MediaId { get; set; }
         public string FilePath { get; set; } = string.Empty;

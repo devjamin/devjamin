@@ -1,10 +1,14 @@
 /*
     PublicController.cs, manages public facing functionality.
 
-    Admin panel access:
+    Public facing routes:
     - GET: /
-    - GET: /Blogs
-    - GET: /Blog/[SLUG]
+    - GET: /Articles
+    - GET: /Article/[SLUG]
+
+    Legacy redirects (kept for SEO of pre-rename URLs):
+    - GET: /Blogs    -> 301 /Articles
+    - GET: /Blog/[SLUG] -> 301 /Article/[SLUG]
 */
 using Microsoft.AspNetCore.Mvc;
 using devjamin.Models;
@@ -25,96 +29,71 @@ namespace devjamin.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
-            // Demo of memory caching, I want to save for later
-            // // Define cache key
-            // string cacheKey = "LatestThreePublishedBlogs";
-
-            // // Try to retrieve the data from cache
-            // if (!_cache.TryGetValue(cacheKey, out List<BlogPostCardViewModel>? latestThreePublishedBlogs))
-            // {
-            //     latestThreePublishedBlogs = await _context.BlogPosts
-            //         .Where(b => b.IsPublished)
-            //         .OrderByDescending(b => b.CreatedDate)
-            //         .Take(3)
-            //         .Select(blog => new BlogPostCardViewModel
-            //         {
-            //             BlogPostId = blog.BlogPostId,
-            //             Title = blog.Title,
-            //             Slug = blog.Slug,
-            //             Description = blog.Description,
-            //             Tags = blog.Tags.Select(tag => new BlogTagViewModel
-            //             {
-            //                 Name = tag.Name // Only need the name for the blog card
-            //             }).ToList()
-            //         })
-            //         .ToListAsync();
-
-            //     // Set cache options
-            //     var cacheEntryOptions = new MemoryCacheEntryOptions()
-            //         .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-
-            //     // Save data in cache
-            //     _cache.Set(cacheKey, latestThreePublishedBlogs, cacheEntryOptions);
-            // }
-
-            var latestThreePublishedBlogs = await _context.BlogPosts
+            var latestThreePublishedArticles = await _context.BlogPosts
                 .Where(b => b.IsPublished)
                 .OrderByDescending(b => b.CreatedDate)
                 .Include(b => b.Media)
                 .Take(3)
-                .Select(blog => new BlogPostCardViewModel
+                .Select(article => new ArticleCardViewModel
                 {
-                    BlogPostId = blog.BlogPostId,
-                    Title = blog.Title,
-                    Slug = blog.Slug,
-                    Description = blog.Description,
-                    Tags = blog.Tags.Select(tag => new BlogTagViewModel
-                    {
-                        Name = tag.Name // Only need the name for the blog card
-                    }).ToList(),
-                    CoverImagePath = blog.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath
-                })
-                .ToListAsync();
-
-            return View("~/Views/Public/Index.cshtml", latestThreePublishedBlogs);
-        }
-
-        // GET: /Blogs
-        [HttpGet("/Blogs")]
-        public async Task<IActionResult> Blogs()
-        {
-            var allPublishedBlogs = await _context.BlogPosts
-                .Where(b => b.IsPublished)
-                .OrderByDescending(b => b.CreatedDate)
-                .Include(b => b.Media)
-                .Select(blog => new BlogPostCardViewModel
-                {
-                    BlogPostId = blog.BlogPostId,
-                    Title = blog.Title,
-                    Slug = blog.Slug,
-                    Description = blog.Description,
-                    Tags = blog.Tags.Select(tag => new BlogTagViewModel
+                    ArticleId = article.BlogPostId,
+                    Title = article.Title,
+                    Slug = article.Slug,
+                    Description = article.Description,
+                    Tags = article.Tags.Select(tag => new ArticleTagViewModel
                     {
                         Name = tag.Name
                     }).ToList(),
-                    CoverImagePath = blog.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath
+                    CoverImagePath = article.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath
                 })
                 .ToListAsync();
 
-            return View("~/Views/Public/BlogsListing.cshtml", allPublishedBlogs);
+            return View("~/Views/Public/Index.cshtml", latestThreePublishedArticles);
         }
 
-        // GET: /Blog/{Slug}
-        [HttpGet("/Blog/{slug}")]
-        public async Task<IActionResult> GetSpecificBlog(string slug)
+        // GET: /Articles
+        [HttpGet("/Articles")]
+        public async Task<IActionResult> Articles()
         {
-            // First try to find the blog post with current slug
-            var blogPost = await _context.BlogPosts
+            var allPublishedArticles = await _context.BlogPosts
+                .Where(b => b.IsPublished)
+                .OrderByDescending(b => b.CreatedDate)
+                .Include(b => b.Media)
+                .Select(article => new ArticleCardViewModel
+                {
+                    ArticleId = article.BlogPostId,
+                    Title = article.Title,
+                    Slug = article.Slug,
+                    Description = article.Description,
+                    Tags = article.Tags.Select(tag => new ArticleTagViewModel
+                    {
+                        Name = tag.Name
+                    }).ToList(),
+                    CoverImagePath = article.Media.FirstOrDefault(m => m.IsCoverImage)!.FilePath
+                })
+                .ToListAsync();
+
+            return View("~/Views/Public/ArticlesListing.cshtml", allPublishedArticles);
+        }
+
+        // GET: /Blogs (legacy redirect)
+        [HttpGet("/Blogs")]
+        public IActionResult BlogsRedirect()
+        {
+            return RedirectPermanent("/Articles");
+        }
+
+        // GET: /Article/{Slug}
+        [HttpGet("/Article/{slug}")]
+        public async Task<IActionResult> GetSpecificArticle(string slug)
+        {
+            // First try to find the article with current slug
+            var article = await _context.BlogPosts
                 .Where(bp => bp.Slug == slug && (bp.IsPublished || (User != null && User.Identity != null && User.Identity.IsAuthenticated)))
                 .FirstOrDefaultAsync();
 
             // If not found, check slug history
-            if (blogPost == null)
+            if (article == null)
             {
                 var slugHistory = await _context.BlogPostSlugHistory
                     .Include(sh => sh.BlogPost)
@@ -123,20 +102,19 @@ namespace devjamin.Controllers
                 if (slugHistory != null && slugHistory.BlogPost.IsPublished)
                 {
                     // Permanent redirect to the new slug
-                    return RedirectPermanent($"/Blog/{slugHistory.BlogPost.Slug}");
+                    return RedirectPermanent($"/Article/{slugHistory.BlogPost.Slug}");
                 }
 
                 return NotFound();
             }
 
-            // Rest of your existing GetSpecificBlog logic...
-            var blogPostViewModel = await _context.BlogPosts
-                .Where(bp => bp.BlogPostId == blogPost.BlogPostId)
+            var articleViewModel = await _context.BlogPosts
+                .Where(bp => bp.BlogPostId == article.BlogPostId)
                 .Include(bp => bp.Author)
                 .Include(bp => bp.Media)
-                .Select(bp => new BlogPostViewModel
+                .Select(bp => new ArticleViewModel
                 {
-                    BlogPostId = bp.BlogPostId,
+                    ArticleId = bp.BlogPostId,
                     Title = bp.Title,
                     Slug = bp.Slug,
                     Description = bp.Description,
@@ -154,12 +132,19 @@ namespace devjamin.Controllers
             // Add CDN base path
             ViewData["CDNBASEPATH"] = _configuration.GetValue<string>("EnvironmentVariables:CDNBASEPATH");
 
-            if (blogPostViewModel == null)
+            if (articleViewModel == null)
             {
                 return NotFound();
             }
 
-            return View("~/Views/Public/FullBlog.cshtml", blogPostViewModel);
+            return View("~/Views/Public/FullArticle.cshtml", articleViewModel);
+        }
+
+        // GET: /Blog/{Slug} (legacy redirect)
+        [HttpGet("/Blog/{slug}")]
+        public IActionResult BlogRedirect(string slug)
+        {
+            return RedirectPermanent($"/Article/{slug}");
         }
 
         private static int CalculateReadTime(string content)

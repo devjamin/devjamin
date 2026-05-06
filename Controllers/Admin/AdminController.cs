@@ -6,11 +6,11 @@
     - GET & POST: /Admin/Login (anonymous)
     - GET: /Admin/Logout
 
-    Blogs management:
-    - GET: /Admin/Blogs
-    - GET & POST: /Admin/Blogs/Create
-    - GET & POST: /Admin/Blogs/Edit/[BlogPostId]
-    - GET: /Admin/Blogs/Delete/[BlogPostId]
+    Articles management:
+    - GET: /Admin/Articles
+    - GET & POST: /Admin/Articles/Create
+    - GET & POST: /Admin/Articles/Edit/[ArticleId]
+    - GET: /Admin/Articles/Delete/[ArticleId]
 */
 using devjamin.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +36,7 @@ namespace devjamin.Controllers
         {
             if (_signInManager.IsSignedIn(User))
             {
-                return RedirectToAction("Blogs", "Admin");
+                return RedirectToAction("Articles", "Admin");
             }
             else
             {
@@ -68,7 +68,7 @@ namespace devjamin.Controllers
                 var result = await _signInManager.PasswordSignInAsync(adminLoginViewModel.Username, adminLoginViewModel.Password, true, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Blogs", "Admin");
+                    return RedirectToAction("Articles", "Admin");
                 }
 
                 else
@@ -81,21 +81,21 @@ namespace devjamin.Controllers
             return View("~/Views/Admin/Login.cshtml", adminLoginViewModel);
         }
 
-        // GET: Admin/Blogs
-        [HttpGet("Blogs")]
-        public async Task<IActionResult> GetBlogs()
+        // GET: Admin/Articles
+        [HttpGet("Articles")]
+        public async Task<IActionResult> Articles()
         {
-            var publishedBlogs = await _context.BlogPosts
+            var publishedArticles = await _context.BlogPosts
                 .Where(b => b.IsPublished && !b.IsDraft)
                 .OrderByDescending(b => b.EditedDate)
                 .Include(b => b.Media)
-                .Select(b => new BlogPostCardViewModel
+                .Select(b => new ArticleCardViewModel
                 {
-                    BlogPostId = b.BlogPostId,
+                    ArticleId = b.BlogPostId,
                     Title = b.Title,
                     Slug = b.Slug,
                     Description = b.Description,
-                    Tags = b.Tags.Select(t => new BlogTagViewModel
+                    Tags = b.Tags.Select(t => new ArticleTagViewModel
                     {
                         Name = t.Name
                     }).ToList(),
@@ -103,16 +103,16 @@ namespace devjamin.Controllers
                 })
                 .ToListAsync();
 
-            var nonPublishedBlogs = await _context.BlogPosts
+            var nonPublishedArticles = await _context.BlogPosts
                 .Where(b => !b.IsPublished && !b.IsDraft)
                 .OrderByDescending(b => b.EditedDate)
-                .Select(b => new BlogPostCardViewModel
+                .Select(b => new ArticleCardViewModel
                 {
-                    BlogPostId = b.BlogPostId,
+                    ArticleId = b.BlogPostId,
                     Title = b.Title,
                     Slug = b.Slug,
                     Description = b.Description,
-                    Tags = b.Tags.Select(t => new BlogTagViewModel
+                    Tags = b.Tags.Select(t => new ArticleTagViewModel
                     {
                         Name = t.Name
                     }).ToList(),
@@ -120,20 +120,20 @@ namespace devjamin.Controllers
                 })
                 .ToListAsync();
 
-            var blogsViewModel = new AllBlogsCardViewModel
+            var articlesViewModel = new AllArticlesCardViewModel
             {
-                PublishedBlogs = publishedBlogs,
-                NonPublishedBlogs = nonPublishedBlogs
+                PublishedArticles = publishedArticles,
+                NonPublishedArticles = nonPublishedArticles
             };
 
-            return View("~/Views/Admin/Blogs/Index.cshtml", blogsViewModel);
+            return View("~/Views/Admin/Articles/Index.cshtml", articlesViewModel);
         }
 
 
-        // GET: Admin/Blogs/Create
-        // Create a new empty blog post in the background, then redirect to the create page
-        // Upon form submission, the blog post will be modified
-        [HttpGet("Blogs/Create")]
+        // GET: Admin/Articles/Create
+        // Create a new empty article in the background, then redirect to the create page
+        // Upon form submission, the article will be modified
+        [HttpGet("Articles/Create")]
         public async Task<IActionResult> Create()
         {
             // Get current user
@@ -143,9 +143,9 @@ namespace devjamin.Controllers
                 return Challenge();
             }
 
-            // create new empty blog
+            // create new empty article
             var DateNow = DateTime.UtcNow;
-            var blogPost = new BlogPost
+            var article = new BlogPost
             {
                 Title = "",
                 Slug = "",
@@ -158,38 +158,38 @@ namespace devjamin.Controllers
                 IsPublished = false
             };
 
-            _context.BlogPosts.Add(blogPost);
+            _context.BlogPosts.Add(article);
             await _context.SaveChangesAsync();
 
-            if (blogPost == null)
+            if (article == null)
             {
                 return NotFound();
             }
 
             // Fetch all tags and prepare the view models for available and selected tags
             var allTags = await _context.BlogTags.ToListAsync();
-            var availableTags = allTags.Select(t => new BlogTagViewModel
+            var availableTags = allTags.Select(t => new ArticleTagViewModel
             {
-                BlogTagId = t.BlogTagId,
+                TagId = t.BlogTagId,
                 Name = t.Name,
                 Slug = t.Slug,
                 Description = t.Description
             }).ToList();
 
-            var selectedTagIds = new List<int>(blogPost.Tags.Select(t => t.BlogTagId));
+            var selectedTagIds = new List<int>(article.Tags.Select(t => t.BlogTagId));
 
-            var blogPostCreateViewModel = new BlogPostCreateEditViewModel
+            var articleCreateViewModel = new ArticleCreateEditViewModel
             {
-                Method = BlogPostCreateEditMethodViewModel.Create,
-                BlogPostId = blogPost.BlogPostId,
-                Title = blogPost.Title,
-                Slug = blogPost.Slug,
-                Description = blogPost.Description,
-                MetaDescription = blogPost.MetaDescription,
-                SemanticHTML = blogPost.SemanticHTML,
-                QuillDelta = blogPost.QuillDelta,
-                IsPublished = blogPost.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
-                Media = blogPost.Media.Select(m => new BlogMediaViewModel
+                Method = ArticleCreateEditMethodViewModel.Create,
+                ArticleId = article.BlogPostId,
+                Title = article.Title,
+                Slug = article.Slug,
+                Description = article.Description,
+                MetaDescription = article.MetaDescription,
+                SemanticHTML = article.SemanticHTML,
+                QuillDelta = article.QuillDelta,
+                IsPublished = article.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
+                Media = article.Media.Select(m => new ArticleMediaViewModel
                 {
                     MediaId = m.MediaId,
                     FilePath = m.FilePath,
@@ -199,61 +199,61 @@ namespace devjamin.Controllers
                 SelectedTagIds = selectedTagIds
             };
 
-            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", blogPostCreateViewModel);
+            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", articleCreateViewModel);
         }
 
-        // POST: Admin/Blogs/Create
-        [HttpPost("Blogs/Create")]
+        // POST: Admin/Articles/Create
+        [HttpPost("Articles/Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BlogPostCreateEditViewModel model)
+        public async Task<IActionResult> Create(ArticleCreateEditViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var blogPost = await _context.BlogPosts
+                var article = await _context.BlogPosts
                     .Include(p => p.Tags)
-                    .FirstOrDefaultAsync(p => p.BlogPostId == model.BlogPostId);
-                if (blogPost == null)
+                    .FirstOrDefaultAsync(p => p.BlogPostId == model.ArticleId);
+                if (article == null)
                 {
                     return NotFound();
                 }
 
-                // Update blog post with new data
-                blogPost.Title = model.Title;
-                blogPost.Slug = model.Slug;
-                blogPost.Description = model.Description;
-                blogPost.MetaDescription = model.MetaDescription;
-                blogPost.SemanticHTML = model.SemanticHTML;
-                blogPost.QuillDelta = model.QuillDelta;
-                blogPost.EditedDate = DateTime.UtcNow;
-                blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
-                blogPost.IsDraft = false; // It's now a posted blog, not "draft"
+                // Update article with new data
+                article.Title = model.Title;
+                article.Slug = model.Slug;
+                article.Description = model.Description;
+                article.MetaDescription = model.MetaDescription;
+                article.SemanticHTML = model.SemanticHTML;
+                article.QuillDelta = model.QuillDelta;
+                article.EditedDate = DateTime.UtcNow;
+                article.IsPublished = model.IsPublished == "on"; // Convert ArticleCreateEditViewModel.IsPublished to bool
+                article.IsDraft = false; // It's now a posted article, not "draft"
 
                 // Update tags
                 if (model.SelectedTagIds != null)
                 {
-                    blogPost.Tags.Clear(); // Remove existing tags
+                    article.Tags.Clear(); // Remove existing tags
                     var selectedTags = await _context.BlogTags
                                         .Where(t => model.SelectedTagIds.Contains(t.BlogTagId))
                                         .ToListAsync(); // Fetch the tags to be added
                     foreach (var tag in selectedTags)
                     {
-                        blogPost.Tags.Add(tag); // Add new selected tags
+                        article.Tags.Add(tag); // Add new selected tags
                     }
                 }
                 else
                 {
-                    blogPost.Tags.Clear(); // Remove all tags
+                    article.Tags.Clear(); // Remove all tags
                 }
 
                 try
                 {
-                    _context.Update(blogPost);
+                    _context.Update(article);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    // Check if blog post exists
-                    if (!_context.BlogPosts.Any(e => e.BlogPostId == model.BlogPostId))
+                    // Check if article exists
+                    if (!_context.BlogPosts.Any(e => e.BlogPostId == model.ArticleId))
                     {
                         return NotFound();
                     }
@@ -263,16 +263,16 @@ namespace devjamin.Controllers
                     }
                 }
 
-                // Redirect to /Admin/Blogs after successful update
-                return Redirect("/Admin/Blogs");
+                // Redirect to /Admin/Articles after successful update
+                return Redirect("/Admin/Articles");
             }
 
-            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", model);
+            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", model);
         }
 
 
-        // GET: Admin/Blogs/Edit/{BlogPostId}
-        [HttpGet("Blogs/Edit/{id:int}")]
+        // GET: Admin/Articles/Edit/{ArticleId}
+        [HttpGet("Articles/Edit/{id:int}")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -280,40 +280,40 @@ namespace devjamin.Controllers
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts
+            var article = await _context.BlogPosts
                 .Include(p => p.Media) // Include media files
                 .Include(p => p.Tags) // Include tags
                 .FirstOrDefaultAsync(p => p.BlogPostId == id);
 
-            if (blogPost == null)
+            if (article == null)
             {
                 return NotFound();
             }
 
             // Fetch all tags and prepare the view models for available and selected tags
             var allTags = await _context.BlogTags.ToListAsync();
-            var availableTags = allTags.Select(t => new BlogTagViewModel
+            var availableTags = allTags.Select(t => new ArticleTagViewModel
             {
-                BlogTagId = t.BlogTagId,
+                TagId = t.BlogTagId,
                 Name = t.Name,
                 Slug = t.Slug,
                 Description = t.Description
             }).ToList();
 
-            var selectedTagIds = new List<int>(blogPost.Tags.Select(t => t.BlogTagId));
+            var selectedTagIds = new List<int>(article.Tags.Select(t => t.BlogTagId));
 
-            var viewModel = new BlogPostCreateEditViewModel
+            var viewModel = new ArticleCreateEditViewModel
             {
-                Method = BlogPostCreateEditMethodViewModel.Edit,
-                BlogPostId = blogPost.BlogPostId,
-                Title = blogPost.Title,
-                Slug = blogPost.Slug,
-                Description = blogPost.Description,
-                MetaDescription = blogPost.MetaDescription,
-                SemanticHTML = blogPost.SemanticHTML,
-                QuillDelta = blogPost.QuillDelta,
-                IsPublished = blogPost.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
-                Media = blogPost.Media.Select(m => new BlogMediaViewModel
+                Method = ArticleCreateEditMethodViewModel.Edit,
+                ArticleId = article.BlogPostId,
+                Title = article.Title,
+                Slug = article.Slug,
+                Description = article.Description,
+                MetaDescription = article.MetaDescription,
+                SemanticHTML = article.SemanticHTML,
+                QuillDelta = article.QuillDelta,
+                IsPublished = article.IsPublished ? "on" : "", // Convert IsPublished bool to string for checkbox
+                Media = article.Media.Select(m => new ArticleMediaViewModel
                 {
                     MediaId = m.MediaId,
                     FilePath = m.FilePath,
@@ -323,79 +323,79 @@ namespace devjamin.Controllers
                 SelectedTagIds = selectedTagIds
             };
 
-            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", viewModel);
+            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", viewModel);
         }
 
 
-        // POST: Admin/Blogs/Edit/{BlogPostId}
-        [HttpPost("Blogs/Edit/{BlogPostId:int}")]
+        // POST: Admin/Articles/Edit/{ArticleId}
+        [HttpPost("Articles/Edit/{ArticleId:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int blogPostId, BlogPostCreateEditViewModel model)
+        public async Task<IActionResult> Edit(int articleId, ArticleCreateEditViewModel model)
         {
-            if (blogPostId != model.BlogPostId)
+            if (articleId != model.ArticleId)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var blogPost = await _context.BlogPosts
+                var article = await _context.BlogPosts
                     .Include(p => p.Tags)
-                    .FirstOrDefaultAsync(p => p.BlogPostId == blogPostId);
+                    .FirstOrDefaultAsync(p => p.BlogPostId == articleId);
 
-                if (blogPost == null)
+                if (article == null)
                 {
                     return NotFound();
                 }
 
                 // If slug has changed, save the old one to history
-                if (blogPost.Slug != model.Slug)
+                if (article.Slug != model.Slug)
                 {
                     var slugHistory = new BlogPostSlugHistory
                     {
-                        OldSlug = blogPost.Slug,
-                        BlogPostId = blogPost.BlogPostId,
+                        OldSlug = article.Slug,
+                        BlogPostId = article.BlogPostId,
                         CreatedDate = DateTime.UtcNow
                     };
                     _context.BlogPostSlugHistory.Add(slugHistory);
                 }
 
-                // Update blog post with new data
-                blogPost.Title = model.Title;
-                blogPost.Slug = model.Slug;
-                blogPost.Description = model.Description;
-                blogPost.MetaDescription = model.MetaDescription;
-                blogPost.SemanticHTML = model.SemanticHTML;
-                blogPost.QuillDelta = model.QuillDelta;
-                blogPost.EditedDate = DateTime.UtcNow;
-                blogPost.IsPublished = model.IsPublished == "on"; // Convert BlogPostCreateEditViewModel.IsPublished to bool
+                // Update article with new data
+                article.Title = model.Title;
+                article.Slug = model.Slug;
+                article.Description = model.Description;
+                article.MetaDescription = model.MetaDescription;
+                article.SemanticHTML = model.SemanticHTML;
+                article.QuillDelta = model.QuillDelta;
+                article.EditedDate = DateTime.UtcNow;
+                article.IsPublished = model.IsPublished == "on"; // Convert ArticleCreateEditViewModel.IsPublished to bool
 
                 // Update tags
                 if (model.SelectedTagIds != null)
                 {
-                    blogPost.Tags.Clear(); // Remove existing tags
+                    article.Tags.Clear(); // Remove existing tags
                     var selectedTags = await _context.BlogTags
                                         .Where(t => model.SelectedTagIds.Contains(t.BlogTagId))
                                         .ToListAsync(); // Fetch the tags to be added
                     foreach (var tag in selectedTags)
                     {
-                        blogPost.Tags.Add(tag); // Add new selected tags
+                        article.Tags.Add(tag); // Add new selected tags
                     }
                 }
                 else
                 {
-                    blogPost.Tags.Clear(); // Remove all tags
+                    article.Tags.Clear(); // Remove all tags
                 }
 
                 try
                 {
-                    _context.Update(blogPost);
+                    _context.Update(article);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    // Check if blog post exists
-                    if (!_context.BlogPosts.Any(e => e.BlogPostId == blogPostId))
+                    // Check if article exists
+                    if (!_context.BlogPosts.Any(e => e.BlogPostId == articleId))
                     {
                         return NotFound();
                     }
@@ -405,38 +405,38 @@ namespace devjamin.Controllers
                     }
                 }
 
-                // Redirect to /Admin/Blogs after successful update
-                return Redirect("/Admin/Blogs");
+                // Redirect to /Admin/Articles after successful update
+                return Redirect("/Admin/Articles");
             }
 
-            return View("~/Views/Admin/Blogs/CreateAndEdit.cshtml", model);
+            return View("~/Views/Admin/Articles/CreateAndEdit.cshtml", model);
         }
 
-        // GET: Admin/Blogs/Delete/{BlogPostId}
-        [HttpGet("Blogs/Delete/{blogPostId:int}")]
-        public async Task<IActionResult> Delete(int? blogPostId)
+        // GET: Admin/Articles/Delete/{ArticleId}
+        [HttpGet("Articles/Delete/{articleId:int}")]
+        public async Task<IActionResult> Delete(int? articleId)
         {
-            if (blogPostId == null)
+            if (articleId == null)
             {
                 return NotFound();
             }
 
-            var blogPost = await _context.BlogPosts
+            var article = await _context.BlogPosts
                 .Include(b => b.Media)
-                .FirstOrDefaultAsync(m => m.BlogPostId == blogPostId);
-            if (blogPost == null)
+                .FirstOrDefaultAsync(m => m.BlogPostId == articleId);
+            if (article == null)
             {
                 return NotFound();
             }
 
-            // Note: If using external media storage (like Cloudflare Images), 
+            // Note: If using external media storage (like Cloudflare Images),
             // you may want to implement cleanup of media files here
 
             // Deletion from database
-            _context.BlogPosts.Remove(blogPost);
+            _context.BlogPosts.Remove(article);
             await _context.SaveChangesAsync();
 
-            return Redirect("/Admin/Blogs");
+            return Redirect("/Admin/Articles");
         }
 
         // GET: /Admin/Logout
@@ -453,9 +453,9 @@ namespace devjamin.Controllers
         {
             var tags = await _context.BlogTags
                 .OrderByDescending(t => t.EditedDate)
-                .Select(t => new BlogTagViewModel
+                .Select(t => new ArticleTagViewModel
                 {
-                    BlogTagId = t.BlogTagId,
+                    TagId = t.BlogTagId,
                     Name = t.Name,
                     Description = t.Description,
                     Slug = t.Slug
@@ -469,21 +469,21 @@ namespace devjamin.Controllers
         [HttpGet("Tags/Create")]
         public IActionResult CreateTag()
         {
-            var blogTagCreateViewModel = new BlogTagCreateEditViewModel
+            var articleTagCreateViewModel = new ArticleTagCreateEditViewModel
             {
-                Method = BlogTagCreateEditMethodViewModel.Create,
+                Method = ArticleTagCreateEditMethodViewModel.Create,
                 Name = "",
                 Slug = "",
                 Description = ""
             };
 
-            return View("~/Views/Admin/Tags/CreateAndEdit.cshtml", blogTagCreateViewModel);
+            return View("~/Views/Admin/Tags/CreateAndEdit.cshtml", articleTagCreateViewModel);
         }
 
         // POST: Admin/Tags/Create
         [HttpPost("Tags/Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateTag(BlogTagCreateEditViewModel model)
+        public async Task<IActionResult> CreateTag(ArticleTagCreateEditViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -495,7 +495,7 @@ namespace devjamin.Controllers
                 }
 
                 var DateNow = DateTime.UtcNow;
-                var blogTag = new BlogTag
+                var tag = new BlogTag
                 {
                     Name = model.Name,
                     Slug = model.Slug,
@@ -504,7 +504,7 @@ namespace devjamin.Controllers
                     EditedDate = DateNow
                 };
 
-                _context.BlogTags.Add(blogTag);
+                _context.BlogTags.Add(tag);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Tags", "Admin");
@@ -513,7 +513,7 @@ namespace devjamin.Controllers
             return View("~/Views/Admin/Tags/CreateAndEdit.cshtml", model);
         }
 
-        // GET: Admin/Tags/Edit/{BlogTagId}
+        // GET: Admin/Tags/Edit/{TagId}
         [HttpGet("Tags/Edit/{id:int}")]
         public async Task<IActionResult> EditTag(int? id)
         {
@@ -522,57 +522,57 @@ namespace devjamin.Controllers
                 return NotFound();
             }
 
-            var blogTag = await _context.BlogTags.FindAsync(id);
-            if (blogTag == null)
+            var tag = await _context.BlogTags.FindAsync(id);
+            if (tag == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new BlogTagCreateEditViewModel
+            var viewModel = new ArticleTagCreateEditViewModel
             {
-                Method = BlogTagCreateEditMethodViewModel.Edit,
-                BlogTagId = blogTag.BlogTagId,
-                Name = blogTag.Name,
-                Slug = blogTag.Slug,
-                Description = blogTag.Description
+                Method = ArticleTagCreateEditMethodViewModel.Edit,
+                TagId = tag.BlogTagId,
+                Name = tag.Name,
+                Slug = tag.Slug,
+                Description = tag.Description
             };
 
             return View("~/Views/Admin/Tags/CreateAndEdit.cshtml", viewModel);
         }
 
-        // POST: Admin/Tags/Edit/{BlogTagId}
-        [HttpPost("Tags/Edit/{BlogTagId:int}")]
+        // POST: Admin/Tags/Edit/{TagId}
+        [HttpPost("Tags/Edit/{TagId:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditTag(int blogTagId, BlogTagCreateEditViewModel BlogTagCreateEditViewModel)
+        public async Task<IActionResult> EditTag(int tagId, ArticleTagCreateEditViewModel articleTagCreateEditViewModel)
         {
-            if (blogTagId != BlogTagCreateEditViewModel.BlogTagId) // From hidden input in form
+            if (tagId != articleTagCreateEditViewModel.TagId) // From hidden input in form
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var blogTag = await _context.BlogTags.FindAsync(blogTagId);
-                if (blogTag == null)
+                var tag = await _context.BlogTags.FindAsync(tagId);
+                if (tag == null)
                 {
                     return NotFound();
                 }
 
-                // Update blog tag with new data
-                blogTag.Name = BlogTagCreateEditViewModel.Name;
-                blogTag.Slug = BlogTagCreateEditViewModel.Slug;
-                blogTag.Description = BlogTagCreateEditViewModel.Description;
-                blogTag.EditedDate = DateTime.UtcNow;
+                // Update tag with new data
+                tag.Name = articleTagCreateEditViewModel.Name;
+                tag.Slug = articleTagCreateEditViewModel.Slug;
+                tag.Description = articleTagCreateEditViewModel.Description;
+                tag.EditedDate = DateTime.UtcNow;
 
                 try
                 {
-                    _context.Update(blogTag);
+                    _context.Update(tag);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    // Check if blog tag exists
-                    if (!_context.BlogTags.Any(e => e.BlogTagId == blogTagId))
+                    // Check if tag exists
+                    if (!_context.BlogTags.Any(e => e.BlogTagId == tagId))
                     {
                         return NotFound();
                     }
@@ -586,35 +586,35 @@ namespace devjamin.Controllers
                 return Redirect("/Admin/Tags");
             }
 
-            return View("~/Views/Admin/Tags/Edit.cshtml", BlogTagCreateEditViewModel);
+            return View("~/Views/Admin/Tags/Edit.cshtml", articleTagCreateEditViewModel);
         }
 
-        // GET: Admin/Tags/Delete/{BlogTagId}
-        [HttpGet("Tags/Delete/{blogTagId:int}")]
-        public async Task<IActionResult> DeleteTag(int? blogTagId)
+        // GET: Admin/Tags/Delete/{TagId}
+        [HttpGet("Tags/Delete/{tagId:int}")]
+        public async Task<IActionResult> DeleteTag(int? tagId)
         {
-            if (blogTagId == null)
+            if (tagId == null)
             {
                 return NotFound();
             }
 
-            var blogTag = await _context.BlogTags
+            var tag = await _context.BlogTags
                 .Include(t => t.BlogPosts)
-                .FirstOrDefaultAsync(t => t.BlogTagId == blogTagId);
+                .FirstOrDefaultAsync(t => t.BlogTagId == tagId);
 
-            if (blogTag == null)
+            if (tag == null)
             {
                 return NotFound();
             }
 
-            // Check if the tag is currently used in any blog posts
-            if (blogTag.BlogPosts.Count != 0)
+            // Check if the tag is currently used in any articles
+            if (tag.BlogPosts.Count != 0)
             {
                 return RedirectToAction("Tags", "Admin");
             }
 
             // Deletion from database
-            _context.BlogTags.Remove(blogTag);
+            _context.BlogTags.Remove(tag);
             await _context.SaveChangesAsync();
 
             return Redirect("/Admin/Tags");

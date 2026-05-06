@@ -1,39 +1,39 @@
-@model devjamin.Models.AllBlogsCardViewModel
+@model devjamin.Models.AllArticlesCardViewModel
 
 @{
-    ViewData["Title"] = "Blogs";
+    ViewData["Title"] = "Articles";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
 <style>
     @* Highlight active nav link *@
-    #blogNavItem a,
-    #blogNavItem svg {
+    #articleNavItem a,
+    #articleNavItem svg {
         color: #160042;
         fill: #160042;
     }
 </style>
 
 <div class="top">
-    <h1 class="top__title">Blogs</h1>
-    <a class="top__createBtn" href="/Admin/Blogs/Create">Create Blog</a>
+    <h1 class="top__title">Articles</h1>
+    <a class="top__createBtn" href="/Admin/Articles/Create">Create Article</a>
 </div>
 
-@if (Model.PublishedBlogs.Count == 0 && Model.NonPublishedBlogs.Count == 0)
+@if (Model.PublishedArticles.Count == 0 && Model.NonPublishedArticles.Count == 0)
 {
-    <p class="blogs__title">No blogs found</p>
+    <p class="articles__title">No articles found</p>
 }
 else
 {
-    @if (Model.PublishedBlogs.Count != 0)
+    @if (Model.PublishedArticles.Count != 0)
     {
-        <section id="activeBlogs" class="blogs">
-            <h2 class="blogs__title">Published blogs</h2>
-            <div class="blogs__container">
-                @foreach (var blogCard in Model.PublishedBlogs)
+        <section id="activeArticles" class="articles">
+            <h2 class="articles__title">Published articles</h2>
+            <div class="articles__container">
+                @foreach (var articleCard in Model.PublishedArticles)
                 {
-                    <article class="blog">
-                        <a class="blog__editLink" href="/Admin/Blogs/Edit/@blogCard.BlogPostId">
+                    <article class="article">
+                        <a class="article__editLink" href="/Admin/Articles/Edit/@articleCard.ArticleId">
                             <svg width="24px" height="24px" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
                                 stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -41,44 +41,44 @@ else
                                     fill-rule="nonzero" />
                             </svg>
                         </a>
-                        @if (blogCard.CoverImagePath != null)
+                        @if (articleCard.CoverImagePath != null)
                         {
-                            <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath/w=768,format=auto" alt="@blogCard.Title">
+                            <img class="article__img" src="https://cdn.devjamin.com/@articleCard.CoverImagePath/w=768,format=auto" alt="@articleCard.Title">
                         }
                         else
                         {
-                            <div class="blog__noImg"></div>
+                            <div class="article__noImg"></div>
                         }
-                        <ul class="blog__tags">
-                            @if (blogCard.Tags.Count > 0)
+                        <ul class="article__tags">
+                            @if (articleCard.Tags.Count > 0)
                             {
-                                @foreach (var tag in blogCard.Tags)
+                                @foreach (var tag in articleCard.Tags)
                                 {
-                                    <li class="blog__tag">@tag.Name</li>
+                                    <li class="article__tag">@tag.Name</li>
                                 }
                             }
                             else {
-                                <li class="blog__tag">Uncategorized</li>
+                                <li class="article__tag">Uncategorized</li>
                             }
                         </ul>
-                        <a class="blog__goToLink" target="_blank" href="/Blog/@blogCard.Slug">
-                            <h3 class="blog__title">@blogCard.Title</h3>
+                        <a class="article__goToLink" target="_blank" href="/Article/@articleCard.Slug">
+                            <h3 class="article__title">@articleCard.Title</h3>
                         </a>
-                        <p class="blog__description">@blogCard.Description</p>
+                        <p class="article__description">@articleCard.Description</p>
                     </article>
                 }
             </div>
         </section>
     }
-    @if (Model.NonPublishedBlogs.Count != 0)
+    @if (Model.NonPublishedArticles.Count != 0)
     {
-        <section id="nonActiveBlogs" class="blogs">
-            <h2 class="blogs__title">Non-published blogs</h2>
-            <div class="blogs__container">
-                @foreach (var blogCard in Model.NonPublishedBlogs)
+        <section id="nonActiveArticles" class="articles">
+            <h2 class="articles__title">Non-published articles</h2>
+            <div class="articles__container">
+                @foreach (var articleCard in Model.NonPublishedArticles)
                 {
-                    <article class="blog">
-                        <a class="blog__editLink" href="/Admin/Blogs/Edit/@blogCard.BlogPostId">
+                    <article class="article">
+                        <a class="article__editLink" href="/Admin/Articles/Edit/@articleCard.ArticleId">
                             <svg width="24px" height="24px" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
                                 stroke-miterlimit="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -86,33 +86,33 @@ else
                                     fill-rule="nonzero" />
                             </svg>
                         </a>
-                        @if (blogCard.CoverImagePath != null)
+                        @if (articleCard.CoverImagePath != null)
                         {
-                            <img class="blog__img" src="https://cdn.devjamin.com/@blogCard.CoverImagePath/w=768,format=auto" alt="@blogCard.Title">
+                            <img class="article__img" src="https://cdn.devjamin.com/@articleCard.CoverImagePath/w=768,format=auto" alt="@articleCard.Title">
                         }
                         else
                         {
-                            <div class="blog__noImg"></div>
+                            <div class="article__noImg"></div>
                         }
-                        <ul class="blog__tags">
-                            @if (blogCard.Tags.Count > 0)
+                        <ul class="article__tags">
+                            @if (articleCard.Tags.Count > 0)
                             {
-                                @foreach (var tag in blogCard.Tags)
+                                @foreach (var tag in articleCard.Tags)
                                 {
-                                    <li class="blog__tag">@tag.Name</li>
+                                    <li class="article__tag">@tag.Name</li>
                                 }
                             }
                             else {
-                                <li class="blog__tag">Uncategorized</li>
+                                <li class="article__tag">Uncategorized</li>
                             }
                         </ul>
-                        <a class="blog__goToLink" target="_blank" href="/Blog/@blogCard.Slug">
-                            <h3 class="blog__title">@blogCard.Title</h3>
+                        <a class="article__goToLink" target="_blank" href="/Article/@articleCard.Slug">
+                            <h3 class="article__title">@articleCard.Title</h3>
                         </a>
-                        <p class="blog__description">@blogCard.Description</p>
+                        <p class="article__description">@articleCard.Description</p>
                     </article>
                 }
             </div>
         </section>
     }
-} 
+}

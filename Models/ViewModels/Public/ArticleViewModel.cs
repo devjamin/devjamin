@@ -1,11 +1,11 @@
 /*
-    BlogPostViewModel.cs, public facing view for full blog post.
+    ArticleViewModel.cs, public facing view for full article.
 */
 namespace devjamin.Models
 {
-    public class BlogPostViewModel
+    public class ArticleViewModel
     {
-        public int BlogPostId { get; set; }
+        public int ArticleId { get; set; }
 
         public required string Title { get; set; }
 

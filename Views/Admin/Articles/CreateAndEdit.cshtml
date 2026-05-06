@@ -1,7 +1,7 @@
-@model devjamin.Models.BlogPostCreateEditViewModel
+@model devjamin.Models.ArticleCreateEditViewModel
 @{
-    ViewData["Title"] = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create Blog" : "Edit Blog";
-    var formAction = Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Create ? "Create" : "Edit";
+    ViewData["Title"] = Model.Method == devjamin.Models.ArticleCreateEditMethodViewModel.Create ? "Create Article" : "Edit Article";
+    var formAction = Model.Method == devjamin.Models.ArticleCreateEditMethodViewModel.Create ? "Create" : "Edit";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -15,13 +15,13 @@
 <link rel="stylesheet" href="~/lib/fancyapps/fancyapps.bundle.css" asp-append-version="true">
 <script src="~/lib/fancyapps/fancyapps.bundle.js" asp-append-version="true"></script>
 @* Our JS *@
-<script src="~/js/blogCreateEdit.js" asp-append-version="true" defer></script>
-<script src="~/js/blogMedia.js" asp-append-version="true" defer></script>
+<script src="~/js/articleCreateEdit.js" asp-append-version="true" defer></script>
+<script src="~/js/articleMedia.js" asp-append-version="true" defer></script>
 
 <style>
     @* Highlight active nav link *@
-    #blogNavItem a,
-    #blogNavItem svg {
+    #articleNavItem a,
+    #articleNavItem svg {
         color: #160042;
         fill: #160042;
     }
@@ -60,9 +60,9 @@
 
 <h1 class="ceTitle">@ViewData["Title"]</h1>
 
-@* Blog editor form *@
+@* Article editor form *@
 <form class="ceForm" asp-action="@formAction" method="post">
-    <input type="hidden" id="BlogPostId" name="BlogPostId" value="@Model.BlogPostId" />
+    <input type="hidden" id="ArticleId" name="ArticleId" value="@Model.ArticleId" />
     <div class="ceForm__groupContainer">
         <div class="ceForm__group">
             <label class="ceForm__label" for="Title">Title</label>
@@ -92,8 +92,8 @@
     </div>
     <div class="ceForm__group">
         <label class="ceForm__label" for="MetaDescription">Meta Description</label>
-        <textarea class="ceForm__textarea ceForm__textarea--small" id="MetaDescription" name="MetaDescription" cols="20" 
-            placeholder="Meta description for search engines (max 160 characters)" 
+        <textarea class="ceForm__textarea ceForm__textarea--small" id="MetaDescription" name="MetaDescription" cols="20"
+            placeholder="Meta description for search engines (max 160 characters)"
             maxlength="160" rows="2">@Model.MetaDescription</textarea>
         @if (!ViewData.ModelState.IsValid && ViewData.ModelState["MetaDescription"]?.Errors.Count > 0)
         {
@@ -121,7 +121,7 @@
         </div>
         <div class="ceForm__mediaContainer">
             <div class="ceForm__media" id="media">
-                
+
             </div>
             <div class="ceForm__mediaOverlay ceForm__mediaOverlay--empty" id="mediaEmptyOverlay">
                 <p>Empty...<br/>Add something by dragging or press "Add media"</p>
@@ -138,13 +138,13 @@
         <div class="ceForm__bottomCheckboxContainer">
             <input class="ceForm__bottomCheckbox" type="checkbox" name="IsPublished" id="IsPublished"
                 @(Model.IsPublished == "on" ? "checked" : "")>
-            <label class="ceForm__bottomLabel" for="IsPublished">Publish blog</label>
+            <label class="ceForm__bottomLabel" for="IsPublished">Publish article</label>
         </div>
         <div class="ceForm__btnWrapper">
-            @if (Model.Method == devjamin.Models.BlogPostCreateEditMethodViewModel.Edit)
+            @if (Model.Method == devjamin.Models.ArticleCreateEditMethodViewModel.Edit)
             {
-            <a href="/Admin/Blogs/Delete/@Model.BlogPostId"
-                onclick="return confirm('Are you sure you want to delete this blog post?');"
+            <a href="/Admin/Articles/Delete/@Model.ArticleId"
+                onclick="return confirm('Are you sure you want to delete this article?');"
                 class="ceForm__btn ceForm__btn--danger">Delete</a>
             }
             <button class="ceForm__btn">Save</button>
@@ -170,9 +170,9 @@
     // Populate select with tags using available tags and check for selected IDs
     choices.setChoices(
         @Html.Raw(Json.Serialize(Model.AvailableTags.Select(tag => new {
-            value = tag.BlogTagId.ToString(),
+            value = tag.TagId.ToString(),
             label = tag.Name,
-            selected = Model.SelectedTagIds.Contains(tag.BlogTagId) // Check if the ID is in the selected IDs list
+            selected = Model.SelectedTagIds.Contains(tag.TagId) // Check if the ID is in the selected IDs list
         })))
     );
 });
@@ -182,4 +182,4 @@
 @* Hidden input for media upload *@
 <input type="file" id="mediaInput" hidden/>
 @* Hidden input for loading existing media *@
-<input type="hidden" id="mediaInputExisting" name="mediaInputExisting" value='@Json.Serialize(Model.Media)' /> 
+<input type="hidden" id="mediaInputExisting" name="mediaInputExisting" value='@Json.Serialize(Model.Media)' />

@@ -1,4 +1,4 @@
-@model List<devjamin.Models.BlogTagViewModel>
+@model List<devjamin.Models.ArticleTagViewModel>
 
 @{
     ViewData["Title"] = "Tags";
@@ -20,7 +20,7 @@
 
 @if (Model.Count == 0)
 {
-    <p class="blogs__title">No tags found</p>
+    <p class="articles__title">No tags found</p>
 }
 else
 {
@@ -28,7 +28,7 @@ else
         @foreach (var tag in Model)
         {
             <article class="tag">
-                <a class="tag__editLink" href="/Admin/Tags/Edit/@tag.BlogTagId">
+                <a class="tag__editLink" href="/Admin/Tags/Edit/@tag.TagId">
                     <h2 class="tag__name">@tag.Name</h2>
                     <p class="tag__description">@tag.Description</p>
                     <svg width="24px" height="24px" class="tag__edit" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"

@@ -1,11 +1,11 @@
 /*
-    BlogPostCardViewModel.cs, view for blog post preview card.
+    ArticleCardViewModel.cs, view for article preview card.
 */
 namespace devjamin.Models
 {
-    public class BlogPostCardViewModel
+    public class ArticleCardViewModel
     {
-        public int BlogPostId { get; set; }
+        public int ArticleId { get; set; }
 
         public required string Title { get; set; }
 
@@ -15,6 +15,6 @@ namespace devjamin.Models
 
         public string? CoverImagePath { get; set; }
 
-        public List<BlogTagViewModel> Tags { get; set; } = [];
+        public List<ArticleTagViewModel> Tags { get; set; } = [];
     }
 }

@@ -1,0 +1,41 @@
+@model IEnumerable<devjamin.Models.ArticleCardViewModel>
+@{
+    ViewData["Title"] = "Articles";
+    ViewData["MetaDescription"] = "A collection of articles where I share personal projects, thoughts, and whatever else I’m into.";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="sectionWrapper articlesListing">
+    <h2 class="articlesListing__title">Articles</h2>
+    <div class="articlesListing__articles">
+        @foreach (var articleCard in Model)
+        {
+            <article class="article">
+                <a class="article__anchor" href="/Article/@articleCard.Slug">
+                    @if (articleCard.CoverImagePath != null)
+                    {
+                        <img class="article__img" src="https://cdn.devjamin.com/@articleCard.CoverImagePath/w=768,format=auto" alt="@articleCard.Title">
+                    }
+                    else
+                    {
+                        <div class="article__noImg"></div>
+                    }
+                    <ul class="article__tags">
+                        @if (articleCard.Tags.Count > 0)
+                        {
+                            @foreach (var tag in articleCard.Tags)
+                            {
+                                <li class="article__tag">@tag.Name</li>
+                            }
+                        }
+                        else {
+                            <li class="article__tag">Uncategorized</li>
+                        }
+                    </ul>
+                    <h3 class="article__title">@articleCard.Title</h3>
+                    <p class="article__description">@articleCard.Description</p>
+                </a>
+            </article>
+        }
+    </div>
+</div>

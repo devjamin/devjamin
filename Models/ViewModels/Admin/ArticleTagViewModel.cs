@@ -1,13 +1,13 @@
 /*
-    BlogTagViewModel.cs, view model viewing blog tags.
+    ArticleTagViewModel.cs, view model viewing article tags.
 */
 using System.ComponentModel.DataAnnotations;
 
 namespace devjamin.Models
 {
-    public class BlogTagViewModel
+    public class ArticleTagViewModel
     {
-        public int BlogTagId { get; set; }
+        public int TagId { get; set; }
 
         [MaxLength(35)]
         public string Name { get; set; } = string.Empty;

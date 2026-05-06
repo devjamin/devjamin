@@ -1,7 +1,7 @@
-@model devjamin.Models.BlogTagCreateEditViewModel
+@model devjamin.Models.ArticleTagCreateEditViewModel
 @{
-    ViewData["Title"] = Model.Method == devjamin.Models.BlogTagCreateEditMethodViewModel.Create ? "Create Tag" : "Edit Tag";
-    var formAction = Model.Method == devjamin.Models.BlogTagCreateEditMethodViewModel.Create ? "CreateTag" : "EditTag";
+    ViewData["Title"] = Model.Method == devjamin.Models.ArticleTagCreateEditMethodViewModel.Create ? "Create Tag" : "Edit Tag";
+    var formAction = Model.Method == devjamin.Models.ArticleTagCreateEditMethodViewModel.Create ? "CreateTag" : "EditTag";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -17,7 +17,7 @@
 
 @* Tag editor form *@
 <form class="ceForm ceForm--tags" asp-controller="Admin" asp-action="@formAction" method="post">
-    <input type="hidden" id="BlogTagId" name="BlogTagId" value="@Model.BlogTagId" />
+    <input type="hidden" id="TagId" name="TagId" value="@Model.TagId" />
     <div class="ceForm__groupContainer">
         <div class="ceForm__group">
             <label class="ceForm__label" for="Name">Name</label>
@@ -47,9 +47,9 @@
     </div>
     <div class="ceForm__bottom">
         <div class="ceForm__btnWrapper">
-            @if (Model.Method == devjamin.Models.BlogTagCreateEditMethodViewModel.Edit)
+            @if (Model.Method == devjamin.Models.ArticleTagCreateEditMethodViewModel.Edit)
             {
-            <a href="/Admin/Tags/Delete/@Model.BlogTagId"
+            <a href="/Admin/Tags/Delete/@Model.TagId"
                 onclick="return confirm('Are you sure you want to delete this tag?');"
                 class="ceForm__btn ceForm__btn--danger">Delete</a>
             }

@@ -8,14 +8,14 @@ const Block = Quill.import('blots/block');
 class SectionBlot extends Block {
     static blotName = 'section';
     static tagName = 'section';
-    static className = 'blogBody__section';
+    static className = 'articleBody__section';
 }
 
 // Custom Article Blot for the main content container
 class ArticleBlot extends Block {
     static blotName = 'article';
     static tagName = 'article';
-    static className = 'blog-article';
+    static className = 'article-content';
 }
 
 // Enhanced Header Blot with better semantic structure
@@ -56,7 +56,7 @@ const List = Quill.import('formats/list');
 Quill.register(List, true);
 
 /*
-    blogCreateEdit.js, a script for everything but media upload in the create/edit blog.
+    articleCreateEdit.js, a script for everything but media upload in the create/edit article.
 
     - Init Quill (WYSIWYG editor)
     - Set Quill content from hidden input
@@ -324,7 +324,7 @@ document.getElementById('altTextModal').addEventListener('click', function (e) {
 
 
 class QuillCarousel {
-    // Keep this in sync with options from blog js
+    // Keep this in sync with options from article js
     static carouselOptions = {
         transition: "slide",
         Arrows: {
@@ -724,7 +724,7 @@ const options = {
             unit: 'word'
         }
     },
-    placeholder: "Compose an epic blog...",
+    placeholder: "Compose an epic article...",
     theme: "snow",
     imageDrop: false,
     // Enable semantic HTML output
@@ -832,7 +832,7 @@ function createSemanticStructure(html) {
             const hasSubheadings = tempDiv.querySelectorAll('h2, h3, h4, h5, h6').length > 1;
 
             if (shouldCreateSection(currentSectionContent, hasSubheadings)) {
-                result += `<section class="blogBody__section">${currentSectionContent}</section>`;
+                result += `<section class="articleBody__section">${currentSectionContent}</section>`;
             } else {
                 // Don't wrap in section if it doesn't meet criteria
                 result += currentSectionContent;

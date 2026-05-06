@@ -1,4 +1,4 @@
-@model devjamin.Models.BlogPostViewModel
+@model devjamin.Models.ArticleViewModel
 @using Microsoft.AspNetCore.Http.Extensions
 
 @{
@@ -13,7 +13,7 @@
     var correctedUrl = currentUrl.ToString().Replace("devjamin.com", "www.devjamin.com");
     var encodedUrl = Uri.EscapeDataString(correctedUrl);
 
-    var shareText = $"Check out this blog post: {Model.Title}";
+    var shareText = $"Check out this article: {Model.Title}";
     var twitterShareUrl = $"https://twitter.com/intent/tweet?text={Uri.EscapeDataString(shareText)}&url={encodedUrl}";
     var linkedInShareUrl = $"https://www.linkedin.com/sharing/share-offsite/?url={encodedUrl}";
     var facebookShareUrl = $"https://www.facebook.com/sharer/sharer.php?u={encodedUrl}";
@@ -53,8 +53,8 @@
   "url": "@correctedUrl",
   "isPartOf": {
     "@@type": "Blog",
-    "name": "Devjamin Blog",
-    "url": "https://www.devjamin.com/Blogs"
+    "name": "Devjamin Articles",
+    "url": "https://www.devjamin.com/Articles"
   },
   "inLanguage": "en-US",
   "genre": "Technology",
@@ -62,8 +62,8 @@
 }
 </script>
 
-<main class="blogWrapper">
-    <header class="blogTop">
+<main class="articleWrapper">
+    <header class="articleTop">
         <nav class="share" aria-label="Share this article">
             <li id="webShareBtn">
                 <button aria-label="Copy Link to Clipboard">
@@ -95,43 +95,38 @@
                 </a>
             </li>
         </nav>
-        <div class="blogTop__info">
+        <div class="articleTop__info">
             <nav aria-label="Breadcrumb">
                 <ul class="breadcrumb">
                     <li class="breadcrumb__item">
                         <a class="breadcrumb__link" href="/">Home</a>
                     </li>
                     <li class="breadcrumb__item">
-                        <a class="breadcrumb__link" href="/Blogs">Blogs</a>
+                        <a class="breadcrumb__link" href="/Articles">Articles</a>
                     </li>
                     <li class="breadcrumb__item" aria-current="page">@displayTitle</li>
                 </ul>
             </nav>
-            <h1 class="blogTop__title">@Model.Title</h1>
-            <p class="blogTop__description">@Model.Description
+            <h1 class="articleTop__title">@Model.Title</h1>
+            <p class="articleTop__description">@Model.Description
             </p>
 
-            <aside class="blogTop__about" aria-label="Article metadata">
-                <div class="blogTop__authorBlock">
-                    <address class="blogTop__author">
-                        <img class="blogTop__authorImg" src="@CDNBASEPATH@Model.AuthorProfilePicturePath/w=200,format=auto" alt="Photo of @Model.AuthorFullName">
-                        <span class="blogTop__authorName">@Model.AuthorFullName</span>
+            <aside class="articleTop__about" aria-label="Article metadata">
+                <div class="articleTop__authorBlock">
+                    <address class="articleTop__author">
+                        <img class="articleTop__authorImg" src="@CDNBASEPATH@Model.AuthorProfilePicturePath/w=200,format=auto" alt="Photo of @Model.AuthorFullName">
+                        <span class="articleTop__authorName">@Model.AuthorFullName</span>
                     </address>
-                    <p class="blogTop__authorReadTime">@Model.ReadTimeMinuteEstimate minute read</p>
+                    <p class="articleTop__authorReadTime">@Model.ReadTimeMinuteEstimate minute read</p>
                 </div>
-                <time class="blogTop__aboutDate" datetime="@Model.CreatedDate.ToString("yyyy-MM-dd")">
+                <time class="articleTop__aboutDate" datetime="@Model.CreatedDate.ToString("yyyy-MM-dd")">
                     @Model.CreatedDate.ToString("dd MMMM, yyyy")
                 </time>
             </aside>
 
         </div>
     </header>
-    <article class="blogBody">
-        @* @if (Model.CoverImagePath != null)
-        {
-            <img class="contentImg" fetchPriority="high" src="https://cdn.devjamin.com/@Model.CoverImagePath" alt="Author">
-        }
-        *@
+    <article class="articleBody">
         @Html.Raw(Model.Content)
     </article>
 </main>

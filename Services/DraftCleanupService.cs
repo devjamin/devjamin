@@ -1,8 +1,8 @@
 /*
-    DraftCleanupService.cs, a background service that periodically (every 12 hours) cleans up draft blog posts older than 12 hours.
-    
-    Going to /Admin/Blogs/Create, creates a empty draft blog post in the db with IsDraft = true, this is then set to false when the user actually posts/creates the blog.
-    So if the user abandons the draft, we will have a empty draft blog post in the db that we want to clean up.
+    DraftCleanupService.cs, a background service that periodically (every 12 hours) cleans up draft articles older than 12 hours.
+
+    Going to /Admin/Articles/Create, creates a empty draft article in the db with IsDraft = true, this is then set to false when the user actually posts/creates the article.
+    So if the user abandons the draft, we will have a empty draft article in the db that we want to clean up.
 */
 using devjamin.Models;
 
@@ -35,7 +35,7 @@ namespace devjamin.Services
 
             var timeThreshold = DateTime.UtcNow.AddHours(-12);
 
-            // Fetch all draft blog posts that were edited more than 12 hours ago.
+            // Fetch all draft articles that were edited more than 12 hours ago.
             var oldDrafts = dbContext.BlogPosts
                                      .Where(bp => bp.IsDraft && bp.EditedDate <= timeThreshold)
                                      .ToList();

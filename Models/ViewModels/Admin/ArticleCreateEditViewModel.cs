@@ -1,24 +1,24 @@
 /*
-    BlogPostCreateEditViewModel.cs, view model for creating and editing blog posts.
+    ArticleCreateEditViewModel.cs, view model for creating and editing articles.
 */
 using System.ComponentModel.DataAnnotations;
 
 namespace devjamin.Models
 {
     // DRY principle, create an enum for the method
-    // This is to determine if the view model is for creating or editing blog post
-    public enum BlogPostCreateEditMethodViewModel
+    // This is to determine if the view model is for creating or editing article
+    public enum ArticleCreateEditMethodViewModel
     {
         Create,
         Edit
     }
 
-    public class BlogPostCreateEditViewModel
+    public class ArticleCreateEditViewModel
     {
         // Method can either be create or edit
-        public BlogPostCreateEditMethodViewModel Method { get; set; }
+        public ArticleCreateEditMethodViewModel Method { get; set; }
 
-        public int BlogPostId { get; set; }
+        public int ArticleId { get; set; }
 
         [Required(ErrorMessage = "Please enter a title.")]
         public string Title { get; set; } = string.Empty;
@@ -41,9 +41,9 @@ namespace devjamin.Models
         public string? IsPublished { get; set; }
 
         // Include media files
-        public List<BlogMediaViewModel> Media { get; set; } = [];
+        public List<ArticleMediaViewModel> Media { get; set; } = [];
 
-        public List<BlogTagViewModel> AvailableTags { get; set; } = [];
+        public List<ArticleTagViewModel> AvailableTags { get; set; } = [];
         public List<int> SelectedTagIds { get; set; } = [];
     }
 }
