@@ -157,10 +157,19 @@ namespace devjamin.Controllers
             return Math.Max(readTimeMinutes, 1);
         }
 
+        // /Error and /Error/{code}: target of the exception handler and status code pages (see Program.cs)
+        [Route("/Error/{code:int?}")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int? code)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var statusCode = code ?? StatusCodes.Status500InternalServerError;
+            Response.StatusCode = statusCode;
+
+            return View("~/Views/Shared/Error.cshtml", new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                StatusCode = statusCode
+            });
         }
     }
 }

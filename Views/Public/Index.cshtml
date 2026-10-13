@@ -1,9 +1,18 @@
-﻿@model IEnumerable<devjamin.Models.ArticleCardViewModel>
+@model IEnumerable<devjamin.Models.ArticleCardViewModel>
 @{
     ViewData["Title"] = "Frontend Developer with Full-Stack and Infrastructure Experience";
     ViewData["MetaDescription"] = "Welcome to my portfolio and articles – I'm sharing my experience as a frontend developer along with personal projects and DIY builds.";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var CDNBASEPATH = ViewData["CDNBASEPATH"];
+    const string cdn = "https://cdn.devjamin.com/";
+    var articles = Model.ToList();
+    var featured = articles.FirstOrDefault();
+}
+
+@section Scripts {
+    <script src="~/lib/gsap/gsap.min.js" asp-append-version="true" defer></script>
+    <script src="~/lib/gsap/ScrollTrigger.min.js" asp-append-version="true" defer></script>
+    <script src="~/lib/gsap/Draggable.min.js" asp-append-version="true" defer></script>
+    <script src="~/js/home.js" asp-append-version="true" defer></script>
 }
 
 @* Structured Data for SEO *@
@@ -27,7 +36,7 @@
       "@@id": "https://www.devjamin.com/#person",
       "name": "Devjamin",
       "url": "https://www.devjamin.com",
-      "image": "@(CDNBASEPATH + "78840034-0447-49ca-b65d-04370e46ac00/w=800,format=auto")",
+      "image": "@(cdn + "78840034-0447-49ca-b65d-04370e46ac00/w=800,format=auto")",
       "description": "Frontend-Focused Full-Stack Developer",
       "jobTitle": "Frontend Developer",
       "worksFor": {
@@ -63,479 +72,347 @@
 }
 </script>
 
-<section class="sectionWrapper hero">
-    <div class="hero__infoBox">
-        <p class="hero__name">Devjamin</p>
-        <h1 class="hero__title">Frontend-Focused Full-Stack Developer</h1>
-        <p class="hero__description">
-            <span id="typewriter-text">Building complex things one bit at a time</span><span class="typewriter-cursor">|</span>
-        </p>
-        <div class="hero__cta">
-            <form class="hero__form" novalidate autocomplete="off">
-                <input name="email" class="hero__input" id="email" type="email" placeholder="Enter Email" autocomplete="off"/>
-                <button class="hero__contact">Contact</button>
-            </form>
-            <a class="hero__more" asp-controller="Home" asp-action="Index" asp-fragment="experience">Learn more</a>
-        </div>
-    </div>
-    <div class="hero__imgBox">
-        <img class="hero__img" 
-             fetchPriority="high" 
-             src="https://cdn.devjamin.com/78840034-0447-49ca-b65d-04370e46ac00/w=540,format=auto" 
-             srcset="https://cdn.devjamin.com/78840034-0447-49ca-b65d-04370e46ac00/w=310,format=auto?v=1 310w,
-                     https://cdn.devjamin.com/78840034-0447-49ca-b65d-04370e46ac00/w=620,format=auto?v=2 620w,
-                     https://cdn.devjamin.com/78840034-0447-49ca-b65d-04370e46ac00/w=540,format=auto?v=3 540w,
-                     https://cdn.devjamin.com/78840034-0447-49ca-b65d-04370e46ac00/w=1080,format=auto?v=4 1080w"
-             sizes="(max-width: 768px) 310px,
-                    540px"
-            width="500"
-            height="500"
-            alt="Portrait of devjamin">
-    </div>
-</section>
-<div id="articles" class="sectionContrastWrapper">
-    <section class="sectionWrapper articles">
-        <p class="articles__tag">Devjamin Insights</p>
-        <h2 class="articles__title">Check Out My Latest Articles</h2>
-        <div class="articles__wrapper">
-            <button id="articlesContainerArrowLeft" class="articles__containerArrow">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z"/></svg>
-            </button>
-            <button id="articlesContainerArrowRight" class="articles__containerArrow articles__containerArrow--right">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z"/></svg>
-            </button>
-            <div class="articles__container">
-                @foreach (var articleCard in Model)
-                {
-                    <article class="article">
-                        <a class="article__anchor" href="/Article/@articleCard.Slug">
-                            @if (articleCard.CoverImagePath != null)
-                            {
-                                <img class="article__img" src="https://cdn.devjamin.com/@articleCard.CoverImagePath/w=768,format=auto" alt="@articleCard.Title">
-                            }
-                            else
-                            {
-                                <div class="article__noImg"></div>
-                            }
-                            <ul class="article__tags">
-                                @if (articleCard.Tags.Count > 0)
-                                {
-                                    @foreach (var tag in articleCard.Tags)
-                                    {
-                                        <li class="article__tag">@tag.Name</li>
-                                    }
-                                }
-                                else {
-                                    <li class="article__tag">Uncategorized</li>
-                                }
-                            </ul>
-                            <h3 class="article__title">@articleCard.Title</h3>
-                            <p class="article__description">@articleCard.Description</p>
-                        </a>
-                    </article>
-                }
+@* HERO *@
+<section class="hero" id="hero">
+    <div class="wrap hero__grid">
+        <div class="hero__txt">
+            <p class="eyebrow h-in">Frontend-Focused Full-Stack Developer</p>
+            <h1 class="display h-in">Building complex things one bit at a time<span class="dot-accent">.</span></h1>
+            <p class="hero__sub h-in">Tinkering, improving, iterating.</p>
+            <p class="hero__lead h-in">Building frontends for a high-traffic e-commerce platform.</p>
+            <div class="hero__cta h-in">
+                <a class="btn btn--fill" href="#work">See the work</a>
+                <a class="btn btn--quiet" href="#contact">Say hi <svg aria-hidden="true"><use href="#arrow" /></svg></a>
             </div>
         </div>
-        <a class="articles__more" href="/Articles">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <span class="articles__moreText">
-                See All Articles
-            </span>
-        </a>
-    </section>
-</div>
-<section id="projects" class="sectionWrapper projects">
-    <p class="projects__tag">Personal Projects</p>
-    <h2 class="projects__title">Things I've Built</h2>
-    <p class="projects__description">A collection of side-projects I actually managed to finish.</p>
-    <div class="projects__grid">
-        <article class="projectShowcase">
-            <a class="projectShowcase__media" href="https://battleships.io" target="_blank" rel="noopener noreferrer" aria-label="Open Battleships.io screenshot">
-                <img class="projectShowcase__img" src="https://cdn.devjamin.com/5ba1cbea-8a2f-4873-61a6-ca455c634a00/w=900,format=auto" alt="Screenshot of Battleships.io" width="600" height="600" loading="lazy">
-            </a>
-            <div class="projectShowcase__body">
-                <p class="projectShowcase__eyebrow">Live Multiplayer Game</p>
-                <h3 class="projectShowcase__title">Battleships.io</h3>
-                <p class="projectShowcase__description">A twist on the classic Battleship game. Both players fire simultaneously in time-based ranked matches.</p>
-                <ul class="projectShowcase__features">
-                    <li class="projectFeature">
-                        <svg class="projectFeature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                        </svg>
-                        Real-time multiplayer
-                    </li>
-                    <li class="projectFeature">
-                        <svg class="projectFeature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                        </svg>
-                        Socket.IO
-                    </li>
-                    <li class="projectFeature">
-                        <svg class="projectFeature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
-                        </svg>
-                        Node.js + PostgreSQL
-                    </li>
-                    <li class="projectFeature">
-                        <svg class="projectFeature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>
-                        </svg>
-                        OAuth (Google &amp; Discord)
-                    </li>
-                    <li class="projectFeature">
-                        <svg class="projectFeature__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
-                        </svg>
-                        Dockerized
-                    </li>
-                </ul>
-                <a class="projectShowcase__cta" href="https://battleships.io" target="_blank" rel="noopener noreferrer">
-                    Play now
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <div class="hero__art">
+            <div class="pzone" id="pzone">
+                <span class="pzone__bg" aria-hidden="true"></span>
+                <figure class="portrait">
+                    <img src="@(cdn)78840034-0447-49ca-b65d-04370e46ac00/w=620,format=auto"
+                         srcset="@(cdn)78840034-0447-49ca-b65d-04370e46ac00/w=310,format=auto 310w, @(cdn)78840034-0447-49ca-b65d-04370e46ac00/w=620,format=auto 620w, @(cdn)78840034-0447-49ca-b65d-04370e46ac00/w=1080,format=auto 1080w"
+                         sizes="(max-width: 900px) 60vw, 290px" alt="Portrait of Devjamin" width="620" height="775" fetchpriority="high">
+                </figure>
+                <span class="me-note" aria-hidden="true">that's me →</span>
+
+                <span class="sticker s1" title="Drag me"><img src="~/img/tech/react.svg" alt="">React</span>
+                <span class="sticker s2" title="Drag me"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="16" r="3.5" /><circle cx="18.5" cy="16" r="3.5" /><path d="M5.5 16 9 9h6.5l3 7M9 9l3.5 7H5.5M14 5.5h2.5l-1 3.5" /></svg>e-bikes</span>
+                <span class="sticker s3" title="Drag me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a.5.5 0 0 1-.5.5h-5v-6h-6v6H4a.5.5 0 0 1-.5-.5z" /></svg>Home Assistant</span>
+                <span class="sticker sticker--accent s4" title="Drag me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 11h13v3.5a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5z" /><path d="M17.5 12.5h3M8.5 8c0-1 1-1.3 1-2.3S8.5 4.5 8.5 4.5M12.5 8c0-1 1-1.3 1-2.3s-1-1.2-1-1.2" /></svg>cooking</span>
+                <span class="sticker s5" title="Drag me"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" /><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5" /></svg>IoT</span>
+            </div>
+            <p class="drag-hint" aria-hidden="true">Stickers are draggable · double-click to put one back</p>
+        </div>
+    </div>
+</section>
+
+@* PROJECTS *@
+<section class="sec sec--alt" id="work">
+    <div class="wrap">
+        <div class="sh">
+            <p class="eyebrow">Projects</p>
+            <h2 class="display">Work<span class="dot-accent">.</span></h2>
+            <p>Things I've designed, built and shipped, and one that's still brewing.</p>
+            <div class="carousel-meta" aria-hidden="true"><span id="workCount">01 / 03</span><span class="carousel-meta__bar"><i id="workBar"></i></span></div>
+        </div>
+
+        <div class="projects">
+            <article class="pcard">
+                <div class="pcard__txt">
+                    <div>
+                        <span class="pill"><i></i>Live · Multiplayer game</span>
+                        <h3 class="display">Battleships.io</h3>
+                    </div>
+                    <div class="pcard__desc">
+                        <p>A twist on the classic Battleship game. Both players fire simultaneously in time-based ranked matches.</p>
+                        <a class="link" href="https://battleships.io" target="_blank" rel="noopener">Play now <svg aria-hidden="true"><use href="#arrow" /></svg></a>
+                    </div>
+                    <ul class="feat"><li>Real-time multiplayer</li><li>Socket.IO</li><li>Node.js + PostgreSQL</li><li>OAuth (Google &amp; Discord)</li><li>Dockerized</li></ul>
+                </div>
+                <div class="pcard__media">
+                    <img src="@(cdn)5ba1cbea-8a2f-4873-61a6-ca455c634a00/w=1200,format=auto" alt="Battleships.io gameplay screenshot" width="1200" height="675" loading="lazy">
+                </div>
+            </article>
+
+            <article class="pcard">
+                <div class="pcard__txt">
+                    <div>
+                        <span class="pill">Custom CMS &amp; blog</span>
+                        <h3 class="display">This Website</h3>
+                    </div>
+                    <div class="pcard__desc">
+                        <p>The site you're on, built from scratch with a custom CMS behind it. I write, edit and publish articles through my own admin panel, with image uploads, SEO-friendly URLs and a contact form that holds up against spam.</p>
+                        <a class="link" href="https://github.com/devjamin" target="_blank" rel="noopener">View on GitHub <svg aria-hidden="true"><use href="#arrow" /></svg></a>
+                    </div>
+                    <ul class="feat"><li>ASP.NET Core 8 MVC</li><li>EF Core + MariaDB</li><li>Rich-text editor (Quill)</li><li>Cloudflare Images CDN</li><li>Rate limiting &amp; spam protection</li></ul>
+                </div>
+                @* TODO: swap the mock for a real screenshot of the admin editor *@
+                <div class="pcard__media" aria-hidden="true">
+                    <div class="mock">
+                        <div class="mock__bar"><i></i><i></i><i></i><span>devjamin.com/admin</span></div>
+                        <div class="mock__body">
+                            <div class="mock__side"><b></b><b></b><b style="width:80%"></b><b style="width:60%"></b><b></b></div>
+                            <div class="mock__main">
+                                <div class="mock__tools"><b></b><b></b><b></b><b></b><b></b></div>
+                                <div class="mock__h"></div>
+                                <div class="mock__p"></div><div class="mock__p" style="width:92%"></div><div class="mock__p" style="width:75%"></div>
+                                <div class="mock__img"><svg><use href="#logo" /></svg></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="pcard pcard--soon">
+                <div class="pcard__txt">
+                    <div>
+                        <span class="pill"><i></i>Coming soon · AI game generator</span>
+                        <h3 class="display">Gamebrew.ai</h3>
+                    </div>
+                    <div class="pcard__desc">
+                        <p>Describe a game, and play it in your browser minutes later. Behind the scenes, multi-step AI agent workflows plan, build and refine each game.</p>
+                    </div>
+                    <ul class="feat"><li>AI agent workflows</li><li>Playable browser games</li></ul>
+                    <p class="soon-note">Still brewing. No link yet.</p>
+                </div>
+                <div class="brew" aria-hidden="true">
+                    <svg viewBox="0 0 120 124">
+                        <path d="M44 12h32" />
+                        <path d="M50 12v36a32 32 0 1 0 20 0V12" />
+                        <path class="liquid" d="M29 86c6-4 12-4 18 0s12 4 18 0 12-4 18 0 7 3 8 2" />
+                        <circle cx="50" cy="100" r="2.2" />
+                        <circle cx="66" cy="104" r="1.6" />
+                        <circle cx="60" cy="95" r="1.4" />
+                        <circle class="bubble" cx="60" cy="80" r="3.4" />
+                        <path d="M34 120h52" opacity=".4" />
                     </svg>
-                </a>
-            </div>
-        </article>
+                </div>
+            </article>
+        </div>
     </div>
 </section>
-<div id="technologies" class="sectionContrastWrapper">
-    <section class="sectionWrapper technologies">
-        <h2 class="technologies__title">My Tech Stack</h2>
-        <p class="technologies__description">An organized list of technologies I leverage to build great stuff.</p>
-        @* Add a new tech: drop an SVG into wwwroot/img/tech/ and copy a <li> below *@
-        <div class="techCategories">
-            <section class="techCategory">
-                <p class="techCategory__label"><span>Frontend &amp; UI</span></p>
-                <ul class="techGrid">
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/html.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">HTML</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/css.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">CSS</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/tailwindcss.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Tailwind</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/javascript.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">JavaScript</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/typescript.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">TypeScript</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/react.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">React</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/nextjs.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Next.js</span>
-                    </li>
-                </ul>
-            </section>
-            <section class="techCategory">
-                <p class="techCategory__label"><span>Backend &amp; Database</span></p>
-                <ul class="techGrid">
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/nodejs.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Node.js</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/python.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Python</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/aws-lambda.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">AWS Lambda</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/mariadb.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">MariaDB</span>
-                    </li>
-                </ul>
-            </section>
-            <section class="techCategory">
-                <p class="techCategory__label"><span>Infrastructure &amp; DevOps</span></p>
-                <ul class="techGrid">
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/aws.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">AWS</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/hetzner.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Hetzner</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/cloudflare.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Cloudflare</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/linux.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Linux</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/docker.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Docker</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/git.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Git</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon techCard__icon--mono" src="/img/tech/ci-cd-line.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">CI/CD</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon techCard__icon--mono" src="/img/tech/dns.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">DNS</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/weblate.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Weblate</span>
-                    </li>
-                </ul>
-            </section>
-            <section class="techCategory">
-                <p class="techCategory__label"><span>Optimization &amp; Insights</span></p>
-                <ul class="techGrid">
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/pagespeedinsights.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Core Web Vitals</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/google-analytics.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Google Analytics</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/google-tag-manager.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Google Tag Manager</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/google-tag-manager.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">Server-Side Tagging</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon techCard__icon--mono" src="/img/tech/uptimerobot.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">UptimeRobot</span>
-                    </li>
-                    <li class="techCard">
-                        <img class="techCard__icon" src="/img/tech/aws-cloudwatch.svg" alt="" width="28" height="28">
-                        <span class="techCard__name">CloudWatch</span>
-                    </li>
-                </ul>
-            </section>
+
+@* ARTICLES *@
+<section class="sec" id="writing">
+    <div class="wrap">
+        <div class="sh">
+            <p class="eyebrow">Articles</p>
+            <h2 class="display">Writing<span class="dot-accent">.</span></h2>
         </div>
-    </section>
-</div>
-<section id="experience" class="sectionWrapper experience">
-    <h2 class="experience__title">Experience</h2>
-    <p class="experience__description">Here's a timeline of my work journey so far.</p>
-    <ul class="timeline">
-        <li class="timeline__item">
-            <div class="timeline__date">
-                <p class="timeline__dateTxt">2022-present</p>
-                <div class="timeline__dot">
-                    <div class="timeline__dotInner"></div>
-                </div>
-            </div>
-            <div class="timeline__card">
-                <h3>Frontend Developer @@ Major Online Retailer</h3>
-                <ul>
-                    <li>
-                        Build and maintain <b>frontend systems</b> for a <b>high-traffic e-commerce platform</b>
-                    </li>
-                    <li>
-                        Develop <b>internal tools</b> that make teams more effective and open up new possibilities
-                    </li>
-                    <li>
-                        Implement <b>data layer</b> and <b>event tracking</b> for analytics and marketing
-                    </li>
-                    <li>
-                        Work with <b>APIs</b> and contribute to <b>backend development</b> when needed
-                    </li>
-                    <li>
-                        Manage <b>domains, DNS</b>, and <b>self-hosted services</b>
-                    </li>
-                    <li>
-                        Optimize <b>performance, debugging</b>, and <b>overall user experience</b>
-                    </li>
-                </ul>
-            </div>
-        </li>
-        <li class="timeline__item">
-            <div class="timeline__date">
-                <p class="timeline__dateTxt">2021-2023</p>
-                <div class="timeline__dot">
-                    <div class="timeline__dotInner"></div>
-                </div>
-            </div>
-            <div class="timeline__card">
-                <h3>Web Developer Education @@ Technical College</h3>
-                <ul>
-                    <li>
-                        Built a foundation in <b>frontend development</b> and <b>modern web technologies</b>
-                    </li>
-                    <li>
-                        Developed projects using <b>React</b> and <b>component-based architecture</b>
-                    </li>
-                    <li>
-                        Used <b>Git, version control</b>, and <b>CI/CD</b> in development workflows
-                    </li>
-                    <li>
-                        Worked with <b>APIs, UI/UX</b>, and overall application structure
-                    </li>
-                </ul>
-            </div>
-        </li>
 
-
-    </ul>
-</section>
-<div id="contact" class="sectionContrastWrapper">
-    <section class="sectionWrapper contact">
-        <span class="contact__tag">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M8 14C7.60417 14 7.23958 13.9011 6.90625 13.7031C6.58333 13.5156 6.32292 13.2604 6.125 12.9375C5.9375 12.6042 5.84375 12.2396 5.84375 11.8437C5.84375 11.3437 5.95833 10.9271 6.1875 10.5937C6.41667 10.2604 6.77083 9.86978 7.25 9.42188C7.60417 9.09896 7.78125 8.79164 7.78125 8.49998V8.21876H7.5C7.17708 8.21876 6.73437 8.54168 6.17187 9.18752C5.61979 9.83336 4.94791 10.1562 4.15625 10.1562C3.76042 10.1562 3.39583 10.0625 3.0625 9.875C2.73958 9.67706 2.47917 9.41666 2.28125 9.09374C2.09375 8.76044 2 8.39582 2 8C2 7.60417 2.09375 7.24479 2.28125 6.92187C2.47917 6.58854 2.73958 6.32812 3.0625 6.14062C3.39583 5.94271 3.76042 5.84375 4.15625 5.84375C4.9375 5.84375 5.60416 6.16146 6.15625 6.79687C6.70833 7.43229 7.15625 7.75 7.5 7.75H7.78125V7.5C7.78125 7.20833 7.60417 6.90104 7.25 6.57813L6.89062 6.25C6.63021 6.01042 6.39063 5.72396 6.17187 5.39062C5.95312 5.04687 5.84375 4.63542 5.84375 4.15625C5.84375 3.76042 5.9375 3.40104 6.125 3.07813C6.32292 2.74479 6.58333 2.48438 6.90625 2.29687C7.23958 2.09896 7.60417 2 8 2C8.39582 2 8.75522 2.09896 9.07814 2.29687C9.41144 2.49479 9.6719 2.75521 9.8594 3.07813C10.0573 3.40104 10.1562 3.76042 10.1562 4.15625C10.1562 4.9375 9.83852 5.60416 9.20312 6.15625C8.56772 6.70833 8.25002 7.15625 8.25002 7.5V7.75H8.49998C8.85416 7.75 9.30206 7.43229 9.84374 6.79687C10.375 6.16146 11.0416 5.84375 11.8438 5.84375C12.2396 5.84375 12.5989 5.94271 12.9219 6.14062C13.2552 6.32812 13.5156 6.58333 13.7031 6.90625C13.9011 7.22917 14 7.59375 14 8C14 8.39582 13.9011 8.76044 13.7031 9.09374C13.5156 9.41666 13.2552 9.67706 12.9219 9.875C12.5989 10.0625 12.2396 10.1562 11.8438 10.1562C11.3542 10.1562 10.9323 10.0365 10.5781 9.79688C10.2344 9.5573 9.84896 9.20834 9.42188 8.75C9.09896 8.39582 8.79164 8.21876 8.49998 8.21876H8.25002V8.49998C8.25002 8.88542 8.56772 9.33332 9.20312 9.84374C9.83852 10.3542 10.1562 11.0208 10.1562 11.8437C10.1562 12.2396 10.0573 12.6042 9.8594 12.9375C9.6719 13.2604 9.41666 13.5156 9.09374 13.7031C8.77082 13.9011 8.40626 14 8 14Z"
-                    fill="#779ACF" />
-            </svg>
-            Let's connect
-        </span>
-        <h2 class="contact__title">Contact me</h2>
-        <p class="contact__description">Wanna chat, build something, or just say hi? Shoot me a message.</p>
-        <form id="contactForm" method="POST" asp-antiforgery="false" class="contact__form" novalidate>
-            <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
-                <label for="Website">Website</label>
-                <input id="Website" name="Website" type="text" tabindex="-1" autocomplete="off"/>
-            </div>
-            <div class="contact__inputContainer">
-                <label for="Name" class="contact__label">Name</label>
-                <input id="Name" name="Name" class="contact__input" placeholder="Name" required aria-required="true" maxlength="100"/>
-                <span class="contact__inputError"></span>
-            </div>
-            <div class="contact__inputContainer">
-                <label for="Email" class="contact__label">Email</label>
-                <input id="Email" name="Email" class="contact__input" placeholder="Email" type="email" required aria-required="true" maxlength="100"/>
-                <span class="contact__inputError"></span>
-            </div>
-            <div class="contact__inputContainer">
-                <label for="Message" class="contact__label">Message</label>
-                <textarea id="Message" name="Message" class="contact__textarea" placeholder="Message" cols="30" rows="10" required aria-required="true" maxlength="1000"></textarea>
-                <span class="contact__inputError"></span>
-            </div>
-            <button id="contactFormBtn" type="submit" class="contact__btn">
-                <svg class="contact__btnSpinner" width="20px" height="20px" fill="#fff" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24"><path d="M23 12c0 1.042-.154 2.045-.425 3h-2.101c.335-.94.526-1.947.526-3 0-4.962-4.037-9-9-9-1.706 0-3.296.484-4.655 1.314l1.858 2.686h-6.994l2.152-7 1.849 2.673c1.684-1.049 3.659-1.673 5.79-1.673 6.074 0 11 4.925 11 11zm-6.354 7.692c-1.357.826-2.944 1.308-4.646 1.308-4.962 0-9-4.038-9-9 0-1.053.191-2.06.525-3h-2.1c-.271.955-.425 1.958-.425 3 0 6.075 4.925 11 11 11 2.127 0 4.099-.621 5.78-1.667l1.853 2.667 2.152-6.989h-6.994l1.855 2.681z"/></svg>
-                Send Message
-            </button>
-            <span id="contactFormFeedbackTxt" class="contact__formFeedbackTxt"><span>Thanks for reaching out Frank!</span><span>I've recieved your message and will get back to you as soon as possible.</span></span>
-        </form>
-    </section>
-</div>
-<script>
-    @* Insert hero email value at contact sections email input and scroll to it *@
-    const heroForm = document.querySelector(".hero__form");
-
-    heroForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        document.getElementById("Email").value = e.target.email.value;
-        document.getElementById("contact").scrollIntoView();
-        document.getElementById("Name").focus();
-    });
-
-    @* Validate form and submit *@
-    const form = document.getElementById("contactForm")
-    const inputs = form.querySelectorAll("input, textarea");
-    const button = document.getElementById("contactFormBtn");
-    const feedbackTxt = document.getElementById("contactFormFeedbackTxt");
-
-    form.addEventListener("submit", async function(e) {
-        e.preventDefault();
-        // Reset feedback text
-        feedbackTxt.style.display = "none";
-        feedbackTxt.classList.remove("contact__formFeedbackTxt--error");
-
-        let formIsValid = true;
-
-        @* Check each inputs validity *@
-        inputs.forEach(input => {
-            @* Skip honeypot — has no error span and shouldn't be validated *@
-            if (input.name === "Website") return;
-
-            const errorSpan = input.nextElementSibling;
-
-            @* Validate input with built-in browser validation *@
-            if (!input.validity.valid) {
-                formIsValid = false;
-                errorSpan.textContent = input.validationMessage; @* Show built-in browser validation message *@
-            } else {
-                errorSpan.textContent = "";
-            }
-        });
-
-        if (formIsValid) {
-            @* Toggle btn loading state *@
-            button.classList.add("contact__btn--loading");
-            button.disabled = true;
-
-            const headers = new Headers();
-            headers.append('Content-Type', 'application/json');
-
-            const body = JSON.stringify({
-                Name: e.target.Name.value,
-                From: e.target.Email.value,
-                Subject: "Contact form submission",
-                Body: e.target.Message.value,
-                Website: e.target.Website.value
-            });
-
-            try {
-                const response = await fetch('/API/Contact', {
-                    method: 'POST',
-                    headers: headers,
-                    body: body
-                });
-                const responseTxt = await response.text()
-
-                @* Handle response errors *@
-                if (!response.ok) {
-                    if (response.status === 429) {
-                        throw new Error("I'm not gonna read that fast! Slow down a bit!");
-                    } else {
-                        throw new Error(responseTxt || "Failed to send message");
+        @if (featured == null)
+        {
+            <p class="empty">No articles yet. The first one is on its way.</p>
+        }
+        else
+        {
+            <a class="feature" href="/Article/@featured.Slug">
+                <div class="feature__img">
+                    @if (featured.CoverImagePath != null)
+                    {
+                        <img src="@(cdn)@featured.CoverImagePath/w=900,format=auto" alt="" loading="lazy">
                     }
-                }
+                </div>
+                <div class="feature__txt">
+                    <span class="tags eyebrow">
+                        @foreach (var tag in featured.Tags.DefaultIfEmpty(new ArticleTagViewModel { Name = "Uncategorized" }))
+                        {
+                            <span>@tag.Name</span>
+                        }
+                    </span>
+                    <h3>@featured.Title</h3>
+                    <p>@featured.Description</p>
+                    <span class="link">Read article <svg aria-hidden="true"><use href="#arrow" /></svg></span>
+                </div>
+            </a>
 
-                @* User success feedback *@
-                const name = e.target.Name.value.split(" ")[0];
-                feedbackTxt.style.display = "flex";
-                feedbackTxt.innerHTML = `<span>Thanks for reaching out ${name}!</span><span>I've recieved your message and will get back to you as soon as possible.</span>`;
-            } catch (error) {
-                console.error(error);
-                feedbackTxt.style.display = "flex";
-                feedbackTxt.classList.add("contact__formFeedbackTxt--error");
-                feedbackTxt.innerHTML = error.message;
-            } finally {
-                @* Reset btn loading state and clear form *@
-                button.classList.remove("contact__btn--loading");
-                button.disabled = false;
-                form.reset();
+            @if (articles.Count > 1)
+            {
+                <div class="acards">
+                    @foreach (var article in articles.Skip(1))
+                    {
+                        <partial name="~/Views/Public/_ArticleCard.cshtml" model="article" />
+                    }
+                </div>
             }
         }
-    });
+        <p class="more"><a class="link" href="/Articles">All articles <svg aria-hidden="true"><use href="#arrow" /></svg></a></p>
+    </div>
+</section>
 
-    @* Clear errors when inputs change *@
-    inputs.forEach(input => {
-        input.addEventListener("input", () => {
-            const errorSpan = input.nextElementSibling;
-            if (errorSpan.textContent) errorSpan.textContent = "";
-        });
-    });
-</script>
+@* STACK *@
+@* Add a new tech: drop an SVG into wwwroot/img/tech/ and copy an <li> below (add class="inv" for black mono icons) *@
+<section class="sec sec--alt" id="stack">
+    <div class="wrap">
+        <div class="sh">
+            <p class="eyebrow">Tech stack</p>
+            <h2 class="display">The toolkit<span class="dot-accent">.</span></h2>
+        </div>
+        <div class="stack">
+            <div class="scard">
+                <h3>Frontend &amp; UI</h3>
+                <ul>
+                    <li><img src="~/img/tech/html.svg" alt="" width="24" height="24">HTML</li>
+                    <li><img src="~/img/tech/css.svg" alt="" width="24" height="24">CSS</li>
+                    <li><img src="~/img/tech/tailwindcss.svg" alt="" width="24" height="24">Tailwind</li>
+                    <li><img src="~/img/tech/javascript.svg" alt="" width="24" height="24">JavaScript</li>
+                    <li><img src="~/img/tech/typescript.svg" alt="" width="24" height="24">TypeScript</li>
+                    <li><img src="~/img/tech/react.svg" alt="" width="24" height="24">React</li>
+                    <li><img class="inv" src="~/img/tech/nextjs.svg" alt="" width="24" height="24">Next.js</li>
+                </ul>
+            </div>
+            <div class="scard">
+                <h3>Backend &amp; Database</h3>
+                <ul>
+                    <li><img src="~/img/tech/nodejs.svg" alt="" width="24" height="24">Node.js</li>
+                    <li><img src="~/img/tech/python.svg" alt="" width="24" height="24">Python</li>
+                    <li><img src="~/img/tech/aws-lambda.svg" alt="" width="24" height="24">AWS Lambda</li>
+                    <li><img src="~/img/tech/mariadb.svg" alt="" width="24" height="24">MariaDB</li>
+                </ul>
+            </div>
+            <div class="scard">
+                <h3>Infrastructure &amp; DevOps</h3>
+                <ul>
+                    <li><img src="~/img/tech/aws.svg" alt="" width="24" height="24">AWS</li>
+                    <li><img src="~/img/tech/hetzner.svg" alt="" width="24" height="24">Hetzner</li>
+                    <li><img src="~/img/tech/cloudflare.svg" alt="" width="24" height="24">Cloudflare</li>
+                    <li><img src="~/img/tech/linux.svg" alt="" width="24" height="24">Linux</li>
+                    <li><img src="~/img/tech/docker.svg" alt="" width="24" height="24">Docker</li>
+                    <li><img src="~/img/tech/git.svg" alt="" width="24" height="24">Git</li>
+                    <li><img class="inv" src="~/img/tech/ci-cd-line.svg" alt="" width="24" height="24">CI/CD</li>
+                    <li><img class="inv" src="~/img/tech/dns.svg" alt="" width="24" height="24">DNS</li>
+                    <li><img src="~/img/tech/weblate.svg" alt="" width="24" height="24">Weblate</li>
+                </ul>
+            </div>
+            <div class="scard">
+                <h3>Optimization &amp; Insights</h3>
+                <ul>
+                    <li><img src="~/img/tech/pagespeedinsights.svg" alt="" width="24" height="24">Core Web Vitals</li>
+                    <li><img src="~/img/tech/google-analytics.svg" alt="" width="24" height="24">Google Analytics</li>
+                    <li><img src="~/img/tech/google-tag-manager.svg" alt="" width="24" height="24">Tag Manager</li>
+                    <li><img src="~/img/tech/google-tag-manager.svg" alt="" width="24" height="24">Server-Side Tagging</li>
+                    <li><img class="inv" src="~/img/tech/uptimerobot.svg" alt="" width="24" height="24">UptimeRobot</li>
+                    <li><img src="~/img/tech/aws-cloudwatch.svg" alt="" width="24" height="24">CloudWatch</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* EXPERIENCE *@
+<section class="sec" id="experience">
+    <div class="wrap">
+        <div class="sh">
+            <p class="eyebrow">Experience</p>
+            <h2 class="display">The path so far<span class="dot-accent">.</span></h2>
+        </div>
+        <div class="xp">
+            <div class="xrow">
+                <p class="xrow__when">2022 — Present</p>
+                <div>
+                    <h3>Frontend Developer <span>@@ Major Online Retailer</span></h3>
+                    <ul>
+                        <li>Build and maintain frontend systems for a high-traffic e-commerce platform</li>
+                        <li>Develop internal tools that make teams more effective</li>
+                        <li>Implement data layer and event tracking for analytics and marketing</li>
+                        <li>Work with APIs and contribute to backend development</li>
+                        <li>Manage domains, DNS and self-hosted services</li>
+                        <li>Optimize performance, debugging and overall UX</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="xrow">
+                <p class="xrow__when">2021 — 2023</p>
+                <div>
+                    <h3>Web Developer Education <span>@@ Technical College</span></h3>
+                    <ul>
+                        <li>Foundation in frontend development and modern web technologies</li>
+                        <li>Projects using React and component-based architecture</li>
+                        <li>Git, version control and CI/CD</li>
+                        <li>APIs, UI/UX and application structure</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* BEYOND THE CODE *@
+<section class="sec sec--alt" id="beyond">
+    <div class="wrap">
+        <div class="sh">
+            <p class="eyebrow">Beyond the code</p>
+            <h2 class="display">Off the clock<span class="dot-accent">.</span></h2>
+        </div>
+        <div class="beyond">
+            <div class="bcard">
+                <span class="bcard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a.5.5 0 0 1-.5.5h-5v-6h-6v6H4a.5.5 0 0 1-.5-.5z" /><path d="M10.5 11.2a2.2 2.2 0 0 1 3 0M9 9.7a4.3 4.3 0 0 1 6 0" /></svg></span>
+                <div><h3>Home Assistant</h3><p>Automating my home one sensor at a time.</p></div>
+            </div>
+            <div class="bcard">
+                <span class="bcard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="7" width="10" height="10" rx="2" /><rect x="10" y="10" width="4" height="4" rx=".5" /><path d="M10 3.5V7M14 3.5V7M10 17v3.5M14 17v3.5M3.5 10H7M3.5 14H7M17 10h3.5M17 14h3.5" /></svg></span>
+                <div><h3>Custom IoT devices</h3><p>Designing and building my own smart devices.</p></div>
+            </div>
+            <div class="bcard">
+                <span class="bcard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="16" r="3.5" /><circle cx="18.5" cy="16" r="3.5" /><path d="M5.5 16 9 9h6.5l3 7M9 9l3.5 7H5.5M14 5.5h2.5l-1 3.5" /><path d="M11.2 11.4h1.6l-.8 1.6h1.6" /></svg></span>
+                <div><h3>Custom e-bikes</h3><p>Motors, batteries, controllers.</p></div>
+            </div>
+            <div class="bcard">
+                <span class="bcard__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 11h13v3.5a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5z" /><path d="M17.5 12.5h3M2 11h2.5" /><path d="M8.5 8c0-1 1-1.3 1-2.3S8.5 4.5 8.5 4.5M12.5 8c0-1 1-1.3 1-2.3s-1-1.2-1-1.2" /></svg></span>
+                <div><h3>Cooking</h3><p>I love to cook.</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* CONTACT *@
+<section class="sec" id="contact">
+    <div class="wrap contact-grid">
+        <div class="sh">
+            <p class="eyebrow">Contact</p>
+            <h2 class="display">Say hi<span class="dot-accent">.</span></h2>
+            <p>Wanna chat, build something, or just say hi? Shoot me a message.</p>
+            <div class="contact__alt">
+                @* Email is XOR-encoded and decoded by site.js on load, keeping it out of the HTML for scrapers *@
+                <span>Or email <a href="#" data-email="5a3935342e3b392e1a3e3f2c303b37333474393537">[email protected]</a></span>
+                <span>Code lives on <a href="https://github.com/devjamin" target="_blank" rel="noopener">GitHub</a></span>
+            </div>
+        </div>
+        <div class="contact">
+            <form class="form" id="contactForm" method="POST" novalidate>
+                @* Honeypot: hidden from people, bots fill it in and get rejected server-side *@
+                <div class="hp" aria-hidden="true">
+                    <label for="Website">Website</label>
+                    <input id="Website" name="Website" type="text" tabindex="-1" autocomplete="off" />
+                </div>
+                <div class="field">
+                    <label for="Name">Name</label>
+                    <input id="Name" name="Name" autocomplete="name" required maxlength="100" aria-describedby="NameError">
+                    <span class="field__error" id="NameError"></span>
+                </div>
+                <div class="field">
+                    <label for="Email">Email</label>
+                    <input id="Email" name="Email" type="email" autocomplete="email" required maxlength="100" aria-describedby="EmailError">
+                    <span class="field__error" id="EmailError"></span>
+                </div>
+                <div class="field field--full">
+                    <label for="Message">Message</label>
+                    <textarea id="Message" name="Message" rows="5" required maxlength="1000" aria-describedby="MessageError"></textarea>
+                    <span class="field__error" id="MessageError"></span>
+                </div>
+                <div class="form__foot">
+                    <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+                    <button class="btn btn--fill send" id="contactFormBtn" type="submit">
+                        <span class="send__lbl">Send message</span>
+                        <span class="send__icon" aria-hidden="true">
+                            <svg class="i-arrow" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+                            <svg class="i-spin" viewBox="0 0 16 16"><path d="M8 2a6 6 0 1 1-6 6" /></svg>
+                            <svg class="i-check" viewBox="0 0 16 16"><path d="M3.5 8.5 6.5 11.5 12.5 4.5" /></svg>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

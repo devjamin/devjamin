@@ -1,0 +1,30 @@
+@model ArticleCardViewModel
+@* Article preview card, used on the homepage and /Articles *@
+<a class="acard" href="/Article/@Model.Slug">
+    @if (Model.CoverImagePath != null)
+    {
+        <div class="acard__img"><img src="https://cdn.devjamin.com/@Model.CoverImagePath/w=768,format=auto" alt="" loading="lazy"></div>
+    }
+    else
+    {
+        <div class="acard__img acard__img--empty" aria-hidden="true"><svg><use href="#logo" /></svg></div>
+    }
+    <div class="acard__txt">
+        <span class="tags eyebrow">
+            @if (Model.Tags.Count > 0)
+            {
+                @foreach (var tag in Model.Tags)
+                {
+                    <span>@tag.Name</span>
+                }
+            }
+            else
+            {
+                <span>Uncategorized</span>
+            }
+        </span>
+        <h3>@Model.Title</h3>
+        <p>@Model.Description</p>
+        <span class="link">Read article <svg aria-hidden="true"><use href="#arrow" /></svg></span>
+    </div>
+</a>

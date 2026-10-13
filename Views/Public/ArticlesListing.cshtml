@@ -5,37 +5,28 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="sectionWrapper articlesListing">
-    <h2 class="articlesListing__title">Articles</h2>
-    <div class="articlesListing__articles">
-        @foreach (var articleCard in Model)
+<header class="page-head">
+    <div class="wrap">
+        <p class="eyebrow">Articles</p>
+        <h1 class="display">Writing<span class="dot-accent">.</span></h1>
+        <p>Notes, guides and write-ups on frontend, infrastructure, and whatever I'm building at the moment.</p>
+    </div>
+</header>
+
+<section class="page-body">
+    <div class="wrap">
+        @if (!Model.Any())
         {
-            <article class="article">
-                <a class="article__anchor" href="/Article/@articleCard.Slug">
-                    @if (articleCard.CoverImagePath != null)
-                    {
-                        <img class="article__img" src="https://cdn.devjamin.com/@articleCard.CoverImagePath/w=768,format=auto" alt="@articleCard.Title">
-                    }
-                    else
-                    {
-                        <div class="article__noImg"></div>
-                    }
-                    <ul class="article__tags">
-                        @if (articleCard.Tags.Count > 0)
-                        {
-                            @foreach (var tag in articleCard.Tags)
-                            {
-                                <li class="article__tag">@tag.Name</li>
-                            }
-                        }
-                        else {
-                            <li class="article__tag">Uncategorized</li>
-                        }
-                    </ul>
-                    <h3 class="article__title">@articleCard.Title</h3>
-                    <p class="article__description">@articleCard.Description</p>
-                </a>
-            </article>
+            <p class="empty">No articles yet. The first one is on its way.</p>
+        }
+        else
+        {
+            <div class="acards">
+                @foreach (var article in Model)
+                {
+                    <partial name="~/Views/Public/_ArticleCard.cshtml" model="article" />
+                }
+            </div>
         }
     </div>
-</div>
+</section>

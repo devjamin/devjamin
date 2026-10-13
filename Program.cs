@@ -127,9 +127,15 @@ using (var scope = app.Services.CreateScope())
 // Configure HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+// Friendly error pages (e.g. 404) for public pages; API and admin responses are left untouched
+app.UseWhen(
+    context => !context.Request.Path.StartsWithSegments("/API", StringComparison.OrdinalIgnoreCase)
+        && !context.Request.Path.StartsWithSegments("/Admin", StringComparison.OrdinalIgnoreCase),
+    branch => branch.UseStatusCodePagesWithReExecute("/Error/{0}"));
 
 app.UseHttpsRedirection();
 
